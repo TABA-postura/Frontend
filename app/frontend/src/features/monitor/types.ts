@@ -23,3 +23,12 @@ export interface PostureSessionTimes {
   endTime: Date | null;
 }
 
+export type FeedbackType = 'WARN' | 'INFO';
+
+export interface FeedbackItem {
+  type: FeedbackType;
+  title: string;
+  message: string;
+  timestamp: number; // Date.now() 값
+}
+

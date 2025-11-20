@@ -1,0 +1,73 @@
+/* CumulativePostureDataCard.css */
+
+.cumulative-posture-data-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.cumulative-posture-data-card__header {
+  margin-bottom: 16px;
+}
+
+.cumulative-posture-data-card__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.cumulative-posture-data-card__subtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.cumulative-posture-data-card__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cumulative-posture-data-card__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.cumulative-posture-data-card__item:last-child {
+  border-bottom: none;
+}
+
+.cumulative-posture-data-card__problem {
+  font-size: 14px;
+  color: #333;
+}
+
+.cumulative-posture-data-card__count {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.cumulative-posture-data-card__empty {
+  padding: 24px 0;
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .cumulative-posture-data-card {
+    padding: 16px;
+  }
+
+  .cumulative-posture-data-card__title {
+    font-size: 16px;
+  }
+}
+
