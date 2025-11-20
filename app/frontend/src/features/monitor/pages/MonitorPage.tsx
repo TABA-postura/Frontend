@@ -1,8 +1,55 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../../../assets/styles/Home.css';
-import PostureIssueSummary from '../components/PostureIssueSummary';
+import { useWebcam } from '../hooks/useWebcam';
+import usePostureSession from '../hooks/usePostureSession';
+import WebcamPanel from '../components/WebcamPanel';
+import MonitoringControls from '../components/MonitoringControls';
+import LiveStatsCard from '../components/LiveStatsCard';
+import AccumulatedPostureCard from '../components/AccumulatedPostureCard';
+import PostureFeedbackPanel from '../components/PostureFeedbackPanel';
+import './MonitorPage.css';
 
-const MonitorPage = () => {
+function MonitorPage() {
+  const webcam = useWebcam();
+  const session = usePostureSession();
+
+  // 세션 시작 시 웹캠 시작
+  const handleStart = async () => {
+    try {
+      await webcam.start();
+      session.handleStart();
+    } catch (err) {
+      // 에러는 useWebcam에서 처리됨
+      console.error('웹캠 시작 실패:', err);
+    }
+  };
+
+  // 세션 종료 시 웹캠 중지
+  const handleEnd = () => {
+    session.handleEnd();
+    webcam.stop();
+  };
+
+  // 웹캠 에러가 있으면 시작 불가
+  const canStart = !webcam.error;
+
+  // 세션 상태에 따라 웹캠 freeze/unfreeze 처리
+  useEffect(() => {
+    // RUNNING → 웹캠 활성 + 재생
+    if (session.status === 'RUNNING' && webcam.isActive) {
+      webcam.unfreeze();
+    }
+
+    // PAUSED → 웹캠 freeze()
+    if (session.status === 'PAUSED') {
+      webcam.freeze();
+    }
+
+    // ENDED → 웹캠 완전 종료 (handleEnd에서 이미 처리됨)
+    // 여기서는 추가 처리 불필요
+  }, [session.status, webcam.isActive, webcam]);
+
   return (
     <div className="monitor-container">
       <div className="dashboard-content">
@@ -33,24 +80,44 @@ const MonitorPage = () => {
 
         {/* 메인 콘텐츠 */}
         <main className="main-content monitor-main">
-          <div className="content-header">
-            <h1 className="main-title">실시간 자세 분석</h1>
-            <p className="main-subtitle">웹캠을 통해 실시간으로 자세를 분석하고 모니터링하세요</p>
-          </div>
-
-          {/* 웹캠 및 통계 영역 */}
-          <div className="monitor-section">
-            <div className="webcam-section">
-              <div className="webcam-placeholder">
-                <div className="webcam-icon">📹</div>
-                <p>웹캠 영역</p>
-                <p className="webcam-hint">웹캠 권한을 허용하면 실시간 분석이 시작됩니다</p>
-              </div>
+          <div className="monitor-page">
+            <div className="monitor-page__header">
+              <h1 className="monitor-page__title">실시간 자세 분석</h1>
+              <p className="monitor-page__subtitle">웹캠을 통해 실시간으로 자세를 모니터링합니다</p>
             </div>
 
-            <div className="stats-section">
-              <PostureIssueSummary />
+            <div className="monitor-page__content">
+              {/* 좌측: 설정 및 통계 */}
+              <section className="monitor-page__left">
+                <MonitoringControls
+                  status={session.status}
+                  times={session.times}
+                  onStart={handleStart}
+                  onPause={session.handlePause}
+                  onResume={session.handleResume}
+                  onEnd={handleEnd}
+                  canStart={canStart}
+                />
+
+                <LiveStatsCard liveStats={session.liveStats} />
+
+                <AccumulatedPostureCard issues={session.accumulatedIssues} />
+              </section>
+
+              {/* 우측: 웹캠 패널 */}
+              <section className="monitor-page__right">
+                <WebcamPanel
+                  isActive={webcam.isActive}
+                  isLoading={webcam.isLoading}
+                  error={webcam.error}
+                  videoRef={webcam.videoRef}
+                  status={session.status}
+                />
+              </section>
             </div>
+
+            {/* 하단: 피드백 패널 */}
+            <PostureFeedbackPanel feedback={session.latestFeedback} />
           </div>
         </main>
       </div>
@@ -59,6 +126,6 @@ const MonitorPage = () => {
       <button className="help-button">?</button>
     </div>
   );
-};
+}
 
 export default MonitorPage;

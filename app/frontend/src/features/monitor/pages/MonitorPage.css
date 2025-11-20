@@ -1,0 +1,215 @@
+/* MonitorPage.css */
+
+.monitor-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.monitor-page__header {
+  margin-bottom: 8px;
+}
+
+.monitor-page__title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.monitor-page__subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+.monitor-page__content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+}
+
+.monitor-page__left {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.monitor-page__right {
+  display: flex;
+  flex-direction: column;
+}
+
+.monitor-page__card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.monitor-page__card-header {
+  margin-bottom: 20px;
+}
+
+.monitor-page__card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.monitor-page__card-description {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* 모니터링 설정 */
+.monitor-page__settings {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.monitor-page__time-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.monitor-page__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.monitor-page__time-input {
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  color: #333;
+  background: white;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.monitor-page__time-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.monitor-page__time-input:disabled {
+  background: #f5f7fa;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.monitor-page__button-group {
+  display: flex;
+  gap: 12px;
+}
+
+.monitor-page__button {
+  flex: 1;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.monitor-page__button--primary {
+  background: #667eea;
+  color: white;
+}
+
+.monitor-page__button--primary:hover:not(:disabled) {
+  background: #5568d3;
+  transform: translateY(-1px);
+}
+
+.monitor-page__button--primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.monitor-page__button--primary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.monitor-page__button--danger {
+  background: #dc2626;
+  color: white;
+}
+
+.monitor-page__button--danger:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.monitor-page__button--danger:active {
+  transform: translateY(0);
+}
+
+/* 실시간 통계 */
+.monitor-page__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.monitor-page__stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.monitor-page__stat-item:last-child {
+  border-bottom: none;
+}
+
+.monitor-page__stat-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.monitor-page__stat-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+  .monitor-page {
+    grid-template-columns: 1fr;
+  }
+
+  .monitor-page__right {
+    order: -1; /* 모바일에서 웹캠 패널을 위로 */
+  }
+}
+
+@media (max-width: 768px) {
+  .monitor-page__card {
+    padding: 16px;
+  }
+
+  .monitor-page__card-title {
+    font-size: 16px;
+  }
+
+  .monitor-page__stat-value {
+    font-size: 16px;
+  }
+}
+
