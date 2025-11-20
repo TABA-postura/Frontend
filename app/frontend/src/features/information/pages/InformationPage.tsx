@@ -11,7 +11,7 @@ interface InformationItem {
   icon: string;
 }
 
-function InformationPage() {
+function InformationPage() {L
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('전체');
   const [selectedItem, setSelectedItem] = useState<InformationItem | null>(null);
