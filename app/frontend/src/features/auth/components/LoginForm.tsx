@@ -1,15 +1,32 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import './LoginForm.css';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login, loading, error } = useAuth();
+  const location = useLocation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // 회원가입 성공 메시지 표시
+  useEffect(() => {
+    const state = location.state as { message?: string };
+    if (state?.message) {
+      // 메시지를 표시할 수 있는 방법 (예: alert 또는 toast)
+      // 여기서는 간단히 console에 출력
+      console.log(state.message);
+    }
+  }, [location]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: 로그인 로직 구현
-    console.log('Login:', { email, password });
+    try {
+      await login({ email, password });
+    } catch (err) {
+      // 에러는 useAuth에서 처리됨
+      console.error('Login error:', err);
+    }
   };
 
   return (
@@ -59,11 +76,18 @@ const LoginForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="비밀번호를 입력하세요"
                 required
+                disabled={loading}
               />
             </div>
 
-            <button type="submit" className="login-button">
-              로그인
+            {error && (
+              <div className="error-message" style={{ color: '#e74c3c', fontSize: '14px', marginTop: '-10px', marginBottom: '10px' }}>
+                {error}
+              </div>
+            )}
+
+            <button type="submit" className="login-button" disabled={loading}>
+              {loading ? '로그인 중...' : '로그인'}
             </button>
           </form>
 

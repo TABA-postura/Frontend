@@ -4,12 +4,9 @@ import SignupPage from '../features/auth/pages/SignupPage';
 import MonitorPage from '../features/monitor/pages/MonitorPage';
 import InformationPage from '../features/information/pages/InformationPage';
 import SelfCarePage from '../features/selfcare/pages/SelfCarePage';
+import ProtectedRoute from '../features/auth/components/ProtectedRoute';
 
 export const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <MonitorPage />,
-  },
   {
     path: '/login',
     element: <LoginPage />,
@@ -19,11 +16,27 @@ export const router = createBrowserRouter([
     element: <SignupPage />,
   },
   {
+    path: '/',
+    element: (
+      <ProtectedRoute>
+        <MonitorPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '/information',
-    element: <InformationPage />,
+    element: (
+      <ProtectedRoute>
+        <InformationPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/self-management',
-    element: <SelfCarePage />,
+    element: (
+      <ProtectedRoute>
+        <SelfCarePage />
+      </ProtectedRoute>
+    ),
   },
 ]);

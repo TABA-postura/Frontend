@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import './SignupForm.css';
 
 const SignupForm = () => {
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const { signup, loading, error } = useAuth();
 
   const handlePasswordChange = (value: string) => {
     setPassword(value);
@@ -26,14 +29,18 @@ const SignupForm = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setPasswordError('비밀번호가 일치하지 않습니다.');
       return;
     }
-    // TODO: 회원가입 로직 구현
-    console.log('Signup:', { email, password });
+    try {
+      await signup({ email, password, name });
+    } catch (err) {
+      // 에러는 useAuth에서 처리됨
+      console.error('Signup error:', err);
+    }
   };
 
   return (
@@ -71,6 +78,20 @@ const SignupForm = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
                 required
+                disabled={loading}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="name">이름</label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="이름을 입력하세요"
+                required
+                disabled={loading}
               />
             </div>
 
@@ -84,6 +105,7 @@ const SignupForm = () => {
                 placeholder="비밀번호를 입력하세요"
                 required
                 minLength={8}
+                disabled={loading}
               />
             </div>
 
@@ -96,14 +118,21 @@ const SignupForm = () => {
                 onChange={(e) => handleConfirmPasswordChange(e.target.value)}
                 placeholder="비밀번호를 다시 입력하세요"
                 required
+                disabled={loading}
               />
               {passwordError && (
                 <span className="error-message">{passwordError}</span>
               )}
             </div>
 
-            <button type="submit" className="signup-button">
-              회원가입
+            {error && (
+              <div className="error-message" style={{ color: '#e74c3c', fontSize: '14px', marginTop: '-10px', marginBottom: '10px' }}>
+                {error}
+              </div>
+            )}
+
+            <button type="submit" className="signup-button" disabled={loading}>
+              {loading ? '회원가입 중...' : '회원가입'}
             </button>
           </form>
 
