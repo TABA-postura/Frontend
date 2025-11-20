@@ -192,4 +192,3 @@ function InformationPage() {
 }
 
 export default InformationPage;
-

@@ -1,0 +1,55 @@
+/* PostureFeedbackPanel.css */
+
+.posture-feedback-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-top: 24px;
+}
+
+.posture-feedback-panel__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px 0;
+}
+
+.posture-feedback-panel__content {
+  padding: 16px;
+  background: #f5f7fa;
+  border-radius: 8px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.posture-feedback-panel__message {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.posture-feedback-panel__empty {
+  font-size: 14px;
+  color: #999;
+  margin: 0;
+  font-style: italic;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .posture-feedback-panel {
+    padding: 16px;
+  }
+
+  .posture-feedback-panel__title {
+    font-size: 16px;
+  }
+
+  .posture-feedback-panel__message {
+    font-size: 14px;
+  }
+}
+

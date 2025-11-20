@@ -1,0 +1,25 @@
+// Monitor feature 공용 타입 정의
+
+export type SessionStatus = 'IDLE' | 'RUNNING' | 'PAUSED' | 'ENDED';
+
+export interface LiveStats {
+  elapsedSeconds: number;     // 분석 시간(초)
+  goodPostureSeconds: number; // 바른 자세 유지 시간(초)
+  warningCount: number;       // 경고 횟수
+  goodPostureRate: number;    // 0~100, goodPostureSeconds / elapsedSeconds * 100
+}
+
+export type PostureIssueType = 'FORWARD_HEAD' | 'BENT_BACK' | 'SHOULDER_ASYMMETRY';
+
+export interface PostureIssueStat {
+  type: PostureIssueType;
+  label: string;  // 예: "거북목", "허리 굽힘"
+  count: number;
+}
+
+export interface PostureSessionTimes {
+  startTime: Date | null;
+  lastPauseTime: Date | null;
+  endTime: Date | null;
+}
+
