@@ -1,5 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { SessionStatus, LiveStats, PostureIssueStat, PostureSessionTimes } from '../types';
+import type {
+  SessionStatus,
+  LiveStats,
+  PostureIssueStat,
+  PostureSessionTimes,
+  FeedbackItem,
+} from '../types';
 
 export interface UsePostureSessionResult {
   status: SessionStatus;
@@ -7,6 +13,7 @@ export interface UsePostureSessionResult {
   liveStats: LiveStats;
   accumulatedIssues: PostureIssueStat[];
   latestFeedback: string | null;
+  feedbackList: FeedbackItem[];
   handleStart: () => void;
   handlePause: () => void;
   handleResume: () => void;
@@ -23,10 +30,21 @@ const INITIAL_ISSUES: PostureIssueStat[] = [
 ];
 
 const FEEDBACK_MESSAGES = {
-  FORWARD_HEAD: '거북목이 감지되었습니다. 모니터를 눈높이에 맞추고 턱을 살짝 당겨주세요.',
-  BENT_BACK: '허리가 앞으로 굽어 있습니다. 허리를 펴고 의자 깊숙이 앉아주세요.',
-  SHOULDER_ASYMMETRY: '어깨 높이가 비대칭입니다. 양 어깨를 천천히 올렸다 내리며 정렬해보세요.',
+  FORWARD_HEAD: {
+    title: '거북목 주의',
+    message: '거북목이 감지되었습니다. 모니터를 눈높이에 맞추고 턱을 살짝 당겨주세요.',
+  },
+  BENT_BACK: {
+    title: '허리 굽힘 주의',
+    message: '허리가 앞으로 굽어 있습니다. 허리를 펴고 의자 깊숙이 앉아주세요.',
+  },
+  SHOULDER_ASYMMETRY: {
+    title: '어깨 높이 불균형',
+    message: '어깨 높이가 비대칭입니다. 양 어깨를 천천히 올렸다 내리며 정렬해보세요.',
+  },
 };
+
+const MAX_FEEDBACK_LIST_SIZE = 10; // 최대 피드백 개수
 
 function usePostureSession(): UsePostureSessionResult {
   const [status, setStatus] = useState<SessionStatus>('IDLE');
@@ -43,6 +61,7 @@ function usePostureSession(): UsePostureSessionResult {
   });
   const [accumulatedIssues, setAccumulatedIssues] = useState<PostureIssueStat[]>(INITIAL_ISSUES);
   const [latestFeedback, setLatestFeedback] = useState<string | null>(null);
+  const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>([]);
 
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const lastWarningTimeRef = useRef<number>(0);
@@ -99,7 +118,21 @@ function usePostureSession(): UsePostureSessionResult {
         );
 
         // 피드백 메시지 설정
-        setLatestFeedback(FEEDBACK_MESSAGES[randomType]);
+        const feedbackData = FEEDBACK_MESSAGES[randomType];
+        setLatestFeedback(feedbackData.message);
+
+        // 피드백 리스트에 추가 (최대 개수 제한)
+        setFeedbackList((prev) => {
+          const newFeedback: FeedbackItem = {
+            type: 'WARN',
+            title: feedbackData.title,
+            message: feedbackData.message,
+            timestamp: now,
+          };
+          const updated = [newFeedback, ...prev].slice(0, MAX_FEEDBACK_LIST_SIZE);
+          return updated;
+        });
+
         lastFeedbackTimeRef.current = now;
       } else {
         // 경고가 없으면 바른 자세로 간주
@@ -108,6 +141,21 @@ function usePostureSession(): UsePostureSessionResult {
         // 최근 1~2분(60~120초) 내 피드백이 없으면 기본 메시지
         if (now - lastFeedbackTimeRef.current > 60000 && newElapsed > 5) {
           setLatestFeedback('현재 자세는 양호합니다.');
+
+          // INFO 타입 피드백 추가 (양호한 자세)
+          setFeedbackList((prev) => {
+            const newFeedback: FeedbackItem = {
+              type: 'INFO',
+              title: '자세 양호',
+              message: '현재 자세는 양호합니다.',
+              timestamp: now,
+            };
+            // 최근 피드백이 WARN이 아니면 추가
+            if (prev.length === 0 || prev[0].type !== 'INFO') {
+              return [newFeedback, ...prev].slice(0, MAX_FEEDBACK_LIST_SIZE);
+            }
+            return prev;
+          });
         }
       }
 
@@ -152,6 +200,7 @@ function usePostureSession(): UsePostureSessionResult {
     });
     setAccumulatedIssues(INITIAL_ISSUES);
     setLatestFeedback(null);
+    setFeedbackList([]);
     lastWarningTimeRef.current = 0;
     lastFeedbackTimeRef.current = 0;
   }, [status]);
@@ -206,6 +255,7 @@ function usePostureSession(): UsePostureSessionResult {
     });
     setAccumulatedIssues(INITIAL_ISSUES);
     setLatestFeedback(null);
+    setFeedbackList([]);
     clearTimer();
     lastWarningTimeRef.current = 0;
     lastFeedbackTimeRef.current = 0;
@@ -230,6 +280,7 @@ function usePostureSession(): UsePostureSessionResult {
     liveStats,
     accumulatedIssues,
     latestFeedback,
+    feedbackList,
     handleStart,
     handlePause,
     handleResume,
