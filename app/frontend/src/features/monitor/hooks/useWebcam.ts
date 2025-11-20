@@ -1,0 +1,2 @@
+// useWebcam.ts
+
