@@ -5,11 +5,12 @@ import MonitorPage from '../features/monitor/pages/MonitorPage';
 import RealtimePosturePage from '../features/monitor/pages/RealtimePosturePage';
 import InformationPage from '../features/information/pages/InformationPage';
 import SelfCarePage from '../features/selfcare/pages/SelfCarePage';
+import MainPage from '../features/home/pages/MainPage';
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <RealtimePosturePage />,
+    element: <MainPage />,
   },
   {
     path: '/monitor',
