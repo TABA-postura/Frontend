@@ -1,0 +1,276 @@
+/* WebcamPanel.css */
+
+.webcam-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.webcam-panel__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.webcam-panel__title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.webcam-panel__description {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.webcam-panel__video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 비율 */
+  background: #0f172a;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.webcam-panel__video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #0f172a;
+}
+
+.webcam-panel__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.9);
+  z-index: 10;
+}
+
+.webcam-panel__overlay--loading {
+  background: rgba(15, 23, 42, 0.95);
+}
+
+.webcam-panel__overlay--idle {
+  background: rgba(15, 23, 42, 0.85);
+}
+
+.webcam-panel__overlay--error {
+  background: rgba(15, 23, 42, 0.95);
+}
+
+.webcam-panel__overlay--status {
+  background: rgba(15, 23, 42, 0.85);
+}
+
+.webcam-panel__overlay--paused {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.webcam-panel__status-text {
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.webcam-panel__paused-title {
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.webcam-panel__paused-hint {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 로딩 상태 */
+.webcam-panel__loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.webcam-panel__loading-text {
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 대기 상태 */
+.webcam-panel__play-button {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(102, 126, 234, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 16px;
+  padding: 0;
+  color: white;
+}
+
+.webcam-panel__play-button:hover {
+  background: rgba(102, 126, 234, 1);
+  transform: scale(1.1);
+}
+
+.webcam-panel__play-button:active {
+  transform: scale(0.95);
+}
+
+.webcam-panel__play-icon {
+  width: 32px;
+  height: 32px;
+  margin-left: 4px; /* 재생 아이콘을 약간 오른쪽으로 이동 */
+}
+
+.webcam-panel__idle-text {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.webcam-panel__idle-hint {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* 에러 상태 */
+.webcam-panel__error-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  text-align: center;
+}
+
+.webcam-panel__error-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.webcam-panel__error-message {
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 400px;
+}
+
+.webcam-panel__retry-button {
+  padding: 12px 24px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.webcam-panel__retry-button:hover {
+  background: #5568d3;
+  transform: translateY(-1px);
+}
+
+.webcam-panel__retry-button:active {
+  transform: translateY(0);
+}
+
+/* 컨트롤 버튼 (활성화 상태) */
+.webcam-panel__controls {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 20;
+}
+
+.webcam-panel__stop-button {
+  padding: 8px 16px;
+  background: rgba(220, 38, 38, 0.9);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.webcam-panel__stop-button:hover {
+  background: rgba(220, 38, 38, 1);
+  transform: translateY(-1px);
+}
+
+.webcam-panel__stop-button:active {
+  transform: translateY(0);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .webcam-panel {
+    padding: 16px;
+  }
+
+  .webcam-panel__title {
+    font-size: 18px;
+  }
+
+  .webcam-panel__play-button {
+    width: 64px;
+    height: 64px;
+  }
+
+  .webcam-panel__play-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .webcam-panel__idle-text {
+    font-size: 16px;
+  }
+}
+

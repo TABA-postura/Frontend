@@ -1,0 +1,85 @@
+/* RealtimePosturePage.css */
+
+.realtime-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px;
+}
+
+.realtime-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.realtime-header__title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.realtime-header__subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+.top-section {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.right-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.bottom-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 900px) {
+  .top-section {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .realtime-page {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .realtime-header__title {
+    font-size: 24px;
+  }
+
+  .realtime-header__subtitle {
+    font-size: 14px;
+  }
+
+  .top-section {
+    gap: 16px;
+  }
+
+  .bottom-section {
+    gap: 16px;
+  }
+}

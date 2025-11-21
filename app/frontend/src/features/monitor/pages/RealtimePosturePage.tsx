@@ -6,11 +6,11 @@ import usePostureSession from '../hooks/usePostureSession';
 import WebcamPanel from '../components/WebcamPanel';
 import MonitoringControls from '../components/MonitoringControls';
 import LiveStatsCard from '../components/LiveStatsCard';
-import AccumulatedPostureCard from '../components/AccumulatedPostureCard';
-import PostureFeedbackPanel from '../components/PostureFeedbackPanel';
-import './MonitorPage.css';
+import CumulativePostureDataCard from '../components/CumulativePostureDataCard';
+import RealtimeFeedbackCard from '../components/RealtimeFeedbackCard';
+import './RealtimePosturePage.css';
 
-function MonitorPage() {
+function RealtimePosturePage() {
   const webcam = useWebcam();
   const session = usePostureSession();
 
@@ -50,6 +50,21 @@ function MonitorPage() {
     // 여기서는 추가 처리 불필요
   }, [session.status, webcam.isActive, webcam]);
 
+  // Transform accumulatedIssues to problemStats format
+  const problemStats = session.accumulatedIssues
+    .filter((issue) => issue.count > 0)
+    .map((issue) => ({
+      problem: issue.label,
+      count: issue.count,
+    }));
+
+  // Use feedbackList directly from session hook
+  const feedbackList = session.feedbackList.map((feedback) => ({
+    type: feedback.type,
+    title: feedback.title,
+    message: feedback.message,
+  }));
+
   return (
     <div className="monitor-container">
       <div className="dashboard-content">
@@ -80,15 +95,16 @@ function MonitorPage() {
 
         {/* 메인 콘텐츠 */}
         <main className="main-content monitor-main">
-          <div className="monitor-page">
-            <div className="monitor-page__header">
-              <h1 className="monitor-page__title">실시간 자세 분석</h1>
-              <p className="monitor-page__subtitle">웹캠을 통해 실시간으로 자세를 모니터링합니다</p>
-            </div>
+          <div className="realtime-page">
+            <header className="realtime-header">
+              <h1 className="realtime-header__title">실시간 자세 분석</h1>
+              <p className="realtime-header__subtitle">
+                웹캠을 통해 실시간으로 자세를 모니터링합니다
+              </p>
+            </header>
 
-            <div className="monitor-page__content">
-              {/* 좌측: 설정 및 통계 */}
-              <section className="monitor-page__left">
+            <section className="top-section">
+              <div className="left-col">
                 <MonitoringControls
                   status={session.status}
                   times={session.times}
@@ -98,14 +114,10 @@ function MonitorPage() {
                   onEnd={handleEnd}
                   canStart={canStart}
                 />
-
                 <LiveStatsCard liveStats={session.liveStats} />
+              </div>
 
-                <AccumulatedPostureCard issues={session.accumulatedIssues} />
-              </section>
-
-              {/* 우측: 웹캠 패널 */}
-              <section className="monitor-page__right">
+              <div className="right-col">
                 <WebcamPanel
                   isActive={webcam.isActive}
                   isLoading={webcam.isLoading}
@@ -113,11 +125,13 @@ function MonitorPage() {
                   videoRef={webcam.videoRef}
                   status={session.status}
                 />
-              </section>
-            </div>
+              </div>
+            </section>
 
-            {/* 하단: 피드백 패널 */}
-            <PostureFeedbackPanel feedback={session.latestFeedback} />
+            <section className="bottom-section">
+              <CumulativePostureDataCard problemStats={problemStats} />
+              <RealtimeFeedbackCard feedbackList={feedbackList} />
+            </section>
           </div>
         </main>
       </div>
@@ -128,4 +142,5 @@ function MonitorPage() {
   );
 }
 
-export default MonitorPage;
+export default RealtimePosturePage;
+

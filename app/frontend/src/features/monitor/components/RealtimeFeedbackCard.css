@@ -1,0 +1,87 @@
+/* RealtimeFeedbackCard.css */
+
+.realtime-feedback-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.realtime-feedback-card__header {
+  margin-bottom: 16px;
+}
+
+.realtime-feedback-card__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.realtime-feedback-card__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.realtime-feedback-card__item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  align-items: flex-start;
+}
+
+.realtime-feedback-card__item--warn {
+  background: #FFF8DB;
+}
+
+.realtime-feedback-card__item--info {
+  background: #EAF2FF;
+}
+
+.realtime-feedback-card__icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.realtime-feedback-card__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.realtime-feedback-card__item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.realtime-feedback-card__item-message {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.realtime-feedback-card__empty {
+  padding: 24px 0;
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .realtime-feedback-card {
+    padding: 16px;
+  }
+
+  .realtime-feedback-card__title {
+    font-size: 16px;
+  }
+}
+
