@@ -14,19 +14,20 @@ const LoginForm = () => {
 
   return (
     <div className="login-container">
-      <div className="login-top-bar">
-        <Link to="/" className="logo-link">
-          <span className="logo-text">Postura</span>
-        </Link>
+      <div className="login-background">
+        {/* 로고 */}
+        <div className="login-logo-container">
+          <Link to="/" className="login-logo-link">
+            <span className="login-logo-text">Postura</span>
+          </Link>
+        </div>
+        
+        {/* 상단 전체 막대기 */}
+        <div className="login-top-bar-line"></div>
       </div>
-
-      <div className="login-background"></div>
 
       <div className="login-content">
         <div className="system-intro">
-          <div className="system-icon">
-            <span style={{ fontSize: '48px' }}>🖥️</span>
-          </div>
           <h1 className="system-title">자세 분석 시스템</h1>
           <p className="system-description">
             올바른 자세를 유지하고 건강한 생활을 시작하세요
@@ -34,7 +35,7 @@ const LoginForm = () => {
         </div>
 
         <div className="login-card">
-          <h2 className="login-title">로그인</h2>
+          <h2 className="login-title">Login</h2>
           <p className="login-subtitle">계정에 로그인하여 시작하세요</p>
 
           <form className="login-form" onSubmit={handleSubmit}>
@@ -72,6 +73,22 @@ const LoginForm = () => {
           </Link>
         </div>
       </div>
+
+      {/* 하단 회색 푸터 */}
+      <footer className="login-footer">
+        <div className="login-footer-content">
+          <div className="login-footer-links">
+            <a href="#" className="login-footer-link">개인정보처리방침</a>
+            <span className="login-footer-divider">|</span>
+            <a href="#" className="login-footer-link">이용약관</a>
+            <span className="login-footer-divider">|</span>
+            <a href="#" className="login-footer-link">문의하기</a>
+          </div>
+          <div className="login-footer-copyright">
+            <p>Copyright (C) POSTURA All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

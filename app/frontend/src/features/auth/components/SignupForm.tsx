@@ -38,19 +38,20 @@ const SignupForm = () => {
 
   return (
     <div className="signup-container">
-      <div className="signup-top-bar">
-        <Link to="/" className="logo-link">
-          <span className="logo-text">Postura</span>
-        </Link>
+      <div className="signup-background">
+        {/* 로고 */}
+        <div className="signup-logo-container">
+          <Link to="/" className="signup-logo-link">
+            <span className="signup-logo-text">Postura</span>
+          </Link>
+        </div>
+        
+        {/* 상단 전체 막대기 */}
+        <div className="signup-top-bar-line"></div>
       </div>
-
-      <div className="signup-background"></div>
 
       <div className="signup-content">
         <div className="system-intro">
-          <div className="system-icon">
-            <span style={{ fontSize: '48px' }}>🖥️</span>
-          </div>
           <h1 className="system-title">자세 분석 시스템</h1>
           <p className="system-description">
             올바른 자세를 유지하고 건강한 생활을 시작하세요
@@ -58,7 +59,7 @@ const SignupForm = () => {
         </div>
 
         <div className="signup-card">
-          <h2 className="signup-title">회원가입</h2>
+          <h2 className="signup-title">Sign Up</h2>
           <p className="signup-subtitle">새로운 계정을 만들어 시작하세요</p>
 
           <form className="signup-form" onSubmit={handleSubmit}>
@@ -103,16 +104,26 @@ const SignupForm = () => {
             </div>
 
             <button type="submit" className="signup-button">
-              회원가입
+              Sign Up
             </button>
           </form>
-
-          <div className="login-link">
-            <span>이미 계정이 있으신가요? </span>
-            <Link to="/login">로그인</Link>
-          </div>
         </div>
       </div>
+      {/* 하단 회색 푸터 */}
+      <footer className="signup-footer">
+        <div className="signup-footer-content">
+          <div className="signup-footer-links">
+            <a href="#" className="signup-footer-link">개인정보처리방침</a>
+            <span className="signup-footer-divider">|</span>
+            <a href="#" className="signup-footer-link">이용약관</a>
+            <span className="signup-footer-divider">|</span>
+            <a href="#" className="signup-footer-link">문의하기</a>
+          </div>
+          <div className="signup-footer-copyright">
+            <p>Copyright (C) POSTURA All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

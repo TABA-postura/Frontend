@@ -205,7 +205,7 @@ body {
   width: 100%;
   max-width: 100%;
   min-height: 100vh;
-  background: linear-gradient(180deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+  background: linear-gradient(to top, #E8F0F8 0%, #FFFFFF 100%); /* 아래에서 위로 파란색에서 흰색 그라데이션 */
   padding: 80px 40px;
   display: flex;
   justify-content: center;
@@ -224,11 +224,11 @@ body {
 .content-subtitle {
   font-size: 32px;
   font-weight: 700;
-  color: #8FA8FF;
+  color: #000000; /* 검정색 */
   margin: 0 0 20px 0;
   padding-right: 360px; /* 사진 영역 피하기 */
   padding-bottom: 20px;
-  border-bottom: 2px solid #8FA8FF;
+  border-bottom: 2px solid #000000; /* 검정색 */
   box-sizing: border-box;
   font-family: 'Inter', sans-serif;
   max-width: calc(100% - 360px);
@@ -239,7 +239,7 @@ body {
   font-size: 16px;
   font-weight: 700;
   line-height: 1.8;
-  color: #8FA8FF;
+  color: #000000; /* 검정색 */
   margin-bottom: 40px;
   box-sizing: border-box;
   /* 사진 높이만큼은 오른쪽 여백, 그 아래로는 전체 너비 */
