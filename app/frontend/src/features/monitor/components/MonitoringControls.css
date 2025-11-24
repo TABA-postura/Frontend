@@ -5,6 +5,8 @@
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  min-width: 0; /* flex item이 overflow를 올바르게 처리하도록 */
 }
 
 .monitoring-controls__header {
