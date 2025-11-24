@@ -4,26 +4,16 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import './LoginForm.css';
 
-/**
- * LoginForm 컴포넌트 Props 타입
- */
 export interface LoginFormProps {
-  /** 로그인 성공 시 호출되는 콜백 함수 */
   onSuccess?: () => void;
 }
 
-/**
- * 로그인 폼 컴포넌트
- * 이메일과 비밀번호를 입력받아 로그인을 수행합니다.
- */
 const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
-  // 폼 상태 관리
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  // 인증 훅 사용
   const { login, isLoading, error: authError } = useAuth();
 
   /**
@@ -40,58 +30,52 @@ const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
       return false;
     }
 
-    // 이메일 형식 검사 (간단한 검사)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setValidationError('올바른 이메일 형식을 입력해주세요.');
       return false;
     }
 
+    // 모든 유효성 검사 통과
     setValidationError(null);
     return true;
   };
 
   /**
-   * 폼 제출 핸들러
+   * 제출 핸들러
    */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (isLoading) return; // 연타 방지
     setValidationError(null);
 
-    // 유효성 검사
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
-      // 로그인 API 호출
       await login(email, password);
 
-      // 성공 시 콜백 호출 (보통 라우팅 처리)
       if (onSuccess) {
         onSuccess();
       }
     } catch (err) {
-      // 에러는 useAuth에서 처리되므로 여기서는 추가 처리 불필요
-      // 필요시 추가 에러 처리 가능
+      // useAuth에서 이미 처리됨
       console.error('Login error:', err);
     }
   };
 
-  // 표시할 에러 메시지 (유효성 검사 에러 또는 인증 에러)
+  // 최종 표시할 에러 메시지
   const displayError = validationError || authError;
 
   return (
     <div className="login-container">
       <div className="login-background">
-        {/* 로고 */}
         <div className="login-logo-container">
           <Link to="/" className="login-logo-link">
             <span className="login-logo-text">Postura</span>
           </Link>
         </div>
-        
-        {/* 상단 전체 막대기 */}
+
         <div className="login-top-bar-line"></div>
       </div>
 
@@ -114,7 +98,10 @@ const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
                 type="email"
                 id="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setValidationError(null);
+                }}
                 placeholder="example@email.com"
                 required
                 disabled={isLoading}
@@ -128,7 +115,10 @@ const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setValidationError(null);
+                  }}
                   placeholder="비밀번호를 입력하세요"
                   required
                   disabled={isLoading}
@@ -136,7 +126,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
                 <button
                   type="button"
                   className="password-toggle"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword((prev) => !prev)}
                   aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                   disabled={isLoading}
                 >
@@ -145,20 +135,22 @@ const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
               </div>
             </div>
 
-            {/* 에러 메시지 표시 */}
             {displayError && (
-              <div className="error-message" style={{ 
-                color: '#e74c3c', 
-                fontSize: '14px', 
-                marginBottom: '16px',
-                textAlign: 'center'
-              }}>
+              <div
+                className="error-message"
+                style={{
+                  color: '#e74c3c',
+                  fontSize: '14px',
+                  marginBottom: '16px',
+                  textAlign: 'center',
+                }}
+              >
                 {displayError}
               </div>
             )}
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="login-button"
               disabled={isLoading}
             >
@@ -172,7 +164,6 @@ const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
         </div>
       </div>
 
-      {/* 하단 회색 푸터 */}
       <footer className="login-footer">
         <div className="login-footer-content">
           <div className="login-footer-links">
