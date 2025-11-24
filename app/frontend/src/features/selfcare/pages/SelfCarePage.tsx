@@ -1,26 +1,33 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import '../../../assets/styles/SelfManagement.css';
 
 const SelfCarePage = () => {
+  const location = useLocation();
   return (
     <div>
       <div className="dashboard-content">
         {/* 왼쪽 사이드바 */}
         <aside className="sidebar left-sidebar">
           <nav className="sidebar-nav">
-            <Link to="/" className="nav-item">
+            <Link
+              to="/monitor"
+              className={`nav-item ${location.pathname === '/monitor' ? 'active' : ''}`}
+            >
               <div className="nav-icon blue">📊</div>
               <div className="nav-text">
                 <span className="nav-title">실시간 자세 분석</span>
               </div>
             </Link>
-            <Link to="/information" className="nav-item">
+            <Link
+              to="/information"
+              className={`nav-item ${location.pathname === '/information' ? 'active' : ''}`}
+            >
               <div className="nav-icon blue">📚</div>
               <div className="nav-text">
                 <span className="nav-title">정보 제공</span>
               </div>
             </Link>
-            <div className="nav-item active">
+            <div className={`nav-item ${location.pathname === '/self-management' ? 'active' : ''}`}>
               <div className="nav-icon">👤</div>
               <div className="nav-text">
                 <span className="nav-title">자기 관리</span>

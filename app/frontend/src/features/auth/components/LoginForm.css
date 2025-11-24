@@ -192,6 +192,8 @@ body {
     transition: all 0.3s ease;
     outline: none;
     background: #fff;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .form-group input:focus {
@@ -201,6 +203,41 @@ body {
   
   .form-group input::placeholder {
     color: #999;
+  }
+
+  .password-input-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .password-input-wrapper input {
+    padding-right: 45px;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: color 0.2s ease;
+    outline: none;
+  }
+
+  .password-toggle:hover {
+    color: #333;
+  }
+
+  .password-toggle:focus {
+    color: #333;
   }
   
   .login-button {

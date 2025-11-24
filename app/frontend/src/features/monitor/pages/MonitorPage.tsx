@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import '../../../assets/styles/Home.css';
 import { useWebcam } from '../hooks/useWebcam';
 import usePostureSession from '../hooks/usePostureSession';
@@ -11,6 +11,7 @@ import PostureFeedbackPanel from '../components/PostureFeedbackPanel';
 import './MonitorPage.css';
 
 function MonitorPage() {
+  const location = useLocation();
   const webcam = useWebcam();
   const session = usePostureSession();
 
@@ -56,12 +57,15 @@ function MonitorPage() {
         {/* 왼쪽 사이드바 */}
         <aside className="sidebar left-sidebar">
           <nav className="sidebar-nav">
-            <div className="nav-item active">
+            <Link
+              to="/monitor"
+              className={`nav-item ${location.pathname === '/monitor' ? 'active' : ''}`}
+            >
               <div className="nav-icon blue">📊</div>
               <div className="nav-text">
                 <span className="nav-title">실시간 자세 분석</span>
               </div>
-            </div>
+            </Link>
             <Link to="/information" className="nav-item">
               <div className="nav-icon blue">📚</div>
               <div className="nav-text">
