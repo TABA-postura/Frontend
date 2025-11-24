@@ -7,6 +7,8 @@ const SignupForm = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // 기본적으로 비밀번호 숨김 (점으로 표시)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // 기본적으로 비밀번호 숨김 (점으로 표시)
 
   const handlePasswordChange = (value: string) => {
     setPassword(value);
@@ -77,27 +79,47 @@ const SignupForm = () => {
 
             <div className="form-group">
               <label htmlFor="password">비밀번호</label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => handlePasswordChange(e.target.value)}
-                placeholder="비밀번호를 입력하세요"
-                required
-                minLength={8}
-              />
+              <div className="password-input-wrapper">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  value={password}
+                  onChange={(e) => handlePasswordChange(e.target.value)}
+                  placeholder="비밀번호를 입력하세요"
+                  required
+                  minLength={8}
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                >
+                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                </button>
+              </div>
             </div>
 
             <div className="form-group">
               <label htmlFor="confirmPassword">비밀번호 확인</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => handleConfirmPasswordChange(e.target.value)}
-                placeholder="비밀번호를 다시 입력하세요"
-                required
-              />
+              <div className="password-input-wrapper">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  id="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => handleConfirmPasswordChange(e.target.value)}
+                  placeholder="비밀번호를 다시 입력하세요"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                >
+                  {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                </button>
+              </div>
               {passwordError && (
                 <span className="error-message">{passwordError}</span>
               )}
