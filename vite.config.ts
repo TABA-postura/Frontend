@@ -5,7 +5,7 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  root: '.',
+  root: './app/frontend',
   resolve: {
     alias: {
       '@': path.resolve(process.cwd(), './app/frontend/src'),
