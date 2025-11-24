@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import '../../../assets/styles/Home.css';
 import { useWebcam } from '../hooks/useWebcam';
+import { usePoseInference } from '../../ai/hooks/usePoseInference';
 import usePostureSession from '../hooks/usePostureSession';
 import WebcamPanel from '../components/WebcamPanel';
 import MonitoringControls from '../components/MonitoringControls';
@@ -14,6 +15,25 @@ function RealtimePosturePage() {
   const location = useLocation();
   const webcam = useWebcam();
   const session = usePostureSession();
+
+  // 백엔드 연동 전 임의로 작성 (프론트<->AI)
+  // 모니터/리얼타임 페이지 함수 안에서
+  const dummyUserId = 1;      // TODO: 백엔드 연동 후 실제 값으로 교체
+  const dummySessionId = 1;   // TODO: /monitor/start 응답 값으로 교체
+
+  // AI 호출 훅
+  usePoseInference({
+    videoRef: webcam.videoRef,
+    status: session.status as any,
+    userId: dummyUserId,
+    sessionId: dummySessionId,
+    intervalMs: 1000,
+    debugLogRaw: true, // 처음엔 true로 해서 콘솔 로그도 보자
+    onResult: (result) => {
+      console.log("[AI RESULT]", result);
+      // TODO: 나중에 여기서 session 쪽 상태 업데이트 (예: session.updateFromAi(result))
+    },
+  });
 
   // 세션 시작 시 웹캠 시작
   const handleStart = async () => {
