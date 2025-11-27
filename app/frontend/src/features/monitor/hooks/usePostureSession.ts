@@ -63,7 +63,7 @@ function usePostureSession(): UsePostureSessionResult {
   const [latestFeedback, setLatestFeedback] = useState<string | null>(null);
   const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>([]);
 
-  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastWarningTimeRef = useRef<number>(0);
   const lastFeedbackTimeRef = useRef<number>(0);
   const statusRef = useRef<SessionStatus>(status);
