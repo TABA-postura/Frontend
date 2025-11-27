@@ -1,0 +1,366 @@
+/* SelfManagementPage.css */
+
+.self-management-container {
+  min-height: 100vh;
+  background: #f5f7fa;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  position: relative;
+}
+
+.self-management-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 통계 카드 */
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-card__icon {
+  font-size: 24px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-card__icon--blue {
+  color: #667eea;
+}
+
+.stat-card__icon--red {
+  color: #ef4444;
+}
+
+.stat-card__icon--green {
+  color: #10b981;
+}
+
+.stat-card__icon--purple {
+  color: #8b5cf6;
+}
+
+.stat-card__title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  margin: 0;
+}
+
+.stat-card__value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  line-height: 1;
+}
+
+.stat-card__change {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.stat-card__change.positive {
+  color: #10b981;
+}
+
+.stat-card__change.negative {
+  color: #ef4444;
+}
+
+/* 차트 섹션 */
+.charts-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tabs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tabs-list {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0;
+}
+
+.tab-trigger {
+  padding: 12px 24px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: -2px;
+}
+
+.tab-trigger:hover {
+  color: #333;
+}
+
+.tab-trigger.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+}
+
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chart-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* 캘린더 */
+.calendar-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.calendar-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.calendar-day--red {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.calendar-day--yellow {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.calendar-day--green {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.calendar-day__date {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.calendar-day__rate {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.calendar-legend {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #666;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.legend-color--red {
+  background: #fee2e2;
+}
+
+.legend-color--yellow {
+  background: #fef3c7;
+}
+
+.legend-color--green {
+  background: #d1fae5;
+}
+
+/* 추천 섹션 */
+.recommendations-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recommendation-card {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+}
+
+.rec-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.rec-icon {
+  font-size: 20px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rec-icon.info {
+  color: #667eea;
+}
+
+.rec-icon.warning {
+  color: #f59e0b;
+}
+
+.rec-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.rec-description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+.rec-button {
+  background: transparent;
+  border: 1px solid #667eea;
+  color: #667eea;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+}
+
+.rec-button:hover {
+  background: #667eea;
+  color: white;
+}
+
+.rec-button-icon {
+  font-size: 16px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1400px) {
+  .stats-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bottom-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 968px) {
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .calendar-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
