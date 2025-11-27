@@ -24,7 +24,7 @@ function InformationPage() {
 
   const categories = ['전체', '질환', '운동'];
 
-  // 🔍 목록 불러오기
+  // 🔍 목록 불러오기 (백엔드 API 호출)
   useEffect(() => {
     const fetchItems = async () => {
       setIsLoading(true);
@@ -44,32 +44,8 @@ function InformationPage() {
       } catch (error: any) {
         console.error('콘텐츠 불러오기 실패:', error);
         setError('콘텐츠를 불러오는 중 오류가 발생했습니다.');
-        // 개발 환경에서는 임시 더미 데이터 표시
-        if (import.meta.env.DEV) {
-          setItems([
-            {
-              id: 1,
-              title: '거북목 증후군',
-              category: '질환',
-              s3ImageUrl: '',
-              relatedPosture: '거북목은 목이 앞으로 나오는 자세로 인해 발생하는 질환입니다.',
-            },
-            {
-              id: 2,
-              title: '목 스트레칭',
-              category: '운동',
-              s3ImageUrl: '',
-              relatedPosture: '거북목을 예방하기 위한 목 스트레칭 방법입니다.',
-            },
-            {
-              id: 3,
-              title: '허리 디스크',
-              category: '질환',
-              s3ImageUrl: '',
-              relatedPosture: '잘못된 자세로 인해 발생하는 허리 디스크 질환입니다.',
-            },
-          ]);
-        }
+        // 백엔드에서 데이터를 받아오므로 프론트엔드에서 더미 데이터를 설정하지 않음
+        setItems([]);
       } finally {
         setIsLoading(false);
       }

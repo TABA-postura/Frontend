@@ -8,7 +8,7 @@ import MonitorPage from '../features/monitor/pages/MonitorPage';
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignupPage from '../features/auth/pages/SignupPage';
 import InformationPage from '../features/selfcare/pages/InformationPage';
-import SelfCarePage from '../features/selfcare/pages/SelfCarePage';
+import SelfManagementPage from '../features/selfcare/pages/SelfManagementPage';
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +37,6 @@ export const router = createBrowserRouter([
   },
   {
     path: '/selfcare',
-    element: <SelfCarePage />,
+    element: <SelfManagementPage />,
   },
 ]);
