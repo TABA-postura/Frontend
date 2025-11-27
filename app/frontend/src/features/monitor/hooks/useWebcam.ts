@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 
 export interface UseWebcamResult {
-  videoRef: React.RefObject<HTMLVideoElement>;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
   isActive: boolean;
   isLoading: boolean;
   error: string | null;

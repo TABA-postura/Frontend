@@ -5,7 +5,7 @@ export type WebcamPanelProps = {
   isActive: boolean;
   isLoading: boolean;
   error: string | null;
-  videoRef: React.RefObject<HTMLVideoElement>;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
   status: SessionStatus;
 };
 
@@ -30,7 +30,6 @@ function WebcamPanel({
   };
 
   const overlayMessage = getOverlayMessage();
-  const showOverlay = isLoading || error || (!isActive && overlayMessage);
   
   // PAUSED 상태일 때는 isActive가 true여도 오버레이 표시
   const showPausedOverlay = status === 'PAUSED' && isActive && !isLoading && !error;

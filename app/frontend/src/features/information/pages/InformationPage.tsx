@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { api } from '../../auth/api/axios';
+import '../../../assets/styles/Home.css';
 import '../../../assets/styles/Information.css';
 
 // ✨ 백엔드 ContentListResponse 구조에 맞춘 타입
@@ -18,22 +19,59 @@ function InformationPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('전체');
   const [selectedItem, setSelectedItem] = useState<InformationItem | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const categories = ['전체', '질환', '운동'];
 
   // 🔍 목록 불러오기
   useEffect(() => {
     const fetchItems = async () => {
+      setIsLoading(true);
+      setError(null);
+      
       try {
         const response = await api.post('/api/content', {
           keyword: searchQuery || null,
           category: selectedCategory !== '전체' ? selectedCategory : null,
         });
 
-        // 백엔드는 배열 자체를 반환함 → contents 없음
-        setItems(response.data || []);
-      } catch (error) {
+        // 백엔드 응답 구조 확인: 배열 또는 { contents: [] } 형태일 수 있음
+        const data = response.data;
+        const itemsArray = Array.isArray(data) ? data : (data?.contents || data?.data || []);
+        
+        setItems(itemsArray);
+      } catch (error: any) {
         console.error('콘텐츠 불러오기 실패:', error);
+        setError('콘텐츠를 불러오는 중 오류가 발생했습니다.');
+        // 개발 환경에서는 임시 더미 데이터 표시
+        if (import.meta.env.DEV) {
+          setItems([
+            {
+              id: 1,
+              title: '거북목 증후군',
+              category: '질환',
+              s3ImageUrl: '',
+              relatedPosture: '거북목은 목이 앞으로 나오는 자세로 인해 발생하는 질환입니다.',
+            },
+            {
+              id: 2,
+              title: '목 스트레칭',
+              category: '운동',
+              s3ImageUrl: '',
+              relatedPosture: '거북목을 예방하기 위한 목 스트레칭 방법입니다.',
+            },
+            {
+              id: 3,
+              title: '허리 디스크',
+              category: '질환',
+              s3ImageUrl: '',
+              relatedPosture: '잘못된 자세로 인해 발생하는 허리 디스크 질환입니다.',
+            },
+          ]);
+        }
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -64,7 +102,7 @@ function InformationPage() {
               <div className="nav-icon blue">📚</div>
               <div className="nav-text"><span className="nav-title">정보 제공</span></div>
             </div>
-            <Link to="/self-management" className={`nav-item ${location.pathname === '/self-management' ? 'active' : ''}`}>
+            <Link to="/selfcare" className={`nav-item ${location.pathname === '/selfcare' ? 'active' : ''}`}>
               <div className="nav-icon">👤</div>
               <div className="nav-text"><span className="nav-title">자기 관리</span></div>
             </Link>
@@ -114,26 +152,43 @@ function InformationPage() {
 
           {/* 정보 리스트 */}
           <div className="information-list">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className={`info-card ${selectedItem?.id === item.id ? 'selected' : ''}`}
-                onClick={() => handleItemClick(item.id)}
-              >
-                <div className="card-header">
-                  <span className="card-icon">📘</span>
-                  <h3 className="card-title">{item.title}</h3>
-                </div>
-
-                {/* 설명: relatedPosture 표시 */}
-                <p className="card-description">{item.relatedPosture}</p>
-
-                {/* 태그 대신 posture 하나만 표시 */}
-                <div className="card-tags">
-                  <span className="tag">{item.category}</span>
-                </div>
+            {isLoading ? (
+              <div className="information-empty">
+                <div className="empty-icon">⏳</div>
+                <p className="empty-text">콘텐츠를 불러오는 중...</p>
               </div>
-            ))}
+            ) : error && items.length === 0 ? (
+              <div className="information-empty">
+                <div className="empty-icon">⚠️</div>
+                <p className="empty-text">{error}</p>
+              </div>
+            ) : items.length === 0 ? (
+              <div className="information-empty">
+                <div className="empty-icon">📭</div>
+                <p className="empty-text">표시할 콘텐츠가 없습니다.</p>
+              </div>
+            ) : (
+              items.map((item) => (
+                <div
+                  key={item.id}
+                  className={`info-card ${selectedItem?.id === item.id ? 'selected' : ''}`}
+                  onClick={() => handleItemClick(item.id)}
+                >
+                  <div className="card-header">
+                    <span className="card-icon">📘</span>
+                    <h3 className="card-title">{item.title}</h3>
+                  </div>
+
+                  {/* 설명: relatedPosture 표시 */}
+                  <p className="card-description">{item.relatedPosture}</p>
+
+                  {/* 태그 대신 posture 하나만 표시 */}
+                  <div className="card-tags">
+                    <span className="tag">{item.category}</span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </main>
 

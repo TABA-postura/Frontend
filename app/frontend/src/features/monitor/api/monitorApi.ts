@@ -6,7 +6,7 @@
  * npm install axios
  */
 
-import axios, { AxiosInstance, AxiosError } from 'axios';
+import axios, { type AxiosInstance, AxiosError } from 'axios';
 
 // ==================== 타입 정의 ====================
 

@@ -7,7 +7,7 @@ import RealtimePosturePage from '../features/monitor/pages/RealtimePosturePage';
 import MonitorPage from '../features/monitor/pages/MonitorPage';
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignupPage from '../features/auth/pages/SignupPage';
-import InformationPage from '../features/information/pages/InformationPage';
+import InformationPage from '../features/selfcare/pages/InformationPage';
 import SelfCarePage from '../features/selfcare/pages/SelfCarePage';
 
 export const router = createBrowserRouter([

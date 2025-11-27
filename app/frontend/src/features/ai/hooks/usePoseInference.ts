@@ -9,7 +9,7 @@ const DEFAULT_AI_BASE_URL =
 export type SessionStatus = "IDLE" | "RUNNING" | "PAUSED" | "ENDED";
 
 export interface UsePoseInferenceOptions {
-  videoRef: React.RefObject<HTMLVideoElement>;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
   status: SessionStatus;
   userId: number;
   sessionId: number;
