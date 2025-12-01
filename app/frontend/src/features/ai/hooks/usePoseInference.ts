@@ -60,10 +60,14 @@ export function usePoseInference(options: UsePoseInferenceOptions) {
     }
 
     let timer: number | null = null;
+    let cancelled = false; // 취소 플래그
+
     const canvas = document.createElement("canvas");
     const video = videoRef.current;
 
     const loop = async () => {
+      if (cancelled) return; // cleanup 이후에는 바로 종료
+
       if (!video || video.readyState < 2) {
         timer = window.setTimeout(loop, intervalMs);
         return;
@@ -81,6 +85,8 @@ export function usePoseInference(options: UsePoseInferenceOptions) {
 
       canvas.toBlob(
         async (blob) => {
+          if (cancelled) return; // 중간에 취소됐으면 더 이상 진행 X
+
           if (!blob) {
             timer = window.setTimeout(loop, intervalMs);
             return;
@@ -95,12 +101,19 @@ export function usePoseInference(options: UsePoseInferenceOptions) {
               debugLogRaw,
             });
 
-            onResult(result);
+            if (!cancelled) {    // 언마운트 후에는 콜백도 안 부르게
+              onResult(result);
+            }
             shouldResetRef.current = false;
           } catch (e) {
-            console.error("AI analyze 호출 실패:", e);
+            if (!cancelled) {
+             console.error("AI analyze 호출 실패:", e);
+            }
           } finally {
-            timer = window.setTimeout(loop, intervalMs);
+            if (!cancelled && status === "RUNNING") {
+              // 취소되지 않았고 여전히 RUNNING일 때만 다음 예약
+              timer = window.setTimeout(loop, intervalMs);
+            }
           }
         },
         "image/jpeg",
@@ -111,6 +124,7 @@ export function usePoseInference(options: UsePoseInferenceOptions) {
     timer = window.setTimeout(loop, intervalMs);
 
     return () => {
+      cancelled = true;
       if (timer !== null) {
         window.clearTimeout(timer);
       }
