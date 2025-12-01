@@ -159,9 +159,7 @@ body {
 }
 
 .monitor-main {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  display: block;
   width: 100%;
   min-width: 0; /* flex item이 overflow를 올바르게 처리하도록 */
 }
