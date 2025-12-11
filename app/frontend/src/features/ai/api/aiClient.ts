@@ -15,9 +15,7 @@ export interface AdviceItem {
 }
 
 export interface AnalyzeResponse {
-  state: PostureState;
-  violations: string[];
-  violation_details: ViolationDetail[];
+  state: PostureState[]; // state가 여러 개일 수 있도록 배열로 수정
   advices: AdviceItem[];
   metrics: Record<string, number>;
   timestamp_ms: number;
