@@ -1,13 +1,12 @@
 /**
  * useAuth 커스텀 훅
  * 인증 상태 관리 및 로그인/로그아웃/회원가입 기능을 제공합니다.
+ * 
+ * 기존 코드와의 호환성을 위해 새로운 useAuth를 래핑합니다.
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { signupApi, loginApi } from '../api/authApi';
-import type { TokenResponse } from '../api/authApi';
-
-// ==================== 타입 정의 ====================
+import { useAuth as useNewAuth } from '../../../hooks/useAuth';
+import { useCallback } from 'react';
 
 export interface User {
   email: string;
@@ -21,102 +20,29 @@ export interface UseAuthReturn {
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name: string) => Promise<string>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
-// ==================== 상수 ====================
-
-const ACCESS_TOKEN_KEY = 'accessToken';
-const REFRESH_TOKEN_KEY = 'refreshToken';
-
-// ==================== 훅 구현 ====================
-
 export function useAuth(): UseAuthReturn {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const { user, isAuthenticated, isLoading, signup: newSignup, login: newLogin, logout: newLogout } = useNewAuth();
 
-  /**
-   * 초기에 localStorage에서 토큰 확인 → 로그인 유지 처리
-   */
-  useEffect(() => {
-    const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
-
-    if (accessToken) {
-      // 간단히 로그인 상태로만 처리
-      // 실제로는 JWT decode 후 email 꺼내기 또는 /api/user/me 호출 추천
-      setUser({ email: 'unknown' });
-    }
-  }, []);
-
-  const isAuthenticated = Boolean(localStorage.getItem(ACCESS_TOKEN_KEY));
-
-  /**
-   * 로그인
-   */
   const login = useCallback(async (email: string, password: string): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
+    await newLogin({ email, password });
+  }, [newLogin]);
 
-    try {
-      const tokenResponse: TokenResponse = await loginApi({ email, password });
-
-      localStorage.setItem(ACCESS_TOKEN_KEY, tokenResponse.accessToken);
-      localStorage.setItem(REFRESH_TOKEN_KEY, tokenResponse.refreshToken);
-
-      setUser({ email });
-      setError(null);
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.message ||
-        err?.message ||
-        '로그인 중 오류가 발생했습니다.';
-      setError(message);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  /**
-   * 회원가입
-   */
   const signup = useCallback(async (email: string, password: string, name: string): Promise<string> => {
-    setIsLoading(true);
-    setError(null);
+    return await newSignup({ email, password, name });
+  }, [newSignup]);
 
-    try {
-      const message = await signupApi({ email, password, name });
-
-      setError(null);
-      return message;
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.message ||
-        err?.message ||
-        '회원가입 중 오류가 발생했습니다.';
-      setError(message);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  /**
-   * 로그아웃
-   */
-  const logout = useCallback(() => {
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
-    setUser(null);
-    setError(null);
-  }, []);
+  const logout = useCallback(async (): Promise<void> => {
+    await newLogout();
+  }, [newLogout]);
 
   return {
-    user,
+    user: user ? { email: user.email, name: user.name } : null,
     isAuthenticated,
     isLoading,
-    error,
+    error: null, // 새로운 구조에서는 error를 별도로 관리하지 않음
     login,
     signup,
     logout,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -30,6 +30,18 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
 
   // 인증 훅 사용
   const { signup, isLoading, error: authError } = useAuth();
+  
+  // timeout 정리를 위한 ref
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  // 컴포넌트 언마운트 시 timeout 정리
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   /**
    * 비밀번호 변경 핸들러
@@ -121,14 +133,23 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
 
       // 성공 시 콜백 호출 (보통 로그인 페이지로 이동)
       if (onSuccess) {
+        // 기존 timeout 정리
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        
         // 약간의 지연 후 콜백 호출 (사용자가 성공 메시지를 볼 수 있도록)
-        setTimeout(() => {
+        timeoutRef.current = setTimeout(() => {
           onSuccess();
+          timeoutRef.current = null;
         }, 1500);
       }
     } catch (err) {
       // 에러는 useAuth에서 처리되므로 여기서는 추가 처리 불필요
-      console.error('Signup error:', err);
+      // 브라우저 확장 프로그램 관련 경고는 무시
+      if (err instanceof Error && !err.message.includes('message channel')) {
+        console.error('Signup error:', err);
+      }
     }
   };
 
