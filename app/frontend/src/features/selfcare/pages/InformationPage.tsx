@@ -1,30 +1,50 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import type { Category, InfoItem } from '../data/infoData';
-import { infoData } from '../data/infoData';
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import type { Category, InfoItem } from '../../../types/info';
+import { useInfoData, useInfoDetail } from '../../../hooks/useInfoData';
 import '../../../assets/styles/Home.css';
 import '../../../assets/styles/Information.css';
 import './InformationPage.css';
 
 function InformationPage() {
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('all');
-  const [selectedItem, setSelectedItem] = useState<InfoItem | null>(null);
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+
+  // URL 쿼리 파라미터에서 guideId 읽기 (SelfManagementPage에서 링크로 넘어온 경우)
+  useEffect(() => {
+    const guideIdParam = searchParams.get('guideId');
+    if (guideIdParam) {
+      const guideId = parseInt(guideIdParam, 10);
+      if (!isNaN(guideId)) {
+        setSelectedItemId(guideId);
+        // guideId를 사용한 후 쿼리 파라미터 제거 (선택사항)
+        // setSearchParams({});
+      }
+    }
+  }, [searchParams, setSearchParams]);
+
+  // 백엔드 API에서 데이터 조회 (백엔드에서 필터링 처리)
+  // category나 keyword가 변경되면 자동으로 다시 조회됨
+  const { data: filteredData, isLoading, error } = useInfoData({
+    category: selectedCategory,
+    keyword: searchTerm || undefined,
+  });
+
+  // 선택된 항목의 상세 정보 조회
+  const { data: selectedItemDetail, isLoading: isDetailLoading } = useInfoDetail(selectedItemId);
 
   const handleReset = () => {
     setSearchTerm('');
     setSelectedCategory('all');
+    setSelectedItemId(null);
   };
 
-  const filteredData = infoData.filter((item) => {
-    const matchesSearch =
-      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const handleItemClick = (item: InfoItem) => {
+    setSelectedItemId(item.id);
+  };
 
   const categoryLabels: Record<Category, string> = {
     all: '전체',
@@ -110,7 +130,17 @@ function InformationPage() {
 
             {/* 정보 리스트 - 세로 스크롤 */}
             <div className="information-list-container">
-              {filteredData.length === 0 ? (
+              {isLoading ? (
+                <div className="information-empty">
+                  <div className="empty-icon">⏳</div>
+                  <p className="empty-text">로딩 중...</p>
+                </div>
+              ) : error ? (
+                <div className="information-empty">
+                  <div className="empty-icon">❌</div>
+                  <p className="empty-text">데이터를 불러오는 중 오류가 발생했습니다.</p>
+                </div>
+              ) : filteredData.length === 0 ? (
                 <div className="information-empty">
                   <div className="empty-icon">📭</div>
                   <p className="empty-text">검색 결과가 없습니다.</p>
@@ -119,8 +149,8 @@ function InformationPage() {
                 filteredData.map((item) => (
                   <div
                     key={item.id}
-                    className={`info-card ${selectedItem?.id === item.id ? 'selected' : ''}`}
-                    onClick={() => setSelectedItem(item)}
+                    className={`info-card ${selectedItemId === item.id ? 'selected' : ''}`}
+                    onClick={() => handleItemClick(item)}
                   >
                     <div className="card-header">
                       <div className="card-warning-icon">⚠️</div>
@@ -149,82 +179,87 @@ function InformationPage() {
         <aside className="detail-panel">
           <h3 className="detail-title">상세 정보</h3>
 
-          {selectedItem ? (
+          {isDetailLoading ? (
+            <div className="detail-empty">
+              <div className="empty-icon">⏳</div>
+              <p className="empty-text">로딩 중...</p>
+            </div>
+          ) : selectedItemDetail ? (
             <div className="detail-content">
               <div className="detail-header">
                 <span className="detail-icon">📘</span>
-                <h4 className="detail-item-title">{selectedItem.title}</h4>
+                <h4 className="detail-item-title">{selectedItemDetail.title}</h4>
               </div>
 
               <div className="detail-section">
                 <h5 className="detail-section-title">설명</h5>
-                <p className="detail-description">{selectedItem.detail.fullDescription}</p>
+                <p className="detail-description">{selectedItemDetail.detail.fullDescription}</p>
               </div>
 
-              {selectedItem.detail.signal && (
+              {selectedItemDetail.detail.signal && (
                 <div className="detail-section">
                   <h5 className="detail-section-title">감지 신호</h5>
-                  <p className="detail-text">{selectedItem.detail.signal}</p>
+                  <p className="detail-text">{selectedItemDetail.detail.signal}</p>
                 </div>
               )}
 
-              {selectedItem.detail.causes && selectedItem.detail.causes.length > 0 && (
+              {selectedItemDetail.detail.causes && selectedItemDetail.detail.causes.length > 0 && (
                 <div className="detail-section">
                   <h5 className="detail-section-title">원인</h5>
                   <ul className="detail-list">
-                    {selectedItem.detail.causes.map((cause, index) => (
+                    {selectedItemDetail.detail.causes.map((cause, index) => (
                       <li key={index}>{cause}</li>
                     ))}
                   </ul>
                 </div>
               )}
 
-              {selectedItem.detail.symptoms && selectedItem.detail.symptoms.length > 0 && (
+              {selectedItemDetail.detail.symptoms && selectedItemDetail.detail.symptoms.length > 0 && (
                 <div className="detail-section">
                   <h5 className="detail-section-title">증상</h5>
                   <ul className="detail-list">
-                    {selectedItem.detail.symptoms.map((symptom, index) => (
+                    {selectedItemDetail.detail.symptoms.map((symptom, index) => (
                       <li key={index}>{symptom}</li>
                     ))}
                   </ul>
                 </div>
               )}
 
-              {selectedItem.detail.methods && selectedItem.detail.methods.length > 0 && (
+              {selectedItemDetail.detail.methods && selectedItemDetail.detail.methods.length > 0 && (
                 <div className="detail-section">
                   <h5 className="detail-section-title">방법</h5>
                   <ul className="detail-list">
-                    {selectedItem.detail.methods.map((method, index) => (
+                    {selectedItemDetail.detail.methods.map((method, index) => (
                       <li key={index}>{method}</li>
                     ))}
                   </ul>
                 </div>
               )}
 
-              {selectedItem.detail.precautions && selectedItem.detail.precautions.length > 0 && (
+              {selectedItemDetail.detail.precautions && selectedItemDetail.detail.precautions.length > 0 && (
                 <div className="detail-section">
                   <h5 className="detail-section-title">주의사항</h5>
                   <ul className="detail-list">
-                    {selectedItem.detail.precautions.map((precaution, index) => (
+                    {selectedItemDetail.detail.precautions.map((precaution, index) => (
                       <li key={index}>{precaution}</li>
                     ))}
                   </ul>
                 </div>
               )}
 
-              {selectedItem.detail.effect && (
+              {selectedItemDetail.detail.effect && (
                 <div className="detail-section">
                   <h5 className="detail-section-title">효과</h5>
-                  <p className="detail-text">{selectedItem.detail.effect}</p>
+                  <p className="detail-text">{selectedItemDetail.detail.effect}</p>
                 </div>
               )}
 
-              {selectedItem.detail.recommendedStretching &&
-                selectedItem.detail.recommendedStretching.length > 0 && (
+              {selectedItemDetail.detail.recommendedStretching &&
+                selectedItemDetail.detail.recommendedStretching.length > 0 && (
                   <div className="detail-section">
                     <h5 className="detail-section-title">추천 스트레칭</h5>
                     <div className="detail-tags">
-                      {selectedItem.detail.recommendedStretching.map((stretching, index) => (
+                      {selectedItemDetail.detail.recommendedStretching.map((stretching, index) => (
                         <span key={index} className="detail-tag">
                           {stretching}
                         </span>
@@ -233,10 +268,10 @@ function InformationPage() {
                   </div>
                 )}
 
-              {selectedItem.detail.note && (
+              {selectedItemDetail.detail.note && (
                 <div className="detail-section">
                   <h5 className="detail-section-title">참고</h5>
-                  <p className="detail-text">{selectedItem.detail.note}</p>
+                  <p className="detail-text">{selectedItemDetail.detail.note}</p>
                 </div>
               )}
             </div>

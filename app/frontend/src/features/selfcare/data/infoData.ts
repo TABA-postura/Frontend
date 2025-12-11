@@ -1,28 +1,18 @@
 // app/frontend/src/features/selfcare/data/infoData.ts
+// 
+// ⚠️ 이 파일은 백엔드 API로 전환되었습니다.
+// 타입 정의는 src/types/info.ts로 이동되었고,
+// API 호출은 src/api/info.ts와 src/hooks/useInfoData.ts를 사용하세요.
+//
+// 아래 데이터는 백엔드 API가 준비되기 전까지 fallback으로 사용할 수 있습니다.
+// 백엔드 API가 준비되면 이 파일을 삭제하거나 주석 처리하세요.
 
-export type Category = 'all' | 'posture' | 'stretching';
+import type { InfoItem } from '../../../types/info';
 
-export interface InfoDetail {
-  fullDescription: string;
-  signal?: string;
-  note?: string;
-  causes?: string[];
-  symptoms?: string[];
-  precautions: string[];
-  methods: string[];
-  effect?: string;
-  recommendedStretching?: string[];
-}
+// 기존 코드와의 호환성을 위해 타입 re-export
+export type { Category, InfoItem, InfoDetail } from '../../../types/info';
 
-export interface InfoItem {
-  id: number;
-  title: string;
-  description: string;
-  category: 'posture' | 'stretching';
-  tags: string[];
-  detail: InfoDetail;
-}
-
+// Fallback 데이터 (백엔드 API 준비 전까지 사용)
 export const infoData: InfoItem[] = [
   {
     id: 1,
