@@ -24,7 +24,6 @@ export interface AnalyzeResponse {
 }
 
 export interface AnalyzeParams {
-  userId: number;
   sessionId: number;
   imageBlob: Blob;
   reset?: boolean;
@@ -48,11 +47,10 @@ export class AiClient {
   }
 
   async analyze(params: AnalyzeParams): Promise<AnalyzeResponse> {
-    const { userId, sessionId, imageBlob, reset = false, debugLogRaw = false } =
+    const { sessionId, imageBlob, reset = false, debugLogRaw = false } =
       params;
 
     const formData = new FormData();
-    formData.append("userId", String(userId));
     formData.append("sessionId", String(sessionId));
     formData.append("reset", reset ? "true" : "false");
     formData.append("file", imageBlob, "frame.jpg");
