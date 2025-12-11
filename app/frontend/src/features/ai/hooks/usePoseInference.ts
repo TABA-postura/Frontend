@@ -4,14 +4,13 @@ import { AiClient } from "../api/aiClient";
 import type { AnalyzeResponse } from "../api/aiClient";
 
 const DEFAULT_AI_BASE_URL =
-  (import.meta as any).env?.VITE_AI_BASE_URL ?? "http://127.0.0.1:8000";
+  (import.meta as any).env?.VITE_AI_BASE_URL ?? "http://3.26.244.186:8000";
 
 export type SessionStatus = "IDLE" | "RUNNING" | "PAUSED" | "ENDED";
 
 export interface UsePoseInferenceOptions {
   videoRef: React.RefObject<HTMLVideoElement | null>;
   status: SessionStatus;
-  userId: number;
   sessionId: number;
   intervalMs?: number;
   debugLogRaw?: boolean;
@@ -30,7 +29,6 @@ export function usePoseInference(options: UsePoseInferenceOptions) {
   const {
     videoRef,
     status,
-    userId,
     sessionId,
     intervalMs = 1000,
     debugLogRaw = false,
@@ -94,7 +92,6 @@ export function usePoseInference(options: UsePoseInferenceOptions) {
 
           try {
             const result = await aiClient.analyze({
-              userId,
               sessionId,
               imageBlob: blob,
               reset: shouldResetRef.current,
@@ -136,7 +133,6 @@ export function usePoseInference(options: UsePoseInferenceOptions) {
     onResult,
     sessionId,
     status,
-    userId,
     videoRef,
   ]);
 }
