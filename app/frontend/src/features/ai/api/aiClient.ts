@@ -1,6 +1,6 @@
 // src/ai/api/aiClient.ts
 
-export type PostureState = "GOOD" | "WARN" | "ERROR";
+export type PostureState = "GOOD" | "WARN" | "ERROR" | "UNKNOWN";
 
 export interface ViolationDetail {
   code: string;
