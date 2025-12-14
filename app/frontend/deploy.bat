@@ -73,7 +73,7 @@ if exist .env.production (
     echo ⚠️  .env.production 파일이 없습니다.
     echo.
     echo 💡 프로덕션 환경 변수를 설정하려면 .env.production 파일을 생성하세요:
-    echo    VITE_API_BASE_URL=https://13.239.176.67:8080
+    echo    VITE_API_BASE_URL=https://api.taba-postura.com:8080
     echo.
     echo ⚠️  기본 HTTP URL을 사용합니다. Mixed Content 에러가 발생할 수 있습니다.
     echo    프로덕션 환경에서는 HTTPS를 사용해야 합니다!

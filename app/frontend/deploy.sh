@@ -127,7 +127,7 @@ if [ -f "$ENV_FILE" ]; then
             echo "   Mixed Content 에러가 발생할 수 있습니다."
             echo ""
             echo "💡 백엔드가 HTTPS를 지원하는 경우 .env.production 파일을 수정하세요:"
-            echo "   VITE_API_BASE_URL=https://13.239.176.67:8080"
+            echo "   VITE_API_BASE_URL=https://api.taba-postura.com:8080"
         fi
     else
         echo "⚠️  VITE_API_BASE_URL이 설정되지 않았습니다. 기본값을 사용합니다."
@@ -151,7 +151,7 @@ fi
 # 빌드 (환경 변수 포함)
 echo ""
 echo "📦 빌드 중..."
-echo "   환경 변수: VITE_API_BASE_URL=${VITE_API_BASE_URL:-'http://13.239.176.67:8080 (기본값)'}"
+echo "   환경 변수: VITE_API_BASE_URL=${VITE_API_BASE_URL:-'http://api.taba-postura.com:8080 (기본값)'}"
 if ! npm run build; then
     echo "❌ 빌드 실패: npm run build 명령이 실패했습니다."
     exit 1

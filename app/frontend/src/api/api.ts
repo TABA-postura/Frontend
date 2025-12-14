@@ -24,27 +24,30 @@ const getBaseUrl = (): string => {
       throw new Error('VITE_API_BASE_URL 환경 변수가 설정되지 않았습니다. .env.production 파일을 확인하세요.');
     }
     
-    // 프로덕션에서 HTTP 사용 시 에러
+    // 프로덕션에서 HTTP 사용 시 경고 (에러는 발생시키지 않음)
     if (envUrl.startsWith('http://')) {
-      const errorMsg = 
-        '❌ Mixed Content Error: 프로덕션 환경에서 HTTP API를 사용할 수 없습니다!\n' +
+      const warningMsg = 
+        '⚠️ Mixed Content Warning: 프로덕션 환경에서 HTTP API를 사용하고 있습니다.\n' +
         `현재 설정된 URL: ${envUrl}\n` +
         '\n' +
-        '해결 방법:\n' +
-        '1. 백엔드에 HTTPS 설정 (권장)\n' +
-        '2. .env.production 파일에 HTTPS URL 설정:\n' +
-        '   VITE_API_BASE_URL=https://d28g9sy3jh6o3a.cloudfront.net\n' +
-        '3. CloudFront/ALB를 통한 프록시 설정';
+        '⚠️ 주의사항:\n' +
+        '- 일부 브라우저에서 Mixed Content 정책으로 인해 차단될 수 있습니다.\n' +
+        '- 보안상 HTTPS 사용을 강력히 권장합니다.\n' +
+        '\n' +
+        '💡 해결 방법 (권장):\n' +
+        '1. 백엔드에 HTTPS 설정 (Let\'s Encrypt 무료 인증서 사용 가능)\n' +
+        '2. Nginx/CloudFront/ALB를 통한 프록시 설정\n' +
+        '3. .env.production 파일에 HTTPS URL 설정';
       
-      console.error(errorMsg);
-      throw new Error('프로덕션 환경에서는 HTTPS URL을 사용해야 합니다.');
+      console.warn(warningMsg);
+      // 에러를 던지지 않고 경고만 표시하고 계속 진행
     }
     
     return envUrl;
   }
   
   // 개발 환경: fallback 사용 (개발 편의성)
-  return envUrl || 'http://13.239.176.67:8080';
+  return envUrl || 'http://api.taba-postura.com:8080';
 };
 
 const BASE_URL = getBaseUrl();
@@ -56,15 +59,15 @@ if (typeof window !== 'undefined') {
   console.log('🔍 [API Config] PROD:', import.meta.env.PROD);
   console.log('🔍 [API Config] MODE:', import.meta.env.MODE);
   
-  // 프로덕션에서 잘못된 URL 사용 시 경고
-  if (import.meta.env.PROD) {
-    if (BASE_URL.includes('13.239.176.67') || BASE_URL.startsWith('http://')) {
-      console.error('❌ [CRITICAL] 잘못된 BASE_URL이 사용되고 있습니다!');
-      console.error('   현재 BASE_URL:', BASE_URL);
-      console.error('   환경 변수:', import.meta.env.VITE_API_BASE_URL);
-      console.error('   이것은 빌드 시 환경 변수가 제대로 포함되지 않았음을 의미합니다.');
-    }
-  }
+      // 프로덕션에서 잘못된 URL 사용 시 경고
+      if (import.meta.env.PROD) {
+        if (BASE_URL.includes('13.239.176.67') || (BASE_URL.includes('api.taba-postura.com') && BASE_URL.startsWith('http://'))) {
+          console.error('❌ [CRITICAL] 잘못된 BASE_URL이 사용되고 있습니다!');
+          console.error('   현재 BASE_URL:', BASE_URL);
+          console.error('   환경 변수:', import.meta.env.VITE_API_BASE_URL);
+          console.error('   이것은 빌드 시 환경 변수가 제대로 포함되지 않았음을 의미합니다.');
+        }
+      }
 }
 
 // 토큰 저장 키

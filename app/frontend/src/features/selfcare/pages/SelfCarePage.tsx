@@ -119,7 +119,6 @@ const SelfCarePage = () => {
           <div className="selfcare-calendar-section">
             <GoalStreakCalendar
               calendarData={calendarData}
-              goalRate={stats.goalRate}
             />
           </div>
         </div>
