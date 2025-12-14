@@ -4,7 +4,7 @@ import { AiClient } from "../api/aiClient";
 import type { AnalyzeResponse } from "../api/aiClient";
 
 const DEFAULT_AI_BASE_URL =
-  (import.meta as any).env?.VITE_AI_BASE_URL ?? "http://3.26.244.186:8000";
+  (import.meta as any).env?.VITE_AI_BASE_URL ?? "https://ai.taba-postura.com";
 
 export type SessionStatus = "IDLE" | "RUNNING" | "PAUSED" | "ENDED";
 

@@ -35,15 +35,6 @@ export class AiClient {
     this.baseUrl = baseUrl.replace(/\/+$/, "");
   }
 
-  async health(): Promise<boolean> {
-    try {
-      const res = await fetch(`${this.baseUrl}/posture/health`);
-      return res.ok;
-    } catch {
-      return false;
-    }
-  }
-
   async analyze(params: AnalyzeParams): Promise<AnalyzeResponse> {
     const { sessionId, imageBlob, reset = false, debugLogRaw = false } =
       params;
