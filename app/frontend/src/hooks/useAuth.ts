@@ -23,13 +23,23 @@ export function useAuth() {
       const message = await authApi.signupApi(data);
       authStore.setLoading(false);
       return message;
-    } catch (error) {
+    } catch (error: any) {
       authStore.setLoading(false);
-      // 브라우저 확장 프로그램 관련 경고는 무시하고 실제 에러만 throw
+      // 브라우저 확장 프로그램 관련 경고는 무시
       if (error instanceof Error && error.message.includes('message channel')) {
         // 확장 프로그램 경고는 무시하고 성공으로 처리
         return '회원가입이 성공적으로 완료되었습니다.';
       }
+      
+      // 403 에러에 대한 더 명확한 에러 메시지
+      if (error?.response?.status === 403) {
+        const enhancedError = new Error(
+          '서버에서 요청을 거부했습니다. CORS 설정이나 서버 권한을 확인하세요.'
+        ) as any;
+        enhancedError.response = error.response;
+        throw enhancedError;
+      }
+      
       throw error;
     }
   }, []);
