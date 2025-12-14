@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, AxiosError, type InternalAxiosRequestConfig } from 'axios';
 
-// 환경 변수에서 BASE_URL 가져오기 (Vite는 VITE_ 접두사 필요)
+// 환경 변수에서 BASE_URL 가져오기
 // 프로덕션 환경에서는 환경 변수가 필수입니다!
 const getBaseUrl = (): string => {
   const envUrl = import.meta.env.VITE_API_BASE_URL;
