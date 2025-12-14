@@ -6,9 +6,9 @@
 
 set -e  # 에러 발생 시 즉시 종료
 
-BUCKET_NAME=${1:-postura-frontend}
+BUCKET_NAME=${1:-postura-frontend-prod}
 AWS_PROFILE=${2:-default}
-CLOUDFRONT_DIST_ID=${3:-$CLOUDFRONT_DISTRIBUTION_ID}
+CLOUDFRONT_DIST_ID=${3:-${CLOUDFRONT_DISTRIBUTION_ID:-EIL0MWS492AIU}}
 AWS_REGION=${AWS_REGION:-ap-northeast-2}
 
 echo "🚀 배포 시작..."
@@ -108,9 +108,50 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
-# 빌드
+# 환경 변수 확인 및 설정
+echo ""
+echo "🔍 환경 변수 확인 중..."
+ENV_FILE=".env.production"
+if [ -f "$ENV_FILE" ]; then
+    echo "✅ .env.production 파일 발견"
+    # 환경 변수 로드 (공백과 특수문자 처리)
+    set -a
+    source "$ENV_FILE"
+    set +a
+    
+    if [ -n "$VITE_API_BASE_URL" ]; then
+        echo "   VITE_API_BASE_URL: $VITE_API_BASE_URL"
+        export VITE_API_BASE_URL
+        if [[ "$VITE_API_BASE_URL" == http://* ]]; then
+            echo "⚠️  경고: HTTP URL을 사용하고 있습니다. HTTPS를 사용하는 것을 권장합니다."
+            echo "   Mixed Content 에러가 발생할 수 있습니다."
+            echo ""
+            echo "💡 백엔드가 HTTPS를 지원하는 경우 .env.production 파일을 수정하세요:"
+            echo "   VITE_API_BASE_URL=https://13.239.176.67:8080"
+        fi
+    else
+        echo "⚠️  VITE_API_BASE_URL이 설정되지 않았습니다. 기본값을 사용합니다."
+        echo "💡 .env.production 파일에 VITE_API_BASE_URL을 설정하세요."
+    fi
+else
+    echo "⚠️  .env.production 파일이 없습니다."
+    echo ""
+    echo "💡 프로덕션 환경 변수를 설정하려면 .env.production 파일을 생성하세요:"
+    echo ""
+    echo "   # 백엔드가 HTTPS를 지원하는 경우:"
+    echo "   VITE_API_BASE_URL=https://13.239.176.67:8080"
+    echo ""
+    echo "   # 또는 백엔드 도메인이 있는 경우:"
+    echo "   VITE_API_BASE_URL=https://api.yourdomain.com"
+    echo ""
+    echo "⚠️  기본 HTTP URL을 사용합니다. Mixed Content 에러가 발생할 수 있습니다."
+    echo "   프로덕션 환경에서는 HTTPS를 사용해야 합니다!"
+fi
+
+# 빌드 (환경 변수 포함)
 echo ""
 echo "📦 빌드 중..."
+echo "   환경 변수: VITE_API_BASE_URL=${VITE_API_BASE_URL:-'http://13.239.176.67:8080 (기본값)'}"
 if ! npm run build; then
     echo "❌ 빌드 실패: npm run build 명령이 실패했습니다."
     exit 1

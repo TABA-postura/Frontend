@@ -6,7 +6,7 @@ REM 환경 변수: CLOUDFRONT_DISTRIBUTION_ID, AWS_REGION (선택사항)
 setlocal enabledelayedexpansion
 
 set BUCKET_NAME=%1
-if "%BUCKET_NAME%"=="" set BUCKET_NAME=postura-frontend
+if "%BUCKET_NAME%"=="" set BUCKET_NAME=postura-frontend-prod
 
 set AWS_PROFILE=%2
 if "%AWS_PROFILE%"=="" set AWS_PROFILE=default
@@ -15,6 +15,8 @@ set CLOUDFRONT_DIST_ID=%3
 if "%CLOUDFRONT_DIST_ID%"=="" (
     if not "%CLOUDFRONT_DISTRIBUTION_ID%"=="" (
         set CLOUDFRONT_DIST_ID=%CLOUDFRONT_DISTRIBUTION_ID%
+    ) else (
+        set CLOUDFRONT_DIST_ID=EIL0MWS492AIU
     )
 )
 
@@ -49,11 +51,32 @@ if not "%AWS_PROFILE%"=="default" (
     set PROFILE_ARG=--profile %AWS_PROFILE%
 )
 
-REM 환경 변수 확인
-if not exist .env.production (
-    echo ⚠️  .env.production 파일이 없습니다!
-    echo 💡 .env.production 파일을 생성하고 환경 변수를 설정하세요.
-    pause
+REM 환경 변수 확인 및 설정
+echo.
+echo 🔍 환경 변수 확인 중...
+if exist .env.production (
+    echo ✅ .env.production 파일 발견
+    REM 환경 변수 로드 (간단 버전)
+    for /f "usebackq tokens=1,* delims==" %%a in (".env.production") do (
+        set "%%a=%%b"
+    )
+    if defined VITE_API_BASE_URL (
+        echo    VITE_API_BASE_URL: %VITE_API_BASE_URL%
+        if "%VITE_API_BASE_URL:~0,7%"=="http://" (
+            echo ⚠️  경고: HTTP URL을 사용하고 있습니다. HTTPS를 사용하는 것을 권장합니다.
+            echo    Mixed Content 에러가 발생할 수 있습니다.
+        )
+    ) else (
+        echo ⚠️  VITE_API_BASE_URL이 설정되지 않았습니다. 기본값을 사용합니다.
+    )
+) else (
+    echo ⚠️  .env.production 파일이 없습니다.
+    echo.
+    echo 💡 프로덕션 환경 변수를 설정하려면 .env.production 파일을 생성하세요:
+    echo    VITE_API_BASE_URL=https://13.239.176.67:8080
+    echo.
+    echo ⚠️  기본 HTTP URL을 사용합니다. Mixed Content 에러가 발생할 수 있습니다.
+    echo    프로덕션 환경에서는 HTTPS를 사용해야 합니다!
 )
 
 REM S3 버킷 존재 확인
