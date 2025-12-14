@@ -1,0 +1,68 @@
+.posture-chart-container {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+.posture-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.posture-chart-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.posture-chart-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.posture-chart-tab {
+  padding: 8px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.posture-chart-tab:hover {
+  border-color: #4a9eff;
+  color: #4a9eff;
+}
+
+.posture-chart-tab.active {
+  background: #4a9eff;
+  color: white;
+  border-color: #4a9eff;
+}
+
+.posture-chart-content {
+  width: 100%;
+}
+
+.chart-section {
+  margin-bottom: 32px;
+}
+
+.chart-section:last-child {
+  margin-bottom: 0;
+}
+
+.chart-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+}

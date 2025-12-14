@@ -1,73 +1,128 @@
-import { Link, useLocation } from 'react-router-dom';
-import '../../../assets/styles/SelfManagement.css';
+import { Link } from 'react-router-dom';
+import '../../../assets/styles/Information.css';
+import { useSelfCareStats } from '../hooks/useSelfCareStats';
+import SummaryCard from '../components/SummaryCard';
+import WarningSummaryCard from '../components/WarningSummaryCard';
+import ProblemCard from '../components/ProblemCard';
+import StreakCard from '../components/StreakCard';
+import PostureChart from '../components/PostureChart';
+import GoalStreakCalendar from '../components/GoalStreakCalendar';
+import './SelfCarePage.css';
 
 const SelfCarePage = () => {
-  const location = useLocation();
-  return (
-    <div>
-      <div className="dashboard-content">
-        {/* 왼쪽 사이드바 */}
-        <aside className="sidebar left-sidebar">
-          <nav className="sidebar-nav">
-            <Link
-              to="/monitor"
-              className={`nav-item ${location.pathname === '/monitor' ? 'active' : ''}`}
-            >
-              <div className="nav-icon blue">📊</div>
-              <div className="nav-text">
-                <span className="nav-title">실시간 자세 분석</span>
-              </div>
-            </Link>
-            <Link
-              to="/information"
-              className={`nav-item ${location.pathname === '/information' ? 'active' : ''}`}
-            >
-              <div className="nav-icon blue">📚</div>
-              <div className="nav-text">
-                <span className="nav-title">정보 제공</span>
-              </div>
-            </Link>
-            <div className={`nav-item ${location.pathname === '/self-management' ? 'active' : ''}`}>
-              <div className="nav-icon">👤</div>
-              <div className="nav-text">
-                <span className="nav-title">자기 관리</span>
-              </div>
-            </div>
-          </nav>
-          <div className="cookie-link">쿠키 관리 또는 옵트 아웃</div>
-        </aside>
+  const { stats, weeklyData, postureDistribution, calendarData, loading, error } = useSelfCareStats();
 
-        {/* 메인 콘텐츠 */}
-        <main className="main-content">
-          <div className="content-section">
-            <div className="recommendations-section">
-              <h3 className="section-title">맞춤 개선 추천</h3>
-              <div className="recommendations-grid">
-                <div className="recommendation-card">
-                  <div className="rec-header">
-                    <span className="rec-icon warning">⚠️</span>
-                    <h4 className="rec-title">어깨 균형 개선</h4>
-                  </div>
-                  <p className="rec-description">
-                    어깨 높이 차이가 자주 감지됩니다. 양쪽 어깨를 균등하게 사용하도록 주의하세요.
-                  </p>
-                  <button className="rec-button">추천 스트레칭 보기 →</button>
-                </div>
-
-                <div className="recommendation-card">
-                  <div className="rec-header">
-                    <span className="rec-icon info">🎯</span>
-                    <h4 className="rec-title">화면 거리 유지</h4>
-                  </div>
-                  <p className="rec-description">
-                    모니터와의 거리가 가까워지는 경향이 있습니다. 최소 50cm 이상 거리를 유지하세요.
-                  </p>
-                  <button className="rec-button">추천 스트레칭 보기 →</button>
-                </div>
-              </div>
+  if (loading) {
+    return (
+      <div className="information-container" style={{ minHeight: '100vh', backgroundColor: '#f5f7fa' }}>
+        <div className="information-background">
+          <div className="information-top-bar">
+            <div className="information-logo-container">
+              <Link to="/" className="information-logo-link">
+                <span className="information-logo-text">Postura</span>
+              </Link>
             </div>
+            <div className="information-top-bar-line"></div>
           </div>
-        </main>
+        </div>
+        <div className="dashboard-content">
+          <div className="loading-container">
+            <p>데이터를 불러오는 중...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !stats) {
+    return (
+      <div className="information-container" style={{ minHeight: '100vh', backgroundColor: '#f5f7fa' }}>
+        <div className="information-background">
+          <div className="information-top-bar">
+            <div className="information-logo-container">
+              <Link to="/" className="information-logo-link">
+                <span className="information-logo-text">Postura</span>
+              </Link>
+            </div>
+            <div className="information-top-bar-line"></div>
+          </div>
+        </div>
+        <div className="dashboard-content">
+          <div className="error-container">
+            <p>데이터를 불러오는데 실패했습니다.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const trendValue = parseFloat((stats.averagePostureRate - stats.lastWeekAverageRate).toFixed(1));
+
+  return (
+    <div className="information-container" style={{ minHeight: '100vh', backgroundColor: '#f5f7fa' }}>
+      {/* 상단 바 배경 */}
+      <div className="information-background">
+        <div className="information-top-bar">
+          <div className="information-logo-container">
+            <Link to="/" className="information-logo-link">
+              <span className="information-logo-text">Postura</span>
+            </Link>
+          </div>
+          <div className="information-top-bar-line"></div>
+        </div>
+      </div>
+
+      <div className="dashboard-content">
+        {/* 헤더 섹션 */}
+        <div className="selfcare-header">
+          <div className="selfcare-header-content">
+            <h1 className="selfcare-title">자기 관리</h1>
+            <p className="selfcare-subtitle">나의 자세 개선 현황을 확인하세요</p>
+          </div>
+        </div>
+
+        {/* 요약 카드 섹션 (2x2 그리드) */}
+        <div className="selfcare-summary-grid">
+          <SummaryCard
+            title="이번 주 평균 바른 자세 유지율"
+            value={`${stats.averagePostureRate.toFixed(1)}%`}
+            trend={{
+              value: Math.abs(trendValue),
+              isPositive: trendValue > 0,
+            }}
+          />
+          <WarningSummaryCard
+            todayCount={stats.todayWarningCount}
+            weekCount={stats.weekWarningCount}
+          />
+          <ProblemCard
+            problemName={stats.mostFrequentProblem.name}
+            count={stats.mostFrequentProblem.count}
+          />
+          <StreakCard
+            days={stats.consecutiveDays}
+            goalRate={stats.goalRate}
+          />
+        </div>
+
+        {/* 메인 콘텐츠 영역 (2컬럼) */}
+        <div className="selfcare-main-content">
+          {/* 왼쪽: 자세 분석 그래프 */}
+          <div className="selfcare-chart-section">
+            <PostureChart
+              weeklyData={weeklyData}
+              postureDistribution={postureDistribution}
+            />
+          </div>
+
+          {/* 오른쪽: 연속 목표 달성 캘린더 */}
+          <div className="selfcare-calendar-section">
+            <GoalStreakCalendar
+              calendarData={calendarData}
+              goalRate={stats.goalRate}
+            />
+          </div>
+        </div>
       </div>
 
       {/* 도움말 버튼 */}

@@ -144,26 +144,55 @@ function InformationPage() {
                 <p className="empty-text">표시할 콘텐츠가 없습니다.</p>
               </div>
             ) : (
-              items.map((item) => (
-                <div
-                  key={item.id}
-                  className={`info-card ${selectedItem?.id === item.id ? 'selected' : ''}`}
-                  onClick={() => handleItemClick(item.id)}
-                >
-                  <div className="card-header">
-                    <span className="card-icon">📘</span>
-                    <h3 className="card-title">{item.title}</h3>
-                  </div>
+              items.map((item) => {
+                // 자세 카드(질환 카테고리)에만 이미지 표시
+                // 일단 모든 카드에 이미지를 표시해서 문제 확인
+                const isPostureCard = true; // 임시로 모든 카드에 표시
+                const imagePath = `/images/pose${item.id}.png`;
+                
+                return (
+                  <div
+                    key={item.id}
+                    className={`info-card ${selectedItem?.id === item.id ? 'selected' : ''}`}
+                    onClick={() => handleItemClick(item.id)}
+                  >
+                    {/* 자세 카드에만 이미지 표시 - 회색 박스에 이미지 넣기 */}
+                    {isPostureCard && (
+                      <div className="card-image-container">
+                        <img
+                          src={imagePath}
+                          alt={item.title}
+                          className="card-image"
+                          onError={(e) => {
+                            console.error('이미지 로드 실패:', imagePath, '카테고리:', item.category, 'ID:', item.id, '제목:', item.title);
+                            // 이미지가 없으면 컨테이너 숨김
+                            const container = e.currentTarget.parentElement;
+                            if (container) {
+                              container.style.display = 'none';
+                            }
+                          }}
+                          onLoad={() => {
+                            console.log('이미지 로드 성공:', imagePath, 'ID:', item.id);
+                          }}
+                        />
+                      </div>
+                    )}
+                    
+                    <div className="card-header">
+                      <span className="card-icon">📘</span>
+                      <h3 className="card-title">{item.title}</h3>
+                    </div>
 
-                  {/* 설명: relatedPosture 표시 */}
-                  <p className="card-description">{item.relatedPosture}</p>
+                    {/* 설명: relatedPosture 표시 */}
+                    <p className="card-description">{item.relatedPosture}</p>
 
-                  {/* 태그 대신 posture 하나만 표시 */}
-                  <div className="card-tags">
-                    <span className="tag">{item.category}</span>
+                    {/* 태그 대신 posture 하나만 표시 */}
+                    <div className="card-tags">
+                      <span className="tag">{item.category}</span>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </main>
