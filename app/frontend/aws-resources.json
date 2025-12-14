@@ -1,0 +1,14 @@
+{
+  "aws": {
+    "s3": {
+      "bucket": "postura-frontend-prod",
+      "arn": "arn:aws:s3:::postura-frontend-prod"
+    },
+    "cloudfront": {
+      "distributionId": "EIL0MWS492AIU",
+      "arn": "arn:aws:cloudfront::107955311064:distribution/EIL0MWS492AIU",
+      "accountId": "107955311064"
+    }
+  }
+}
+

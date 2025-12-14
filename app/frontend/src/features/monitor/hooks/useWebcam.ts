@@ -1,4 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
+import { isSecureContext, isWebcamSupported } from '../../../utils/security';
 
 export interface UseWebcamResult {
   videoRef: React.RefObject<HTMLVideoElement | null>;
@@ -53,9 +54,27 @@ export function useWebcam(): UseWebcamReturn {
   }, []);
 
   const start = useCallback(async () => {
-    // 브라우저 지원 확인
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setError('이 브라우저에서는 웹캠을 지원하지 않습니다.');
+    // HTTPS 및 웹캠 지원 확인
+    if (!isSecureContext()) {
+      const errorMsg = '웹캠을 사용하려면 HTTPS 연결이 필요합니다. HTTPS URL로 접속해주세요.';
+      console.error('[Webcam] HTTPS required:', {
+        protocol: location.protocol,
+        hostname: location.hostname,
+        isSecureContext: window.isSecureContext,
+      });
+      setError(errorMsg);
+      setIsLoading(false);
+      setIsActive(false);
+      return;
+    }
+
+    if (!isWebcamSupported()) {
+      const errorMsg = '이 브라우저에서는 웹캠을 지원하지 않습니다. Chrome, Firefox, Edge 등의 최신 브라우저를 사용해주세요.';
+      console.error('[Webcam] Not supported:', {
+        hasMediaDevices: !!navigator.mediaDevices,
+        hasGetUserMedia: typeof navigator.mediaDevices?.getUserMedia === 'function',
+      });
+      setError(errorMsg);
       setIsLoading(false);
       setIsActive(false);
       return;

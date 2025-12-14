@@ -1,6 +1,6 @@
 // src/ai/api/aiClient.ts
 
-export type PostureState = "GOOD" | "WARN" | "ERROR";
+export type PostureState = "GOOD" | "WARN" | "ERROR" | "UNKNOWN";
 
 export interface ViolationDetail {
   code: string;
@@ -15,16 +15,13 @@ export interface AdviceItem {
 }
 
 export interface AnalyzeResponse {
-  state: PostureState;
-  violations: string[];
-  violation_details: ViolationDetail[];
+  state: PostureState[]; // state가 여러 개일 수 있도록 배열로 수정
   advices: AdviceItem[];
   metrics: Record<string, number>;
   timestamp_ms: number;
 }
 
 export interface AnalyzeParams {
-  userId: number;
   sessionId: number;
   imageBlob: Blob;
   reset?: boolean;
@@ -48,11 +45,10 @@ export class AiClient {
   }
 
   async analyze(params: AnalyzeParams): Promise<AnalyzeResponse> {
-    const { userId, sessionId, imageBlob, reset = false, debugLogRaw = false } =
+    const { sessionId, imageBlob, reset = false, debugLogRaw = false } =
       params;
 
     const formData = new FormData();
-    formData.append("userId", String(userId));
     formData.append("sessionId", String(sessionId));
     formData.append("reset", reset ? "true" : "false");
     formData.append("file", imageBlob, "frame.jpg");

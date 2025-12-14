@@ -9,6 +9,7 @@ import MonitoringControls from '../components/MonitoringControls';
 import LiveStatsCard from '../components/LiveStatsCard';
 import AccumulatedPostureCard from '../components/AccumulatedPostureCard';
 import PostureFeedbackPanel from '../components/PostureFeedbackPanel';
+import LogoutButton from '../../../components/LogoutButton';
 import './MonitorPage.css';
 
 function MonitorPage() {
@@ -73,6 +74,9 @@ function MonitorPage() {
 
   return (
     <div className="monitor-container">
+      {/* 로그아웃 버튼 - 좌측 상단 고정 */}
+      <LogoutButton />
+      
       <div className="dashboard-content">
         {/* 왼쪽 사이드바 */}
         <aside className="sidebar left-sidebar">
