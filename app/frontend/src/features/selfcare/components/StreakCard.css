@@ -1,0 +1,42 @@
+.streak-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  height: 100%;
+}
+
+.streak-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.streak-icon {
+  font-size: 24px;
+}
+
+.streak-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.streak-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.streak-days {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+}
+
+.streak-goal {
+  font-size: 14px;
+  color: #666;
+}
