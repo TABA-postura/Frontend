@@ -3,19 +3,13 @@ import './GoalStreakCalendar.css';
 
 interface GoalStreakCalendarProps {
   calendarData: CalendarStat[];
-  goalRate: number;
 }
 
-const GoalStreakCalendar = ({ calendarData, goalRate }: GoalStreakCalendarProps) => {
+const GoalStreakCalendar = ({ calendarData }: GoalStreakCalendarProps) => {
   const getDayColor = (rate: number): string => {
     if (rate <= 60) return 'red';
     if (rate <= 80) return 'orange';
     return 'green';
-  };
-
-  const getDayLabel = (index: number): string => {
-    const days = ['일', '월', '화', '수', '목', '금', '토'];
-    return days[index % 7];
   };
 
   // 현재 월의 날짜들 생성 (1일부터 시작)

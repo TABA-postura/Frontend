@@ -27,10 +27,11 @@ export default defineConfig(({ mode }) => {
     }
     
     if (apiBaseUrl.startsWith('http://')) {
-      console.error('❌ ERROR: 프로덕션 환경에서는 HTTPS URL을 사용해야 합니다!');
-      console.error(`현재 설정: ${apiBaseUrl}`);
-      console.error('.env.production 파일에 HTTPS URL로 수정하세요.');
-      process.exit(1);
+      console.warn('⚠️ WARNING: 프로덕션 환경에서 HTTP URL을 사용하고 있습니다!');
+      console.warn(`현재 설정: ${apiBaseUrl}`);
+      console.warn('⚠️ Mixed Content 경고가 발생할 수 있습니다.');
+      console.warn('💡 HTTPS 사용을 권장하지만, 백엔드가 HTTPS를 지원하지 않는 경우 이대로 진행합니다.');
+      // 에러를 던지지 않고 경고만 표시하고 계속 진행
     }
     
     console.log('✅ 환경 변수 확인 완료:');

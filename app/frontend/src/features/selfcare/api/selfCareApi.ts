@@ -1,7 +1,4 @@
-import axios from 'axios';
 import { weeklyData, postureDistribution, calendarData } from '../data/selfManagementStats';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 export interface SelfCareStats {
   averagePostureRate: number; // 이번 주 평균 바른 자세 유지율
