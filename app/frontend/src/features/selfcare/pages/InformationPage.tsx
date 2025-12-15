@@ -1,40 +1,54 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import type { Category, InfoItem } from '../data/infoData';
-import { infoData } from '../data/infoData';
+import { useContentList, useContentDetail } from '../../../hooks/useContent';
+import type { ContentCategory } from '../../../types/content';
 import '../../../assets/styles/Home.css';
 import '../../../assets/styles/Information.css';
 import './InformationPage.css';
 
+// 카테고리 매핑: UI 카테고리 -> API 카테고리
+type UICategory = 'all' | 'posture' | 'stretching' | 'exercise';
+const categoryMapping: Record<UICategory, ContentCategory | 'all'> = {
+  all: 'all',
+  posture: '자세',
+  stretching: '스트레칭',
+  exercise: '교정 운동',
+};
+
+// 기본 이미지 경로 (s3ImageUrl이 null일 때 사용)
+const DEFAULT_IMAGE_PATH = '/images/default-content.jpg';
+
 function InformationPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<Category>('all');
-  const [selectedItem, setSelectedItem] = useState<InfoItem | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<UICategory>('all');
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+
+  // API 카테고리 변환
+  const apiCategory = useMemo(() => {
+    return categoryMapping[selectedCategory] === 'all' 
+      ? undefined 
+      : (categoryMapping[selectedCategory] as ContentCategory);
+  }, [selectedCategory]);
+
+  // 콘텐츠 목록 조회
+  const { data: contentList, isLoading, error } = useContentList(
+    searchTerm || undefined,
+    apiCategory
+  );
+
+  // 콘텐츠 상세 조회
+  const { data: contentDetail, isLoading: isDetailLoading } = useContentDetail(selectedItemId);
 
   const handleReset = () => {
     setSearchTerm('');
     setSelectedCategory('all');
   };
 
-  const filteredData = infoData.filter((item) => {
-    const matchesSearch =
-      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    // 카테고리 필터링: 'all'이 아니면 정확히 일치하는 카테고리만 표시
-    const matchesCategory = 
-      selectedCategory === 'all' 
-        ? true 
-        : item.category === selectedCategory;
-    
-    return matchesSearch && matchesCategory;
-  });
-
-  const categoryLabels: Record<Category, string> = {
+  const categoryLabels: Record<UICategory, string> = {
     all: '전체',
     posture: '자세',
     stretching: '스트레칭',
+    exercise: '교정 운동',
   };
 
   return (
@@ -97,7 +111,7 @@ function InformationPage() {
 
               <div className="category-section">
                 <div className="category-buttons">
-                  {(['all', 'posture', 'stretching'] as Category[]).map((category) => (
+                  {(['all', 'posture', 'stretching', 'exercise'] as UICategory[]).map((category) => (
                     <button
                       key={category}
                       className={`category-button category-button-${category} ${selectedCategory === category ? 'active' : ''}`}
@@ -112,19 +126,39 @@ function InformationPage() {
 
             {/* 정보 리스트 - 세로 스크롤 */}
             <div className="information-list-container">
-              {filteredData.length === 0 ? (
+              {isLoading ? (
+                <div className="information-empty">
+                  <div className="empty-icon">⏳</div>
+                  <p className="empty-text">로딩 중...</p>
+                </div>
+              ) : error ? (
+                <div className="information-empty">
+                  <div className="empty-icon">⚠️</div>
+                  <p className="empty-text">콘텐츠를 불러오는 중 오류가 발생했습니다.</p>
+                  <p className="empty-text" style={{ fontSize: '12px', color: '#999' }}>
+                    {error.message}
+                  </p>
+                </div>
+              ) : contentList.length === 0 ? (
                 <div className="information-empty">
                   <div className="empty-icon">📭</div>
                   <p className="empty-text">검색 결과가 없습니다.</p>
                 </div>
               ) : (
-                filteredData.map((item) => {
-                  const imagePath = `/photo/${item.id}.jpg`;
+                contentList.map((item) => {
+                  // 카테고리 기반 CSS 클래스 매핑
+                  const categoryClass = item.category === '자세' ? 'posture' 
+                    : item.category === '스트레칭' ? 'stretching'
+                    : 'exercise';
+                  
+                  // 이미지 URL 처리: s3ImageUrl이 있으면 사용, 없으면 기본 이미지
+                  const imageUrl = item.s3ImageUrl || DEFAULT_IMAGE_PATH;
+                  
                   return (
                     <div
                       key={item.id}
-                      className={`info-card info-card-${item.category} ${selectedItem?.id === item.id ? 'selected' : ''}`}
-                      onClick={() => setSelectedItem(item)}
+                      className={`info-card info-card-${categoryClass} ${selectedItemId === item.id ? 'selected' : ''}`}
+                      onClick={() => setSelectedItemId(item.id)}
                     >
                       <div className="card-content-wrapper">
                         <div className="card-header">
@@ -133,27 +167,28 @@ function InformationPage() {
 
                         <div className="card-image-container">
                           <img
-                            src={imagePath}
+                            src={imageUrl}
                             alt={item.title}
                             className="card-image"
                             onError={(e) => {
-                              // 이미지가 없으면 숨김 처리
-                              e.currentTarget.style.display = 'none';
+                              // 이미지 로드 실패 시 기본 이미지로 대체
+                              if (e.currentTarget.src !== DEFAULT_IMAGE_PATH) {
+                                e.currentTarget.src = DEFAULT_IMAGE_PATH;
+                              } else {
+                                // 기본 이미지도 실패하면 숨김 처리
+                                e.currentTarget.style.display = 'none';
+                              }
                             }}
                           />
                         </div>
 
-                        <p className="card-description">{item.description}</p>
+                        <p className="card-description">{item.relatedPart}</p>
 
                         <div className="card-tags">
-                          {item.tags.map((tag, index) => (
-                            <span
-                              key={index}
-                              className={`tag ${index === item.tags.length - 1 && item.category === 'posture' ? 'highlight' : ''}`}
-                            >
-                              {tag}
-                            </span>
-                          ))}
+                          <span className="tag">{item.category}</span>
+                          {item.relatedPart && (
+                            <span className="tag">{item.relatedPart}</span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -166,96 +201,61 @@ function InformationPage() {
       </div>
 
       {/* 모달 팝업 */}
-      {selectedItem && (
-        <div className="info-modal-overlay" onClick={() => setSelectedItem(null)}>
+      {selectedItemId !== null && (
+        <div className="info-modal-overlay" onClick={() => setSelectedItemId(null)}>
           <div className="info-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="detail-header">
-              <h4 className="detail-item-title">{selectedItem.title}</h4>
-            </div>
-
-            <div className="detail-section">
-              <h5 className="detail-section-title">설명</h5>
-              <div className="description-box">
-                <p className="detail-description">{selectedItem.detail.fullDescription}</p>
+            {isDetailLoading ? (
+              <div style={{ padding: '40px', textAlign: 'center' }}>
+                <div className="empty-icon">⏳</div>
+                <p className="empty-text">로딩 중...</p>
               </div>
-            </div>
+            ) : contentDetail ? (
+              <>
+                <div className="detail-header">
+                  <h4 className="detail-item-title">{contentDetail.title}</h4>
+                  {contentDetail.category && (
+                    <span className="detail-category-tag">{contentDetail.category}</span>
+                  )}
+                </div>
 
-            {selectedItem.detail.signal && (
-              <div className="detail-section">
-                <h5 className="detail-section-title">감지 신호</h5>
-                <p className="detail-text">{selectedItem.detail.signal}</p>
-              </div>
-            )}
+                {contentDetail.s3ImageUrl && (
+                  <div className="detail-image-container" style={{ marginBottom: '24px' }}>
+                    <img
+                      src={contentDetail.s3ImageUrl}
+                      alt={contentDetail.title}
+                      style={{
+                        width: '100%',
+                        maxHeight: '400px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                      }}
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
 
-            {selectedItem.detail.causes && selectedItem.detail.causes.length > 0 && (
-              <div className="detail-section">
-                <h5 className="detail-section-title">원인</h5>
-                <ul className="detail-list">
-                  {selectedItem.detail.causes.map((cause, index) => (
-                    <li key={index}>{cause}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {selectedItem.detail.symptoms && selectedItem.detail.symptoms.length > 0 && (
-              <div className="detail-section">
-                <h5 className="detail-section-title">증상</h5>
-                <ul className="detail-list">
-                  {selectedItem.detail.symptoms.map((symptom, index) => (
-                    <li key={index}>{symptom}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {selectedItem.detail.methods && selectedItem.detail.methods.length > 0 && (
-              <div className="detail-section">
-                <h5 className="detail-section-title">방법</h5>
-                <ul className="detail-list">
-                  {selectedItem.detail.methods.map((method, index) => (
-                    <li key={index}>{method}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {selectedItem.detail.precautions && selectedItem.detail.precautions.length > 0 && (
-              <div className="detail-section">
-                <h5 className="detail-section-title">주의사항</h5>
-                <ul className="detail-list">
-                  {selectedItem.detail.precautions.map((precaution, index) => (
-                    <li key={index}>{precaution}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {selectedItem.detail.effect && (
-              <div className="detail-section">
-                <h5 className="detail-section-title">효과</h5>
-                <p className="detail-text">{selectedItem.detail.effect}</p>
-              </div>
-            )}
-
-            {selectedItem.detail.recommendedStretching &&
-              selectedItem.detail.recommendedStretching.length > 0 && (
                 <div className="detail-section">
-                  <h5 className="detail-section-title">추천 스트레칭</h5>
-                  <div className="detail-tags">
-                    {selectedItem.detail.recommendedStretching.map((stretching, index) => (
-                      <span key={index} className="detail-tag">
-                        {stretching}
-                      </span>
-                    ))}
+                  <h5 className="detail-section-title">내용</h5>
+                  <div className="description-box">
+                    <p className="detail-description" style={{ whiteSpace: 'pre-wrap' }}>
+                      {contentDetail.contentText}
+                    </p>
                   </div>
                 </div>
-              )}
 
-            {selectedItem.detail.note && (
-              <div className="detail-section">
-                <h5 className="detail-section-title">참고</h5>
-                <p className="detail-text">{selectedItem.detail.note}</p>
+                {contentDetail.relatedPart && (
+                  <div className="detail-section">
+                    <h5 className="detail-section-title">관련 부위</h5>
+                    <p className="detail-text">{contentDetail.relatedPart}</p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div style={{ padding: '40px', textAlign: 'center' }}>
+                <div className="empty-icon">⚠️</div>
+                <p className="empty-text">콘텐츠를 불러올 수 없습니다.</p>
               </div>
             )}
           </div>
