@@ -16,9 +16,6 @@ export interface SelfCareStats {
 // 임시 데이터 - 실제로는 API에서 가져와야 함
 export const getSelfCareStats = async (): Promise<SelfCareStats> => {
   try {
-    // TODO: 실제 API 호출로 교체
-    // const response = await axios.get(`${API_BASE_URL}/api/selfcare/stats`);
-    // return response.data;
     
     // 임시 데이터 반환
     const weekAverage = weeklyData.reduce((sum, d) => sum + d.posture, 0) / weeklyData.length;
