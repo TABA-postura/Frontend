@@ -1,17 +1,26 @@
 import { useState, useEffect } from 'react';
 import TopBar from '../../../components/TopBar';
+import '../../../assets/styles/Information.css';
 
 function InformationPage() {
   const videoSrc = '/videos/info-bg0001-0040.mp4';
   const [activeButton, setActiveButton] = useState<string>('전체');
   const [isVideoVisible, setIsVideoVisible] = useState(false);
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   useEffect(() => {
     // 페이지 로드 시 애니메이션 시작
     const timer = setTimeout(() => {
       setIsVideoVisible(true);
     }, 100);
-    return () => clearTimeout(timer);
+    // 검색창은 동영상보다 약간 늦게 나타나게
+    const searchTimer = setTimeout(() => {
+      setIsSearchVisible(true);
+    }, 600);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(searchTimer);
+    };
   }, []);
 
   return (
@@ -115,9 +124,12 @@ function InformationPage() {
             style={{
               position: 'relative',
               width: '100%',
-              maxWidth: '600px',
+              maxWidth: '800px',
               alignSelf: 'center',
               marginTop: '180px',
+              opacity: isSearchVisible ? 1 : 0,
+              transform: isSearchVisible ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 1s ease-out, transform 1s ease-out',
             }}
           >
             <input
@@ -127,25 +139,28 @@ function InformationPage() {
                 width: '100%',
                 padding: '14px 24px',
                 borderRadius: '50px',
-                border: '1px solid #00ffff',
-                backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                color: 'white',
+                border: '1px solid #66cccc',
+                backgroundColor: isSearchVisible ? 'rgba(0, 0, 0, 0.01)' : 'rgba(0, 0, 0, 0)',
+                color: '#e6f5f5',
                 fontSize: '16px',
                 fontFamily: "'Pretendard', sans-serif",
                 outline: 'none',
-                backdropFilter: 'blur(10px)',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 0 2px rgba(0, 255, 255, 0.2)',
+                backdropFilter: isSearchVisible ? 'blur(10px) brightness(0.6)' : 'blur(0px) brightness(1)',
+                transition: 'all 1s ease-out',
+                boxShadow: '0 0 2px rgba(102, 204, 204, 0.2)',
               }}
+              className="search-input"
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#00ffff';
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
-                e.currentTarget.style.boxShadow = '0 0 3px rgba(0, 255, 255, 0.3)';
+                e.currentTarget.style.borderColor = '#66cccc';
+                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+                e.currentTarget.style.backdropFilter = 'blur(10px) brightness(0.7)';
+                e.currentTarget.style.boxShadow = '0 0 3px rgba(102, 204, 204, 0.3)';
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = '#00ffff';
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
-                e.currentTarget.style.boxShadow = '0 0 2px rgba(0, 255, 255, 0.2)';
+                e.currentTarget.style.borderColor = '#66cccc';
+                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.01)';
+                e.currentTarget.style.backdropFilter = 'blur(10px) brightness(0.6)';
+                e.currentTarget.style.boxShadow = '0 0 2px rgba(102, 204, 204, 0.2)';
               }}
             />
           </div>

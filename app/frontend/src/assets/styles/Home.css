@@ -35,10 +35,10 @@ body {
 /* 컨테이너 */
 .monitor-container {
   width: 100%;
-  height: 100vh;
-  min-height: 100vh;
-  background: #f5f7fa;
-  padding: 0;
+  min-height: 100vh;      /* 화면을 채우되, 바 높이는 상단 패딩으로 해결 */
+  height: auto;           /* 강제 높이 없음 */
+  background: transparent;
+  padding: 0;             /* TopBar는 바로 상단에 붙도록 */
   margin: 0;
   position: relative;
   overflow: hidden;
@@ -48,8 +48,8 @@ body {
 .dashboard-content {
   display: flex;
   width: 100%;
-  height: 100%;
-  min-height: 100vh;
+  height: auto;
+  min-height: 0; /* flex overflow 정상화 */
   gap: 0;
   overflow: hidden;
   margin: 0;
@@ -152,16 +152,19 @@ body {
   padding: 32px;
   overflow-y: auto;
   overflow-x: hidden;
-  background: #f5f7fa;
+  background: transparent;
   min-width: 0; /* flex item이 overflow를 올바르게 처리하도록 */
   width: 100%;
-  height: 100%;
+  height: auto;
 }
 
 .monitor-main {
   display: block;
   width: 100%;
   min-width: 0; /* flex item이 overflow를 올바르게 처리하도록 */
+  padding: 16px 20px; /* 좌우 여백을 늘려 우측 붙음 방지 */
+  max-width: 1000px;
+  margin: 40px auto 0; /* TopBar와 메인 콘텐츠 사이 여백 확대 */
 }
 
 .content-header {

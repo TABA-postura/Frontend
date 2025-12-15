@@ -3,14 +3,18 @@
 .webcam-panel {
   background: white;
   border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
   width: 100%;
+  max-width: 90%; /* 우측 영역 안에서 폭을 줄여 좌우 여백 확보 */
+  margin: 0 auto; /* 중앙 정렬 */
   min-width: 0; /* flex item이 overflow를 올바르게 처리하도록 */
   overflow: hidden;
+  backdrop-filter: none;
+  border: 1px solid #00cccc;
 }
 
 .webcam-panel__header {
@@ -20,16 +24,18 @@
 }
 
 .webcam-panel__title {
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 600;
-  color: #333;
+  color: #0f172a;
   margin: 0;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .webcam-panel__description {
-  font-size: 14px;
-  color: #666;
+  font-size: 11px;
+  color: #4b5563;
   margin: 0;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .webcam-panel__video-wrapper {

@@ -168,82 +168,101 @@ function RealtimePosturePage() {
   }));
 
   return (
-    <div className="monitor-container">
-      <TopBar />
-      <div className="dashboard-content">
-        {/* 왼쪽 사이드바 */}
-        <aside className="sidebar left-sidebar">
-          <nav className="sidebar-nav">
-            <Link
-              to="/monitor"
-              className={`nav-item ${location.pathname === '/monitor' ? 'active' : ''}`}
-            >
-              <div className="nav-icon blue">📊</div>
-              <div className="nav-text">
-                <span className="nav-title">실시간 자세 분석</span>
-              </div>
-            </Link>
-            <Link to="/information" className="nav-item">
-              <div className="nav-icon blue">📚</div>
-              <div className="nav-text">
-                <span className="nav-title">정보 제공</span>
-              </div>
-            </Link>
-            <Link to="/self-management" className="nav-item">
-              <div className="nav-icon">👤</div>
-              <div className="nav-text">
-                <span className="nav-title">자기 관리</span>
-              </div>
-            </Link>
-          </nav>
-          <div className="cookie-link">쿠키 관리 또는 옵트 아웃</div>
-        </aside>
+    <div 
+      className="monitor-container"
+      style={{ 
+        minHeight: '100vh',
+        backgroundImage: 'url(/images/posetura_line.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+        position: 'relative',
+      }}
+    >
+      {/* 배경 오버레이 - 소라색 반투명 (파란색 톤) */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(110, 175, 215, 0.3)',
+          zIndex: 0,
+        }}
+      />
+      
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <TopBar />
+        <div className="dashboard-content">
+          {/* 왼쪽 사이드바 */}
+          <aside className="sidebar left-sidebar">
+            <nav className="sidebar-nav">
+              <Link
+                to="/monitor"
+                className={`nav-item ${location.pathname === '/monitor' ? 'active' : ''}`}
+              >
+                <div className="nav-icon blue">📊</div>
+                <div className="nav-text">
+                  <span className="nav-title">실시간 자세 분석</span>
+                </div>
+              </Link>
+              <Link to="/information" className="nav-item">
+                <div className="nav-icon blue">📚</div>
+                <div className="nav-text">
+                  <span className="nav-title">정보 제공</span>
+                </div>
+              </Link>
+              <Link to="/self-management" className="nav-item">
+                <div className="nav-icon">👤</div>
+                <div className="nav-text">
+                  <span className="nav-title">자기 관리</span>
+                </div>
+              </Link>
+            </nav>
+            <div className="cookie-link">쿠키 관리 또는 옵트 아웃</div>
+          </aside>
 
-        {/* 메인 콘텐츠 */}
-        <main className="main-content monitor-main">
-          <div className="realtime-page">
-            <header className="realtime-header">
-              <h1 className="realtime-header__title">실시간 자세 분석</h1>
-              <p className="realtime-header__subtitle">
-                웹캠을 통해 실시간으로 자세를 모니터링합니다
-              </p>
-            </header>
+          {/* 메인 콘텐츠 */}
+          <main className="main-content monitor-main">
+            <div className="realtime-page">
+              <section className="top-section">
+                <div className="left-col">
+                  <MonitoringControls
+                    status={session.status}
+                    times={session.times}
+                    onStart={handleStart}
+                    onPause={session.handlePause}
+                    onResume={session.handleResume}
+                    onEnd={handleEnd}
+                    canStart={canStart}
+                  />
+                  <LiveStatsCard liveStats={session.liveStats} />
+                </div>
 
-            <section className="top-section">
-              <div className="left-col">
-                <MonitoringControls
-                  status={session.status}
-                  times={session.times}
-                  onStart={handleStart}
-                  onPause={session.handlePause}
-                  onResume={session.handleResume}
-                  onEnd={handleEnd}
-                  canStart={canStart}
-                />
-                <LiveStatsCard liveStats={session.liveStats} />
-              </div>
+                <div className="right-col">
+                  <WebcamPanel
+                    isActive={webcam.isActive}
+                    isLoading={webcam.isLoading}
+                    error={webcam.error}
+                    videoRef={webcam.videoRef}
+                    status={session.status}
+                  />
+                </div>
+              </section>
 
-              <div className="right-col">
-                <WebcamPanel
-                  isActive={webcam.isActive}
-                  isLoading={webcam.isLoading}
-                  error={webcam.error}
-                  videoRef={webcam.videoRef}
-                  status={session.status}
-                />
-              </div>
-            </section>
+              <section className="bottom-section">
+                <CumulativePostureDataCard problemStats={problemStats} />
+                <RealtimeFeedbackCard feedbackList={feedbackList} />
+              </section>
+            </div>
+          </main>
+        </div>
 
-            <section className="bottom-section">
-              <CumulativePostureDataCard problemStats={problemStats} />
-              <RealtimeFeedbackCard feedbackList={feedbackList} />
-            </section>
-          </div>
-        </main>
+        {/* 도움말 버튼 */}
+        <button className="help-button">?</button>
       </div>
-
-      {/* 도움말 버튼 */}
-      <button className="help-button">?</button>
     </div>
   );
 }

@@ -130,16 +130,20 @@ function SelfCarePage() {
         <div
           style={{
             borderRadius: '12px',
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            background: isVisible 
+              ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 100%)'
+              : 'rgba(0, 0, 0, 0)',
             border: '1px solid rgba(255, 255, 255, 0.1)',
             padding: '24px',
             minHeight: '180px',
             backdropFilter: 'blur(10px)',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
-            transition: 'all 0.3s ease',
+            transition: 'all 0.8s ease',
             display: 'flex',
             flexDirection: 'column',
             gap: '12px',
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 100%)';
