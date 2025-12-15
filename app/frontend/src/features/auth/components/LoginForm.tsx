@@ -158,6 +158,42 @@ const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
             </button>
           </form>
 
+          {/* 소셜 로그인 구분선 */}
+          <div className="social-login-divider">
+            <span className="divider-line"></span>
+            <span className="divider-text">또는</span>
+            <span className="divider-line"></span>
+          </div>
+
+          {/* 소셜 로그인 버튼 */}
+          <div className="social-login-buttons">
+            <button
+              type="button"
+              className="social-login-button google-login"
+              onClick={() => {
+                // Google OAuth 인증 URL로 직접 리다이렉트
+                window.location.href = 'https://api.taba-postura.com/oauth2/authorization/google';
+              }}
+              disabled={isLoading}
+            >
+              <span className="social-icon">🔵</span>
+              <span className="social-text">Google로 로그인</span>
+            </button>
+
+            <button
+              type="button"
+              className="social-login-button kakao-login"
+              onClick={() => {
+                // Kakao OAuth 인증 URL로 직접 리다이렉트
+                window.location.href = 'https://api.taba-postura.com/oauth2/authorization/kakao';
+              }}
+              disabled={isLoading}
+            >
+              <span className="social-icon">🟡</span>
+              <span className="social-text">Kakao로 로그인</span>
+            </button>
+          </div>
+
           <Link to="/signup" className="signup-button">
             회원가입
           </Link>

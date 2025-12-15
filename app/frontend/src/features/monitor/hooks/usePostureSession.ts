@@ -9,6 +9,7 @@ import type {
 
 export interface UsePostureSessionResult {
   status: SessionStatus;
+  sessionId: number | null; // 세션 ID (시작 시 생성)
   times: PostureSessionTimes;
   liveStats: LiveStats;
   accumulatedIssues: PostureIssueStat[];
@@ -48,6 +49,7 @@ const MAX_FEEDBACK_LIST_SIZE = 10; // 최대 피드백 개수
 
 function usePostureSession(): UsePostureSessionResult {
   const [status, setStatus] = useState<SessionStatus>('IDLE');
+  const [sessionId, setSessionId] = useState<number | null>(null);
   const [times, setTimes] = useState<PostureSessionTimes>({
     startTime: null,
     lastPauseTime: null,
@@ -186,6 +188,9 @@ function usePostureSession(): UsePostureSessionResult {
       return;
     }
 
+    // 새 세션 ID 생성 (실제로는 백엔드 API에서 받아와야 함)
+    const newSessionId = Date.now();
+    setSessionId(newSessionId);
     setStatus('RUNNING');
     setTimes({
       startTime: new Date(),
@@ -242,6 +247,7 @@ function usePostureSession(): UsePostureSessionResult {
 
   const reset = useCallback(() => {
     setStatus('IDLE');
+    setSessionId(null);
     setTimes({
       startTime: null,
       lastPauseTime: null,
@@ -276,6 +282,7 @@ function usePostureSession(): UsePostureSessionResult {
 
   return {
     status,
+    sessionId,
     times,
     liveStats,
     accumulatedIssues,

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import '../../../assets/styles/Home.css';
 import { useWebcam } from '../hooks/useWebcam';
@@ -16,22 +16,104 @@ function RealtimePosturePage() {
   const webcam = useWebcam();
   const session = usePostureSession();
 
-  // 백엔드 연동 전 임의로 작성 (프론트<->AI)
-  // 모니터/리얼타임 페이지 함수 안에서
-  const dummySessionId = 1;   // TODO: /monitor/start 응답 값으로 교체
-
-  // AI 호출 훅
-  usePoseInference({
+  // AI 추론 훅: sendFrame 함수를 받아옴
+  const poseInference = usePoseInference({
     videoRef: webcam.videoRef,
-    status: session.status as any,
-    sessionId: dummySessionId,
-    intervalMs: 1000,
-    debugLogRaw: true, // 처음엔 true로 해서 콘솔 로그도 보자
+    sessionId: session.sessionId || 0, // sessionId가 없으면 0 (실제로는 사용 안 됨)
+    debugLogRaw: true,
     onResult: (result) => {
       console.log("[AI RESULT]", result);
       // TODO: 나중에 여기서 session 쪽 상태 업데이트 (예: session.updateFromAi(result))
     },
   });
+
+  // 프레임 전송 간격 (ms) - 1초마다 전송
+  const FRAME_INTERVAL_MS = 1000;
+  
+  // 첫 프레임 여부 추적 (baseline 리셋용)
+  const isFirstFrameRef = useRef<boolean>(false);
+  const animationFrameRef = useRef<number | null>(null);
+
+  // 세션이 시작되면 첫 프레임 플래그 설정
+  useEffect(() => {
+    if (session.status === 'RUNNING' && session.sessionId !== null) {
+      isFirstFrameRef.current = true;
+    } else {
+      isFirstFrameRef.current = false;
+    }
+  }, [session.status, session.sessionId]);
+
+  // 방식 A: RealtimePosturePage에서 tick과 연동하여 프레임 전송
+  useEffect(() => {
+    // RUNNING 상태이고 sessionId가 있을 때만 프레임 전송 시작
+    if (session.status !== 'RUNNING' || session.sessionId === null) {
+      // 정리
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      return;
+    }
+
+    // 웹캠이 준비되지 않았으면 대기
+    if (!webcam.videoRef.current || webcam.videoRef.current.readyState < 2) {
+      return;
+    }
+
+    // requestAnimationFrame 기반으로 프레임 전송 (더 부드러운 타이밍)
+    let lastFrameTime = 0;
+
+    const sendFrameLoop = async () => {
+      const now = Date.now();
+      
+      // FRAME_INTERVAL_MS 간격으로 전송
+      if (now - lastFrameTime >= FRAME_INTERVAL_MS) {
+        lastFrameTime = now;
+        
+        const reset = isFirstFrameRef.current;
+        if (reset) {
+          isFirstFrameRef.current = false;
+        }
+
+        try {
+          await poseInference.sendFrame(reset);
+        } catch (error) {
+          console.error('프레임 전송 실패:', error);
+        }
+      }
+
+      // 다음 프레임 요청
+      if (session.status === 'RUNNING' && session.sessionId !== null) {
+        animationFrameRef.current = requestAnimationFrame(sendFrameLoop);
+      }
+    };
+
+    // 첫 프레임 즉시 전송
+    const sendFirstFrame = async () => {
+      try {
+        await poseInference.sendFrame(true);
+        isFirstFrameRef.current = false;
+      } catch (error) {
+        console.error('첫 프레임 전송 실패:', error);
+      }
+    };
+
+    sendFirstFrame();
+    animationFrameRef.current = requestAnimationFrame(sendFrameLoop);
+
+    // cleanup 함수
+    return () => {
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    };
+  }, [
+    session.status,
+    session.sessionId,
+    webcam.videoRef,
+    poseInference,
+  ]);
 
   // 세션 시작 시 웹캠 시작
   const handleStart = async () => {

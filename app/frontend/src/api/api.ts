@@ -1,87 +1,17 @@
 import axios, { type AxiosInstance, AxiosError, type InternalAxiosRequestConfig } from 'axios';
 
-// 환경 변수에서 BASE_URL 가져오기
-// 프로덕션 환경에서는 환경 변수가 필수입니다!
-const getBaseUrl = (): string => {
-  const envUrl = import.meta.env.VITE_API_BASE_URL;
-  
-  // 프로덕션 환경에서는 환경 변수가 필수
-  if (import.meta.env.PROD) {
-    if (!envUrl) {
-      const errorMsg = 
-        '❌ CRITICAL ERROR: VITE_API_BASE_URL 환경 변수가 설정되지 않았습니다!\n' +
-        '프로덕션 환경에서는 반드시 .env.production 파일에 VITE_API_BASE_URL을 설정해야 합니다.\n' +
-        '\n' +
-        '해결 방법:\n' +
-        '1. 프로젝트 루트에 .env.production 파일 생성\n' +
-        '2. 다음 내용 추가:\n' +
-        '   VITE_API_BASE_URL=https://d28g9sy3jh6o3a.cloudfront.net\n' +
-        '   (또는 백엔드 HTTPS URL)\n' +
-        '3. npm run build 재실행\n' +
-        '4. 재배포';
-      
-      console.error(errorMsg);
-      throw new Error('VITE_API_BASE_URL 환경 변수가 설정되지 않았습니다. .env.production 파일을 확인하세요.');
-    }
-    
-    // 프로덕션에서 HTTP 사용 시 경고 (에러는 발생시키지 않음)
-    if (envUrl.startsWith('http://')) {
-      const warningMsg = 
-        '⚠️ Mixed Content Warning: 프로덕션 환경에서 HTTP API를 사용하고 있습니다.\n' +
-        `현재 설정된 URL: ${envUrl}\n` +
-        '\n' +
-        '⚠️ 주의사항:\n' +
-        '- 일부 브라우저에서 Mixed Content 정책으로 인해 차단될 수 있습니다.\n' +
-        '- 보안상 HTTPS 사용을 강력히 권장합니다.\n' +
-        '\n' +
-        '💡 해결 방법 (권장):\n' +
-        '1. 백엔드에 HTTPS 설정 (Let\'s Encrypt 무료 인증서 사용 가능)\n' +
-        '2. Nginx/CloudFront/ALB를 통한 프록시 설정\n' +
-        '3. .env.production 파일에 HTTPS URL 설정';
-      
-      console.warn(warningMsg);
-      // 에러를 던지지 않고 경고만 표시하고 계속 진행
-    }
-    
-    return envUrl;
-  }
-  
-  // 개발 환경: fallback 사용 (개발 편의성)
-  return envUrl || 'http://api.taba-postura.com:8080';
-};
-
-const BASE_URL = getBaseUrl();
-
-// 디버깅: 런타임에 BASE_URL 확인 (프로덕션에서도 표시)
-if (typeof window !== 'undefined') {
-  console.log('🔍 [API Config] BASE_URL:', BASE_URL);
-  console.log('🔍 [API Config] VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);
-  console.log('🔍 [API Config] PROD:', import.meta.env.PROD);
-  console.log('🔍 [API Config] MODE:', import.meta.env.MODE);
-  
-      // 프로덕션에서 잘못된 URL 사용 시 경고
-      if (import.meta.env.PROD) {
-        if (BASE_URL.includes('13.239.176.67') || (BASE_URL.includes('api.taba-postura.com') && BASE_URL.startsWith('http://'))) {
-          console.error('❌ [CRITICAL] 잘못된 BASE_URL이 사용되고 있습니다!');
-          console.error('   현재 BASE_URL:', BASE_URL);
-          console.error('   환경 변수:', import.meta.env.VITE_API_BASE_URL);
-          console.error('   이것은 빌드 시 환경 변수가 제대로 포함되지 않았음을 의미합니다.');
-        }
-      }
-}
 
 // 토큰 저장 키
 const ACCESS_TOKEN_KEY = 'accessToken';
 const REFRESH_TOKEN_KEY = 'refreshToken';
 
-// API 클라이언트 인스턴스 생성
 export const apiClient: AxiosInstance = axios.create({
-  baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
   withCredentials: false,
 });
+
 
 // 토큰 관리 유틸리티
 export const tokenStorage = {
@@ -226,13 +156,17 @@ apiClient.interceptors.response.use(
           accessToken: string;
           refreshToken: string;
           tokenType: string;
-        }>(`${BASE_URL}/api/auth/reissue`, {
-          refreshToken,
-        }, {
-          headers: {
-            'Content-Type': 'application/json',
+        }>(
+          '/api/auth/reissue',
+          {
+            refreshToken,
           },
-        });
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
         const { accessToken, refreshToken: newRefreshToken } = response.data;
 

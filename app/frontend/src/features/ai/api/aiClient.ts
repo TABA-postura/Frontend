@@ -26,6 +26,7 @@ export interface AnalyzeParams {
   imageBlob: Blob;
   reset?: boolean;
   debugLogRaw?: boolean;
+  abortSignal?: AbortSignal;
 }
 
 export class AiClient {
@@ -36,8 +37,13 @@ export class AiClient {
   }
 
   async analyze(params: AnalyzeParams): Promise<AnalyzeResponse> {
-    const { sessionId, imageBlob, reset = false, debugLogRaw = false } =
+    const { sessionId, imageBlob, reset = false, debugLogRaw = false, abortSignal } =
       params;
+
+    // 취소 신호가 이미 발생했으면 즉시 중단
+    if (abortSignal?.aborted) {
+      throw new DOMException('요청이 취소되었습니다.', 'AbortError');
+    }
 
     const formData = new FormData();
     formData.append("sessionId", String(sessionId));
@@ -47,7 +53,13 @@ export class AiClient {
     const res = await fetch(`${this.baseUrl}/posture/analyze`, {
       method: "POST",
       body: formData,
+      //signal: abortSignal, // AbortSignal을 fetch에 전달하여 요청 취소 가능하게 함
     });
+
+    // 취소 신호 확인
+    if (abortSignal?.aborted) {
+      throw new DOMException('요청이 취소되었습니다.', 'AbortError');
+    }
 
     if (!res.ok) {
       const text = await res.text();
@@ -57,6 +69,11 @@ export class AiClient {
     }
 
     const data = (await res.json()) as AnalyzeResponse;
+
+    // 취소 신호 재확인 (응답 처리 전)
+    if (abortSignal?.aborted) {
+      throw new DOMException('요청이 취소되었습니다.', 'AbortError');
+    }
 
     if (debugLogRaw) {
       console.log("[AI analyze raw response]", data);
