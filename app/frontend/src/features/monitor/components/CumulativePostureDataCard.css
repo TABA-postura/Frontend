@@ -1,13 +1,15 @@
 /* CumulativePostureDataCard.css */
 
 .cumulative-posture-data-card {
-  background: white;
+  background: rgba(0, 0, 0, 0.6);
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   width: 100%;
   min-width: 0; /* grid item이 overflow를 올바르게 처리하도록 */
   overflow: hidden;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .cumulative-posture-data-card__header {
@@ -17,14 +19,16 @@
 .cumulative-posture-data-card__title {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: white;
   margin: 0 0 4px 0;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .cumulative-posture-data-card__subtitle {
   font-size: 14px;
-  color: #666;
+  color: rgba(255, 255, 255, 0.7);
   margin: 0;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .cumulative-posture-data-card__list {
@@ -38,7 +42,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .cumulative-posture-data-card__item:last-child {
@@ -47,20 +51,23 @@
 
 .cumulative-posture-data-card__problem {
   font-size: 14px;
-  color: #333;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Pretendard', sans-serif;
 }
 
 .cumulative-posture-data-card__count {
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: white;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .cumulative-posture-data-card__empty {
   padding: 24px 0;
   text-align: center;
   font-size: 14px;
-  color: #999;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Pretendard', sans-serif;
 }
 
 /* 반응형 디자인 */

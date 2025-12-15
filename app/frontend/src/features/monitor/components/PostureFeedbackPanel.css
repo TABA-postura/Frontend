@@ -3,39 +3,44 @@
 .posture-feedback-panel {
   background: white;
   border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-top: 24px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  margin-top: 12px;
+  backdrop-filter: none;
+  border: 1px solid #00cccc;
 }
 
 .posture-feedback-panel__title {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
-  color: #333;
-  margin: 0 0 16px 0;
+  color: #0f172a;
+  margin: 0 0 10px 0;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .posture-feedback-panel__content {
-  padding: 16px;
+  padding: 10px;
   background: #f5f7fa;
   border-radius: 8px;
-  min-height: 60px;
+  min-height: 44px;
   display: flex;
   align-items: center;
 }
 
 .posture-feedback-panel__message {
-  font-size: 16px;
-  color: #333;
+  font-size: 13px;
+  color: #0f172a;
   margin: 0;
   line-height: 1.6;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .posture-feedback-panel__empty {
   font-size: 14px;
-  color: #999;
+  color: #6b7280;
   margin: 0;
   font-style: italic;
+  font-family: 'Pretendard', sans-serif;
 }
 
 /* 반응형 디자인 */

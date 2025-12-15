@@ -195,56 +195,77 @@ function MonitorPage() {
   }, [session.status, webcam.isActive, webcam]);
 
   return (
-    <div className="monitor-container">
-      <TopBar />
+    <div 
+      className="monitor-container"
+      style={{ 
+        minHeight: '100vh',
+        backgroundImage: 'url(/images/posetura_line.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+        position: 'relative',
+      }}
+    >
+      {/* 배경 오버레이 - 밝은 하늘색 반투명 */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(230, 245, 255, 0.25)', // 더 밝은 하늘색
+          zIndex: 0,
+        }}
+      />
       
-      <div className="dashboard-content">
-        {/* 메인 콘텐츠 */}
-        <main className="main-content monitor-main">
-          <div className="monitor-page">
-            <div className="monitor-page__header">
-              <h1 className="monitor-page__title">실시간 자세 분석</h1>
-              <p className="monitor-page__subtitle">웹캠을 통해 실시간으로 자세를 모니터링합니다</p>
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <TopBar />
+      
+        <div className="dashboard-content">
+          {/* 메인 콘텐츠 */}
+          <main className="main-content monitor-main">
+            <div className="monitor-page">
+              <div className="monitor-page__content">
+                {/* 좌측: 설정 및 통계 */}
+                <section className="monitor-page__left">
+                  <MonitoringControls
+                    status={session.status}
+                    times={session.times}
+                    onStart={handleStart}
+                    onPause={session.handlePause}
+                    onResume={session.handleResume}
+                    onEnd={handleEnd}
+                    canStart={canStart}
+                  />
+
+                  <LiveStatsCard liveStats={session.liveStats} />
+
+                  <AccumulatedPostureCard issues={session.accumulatedIssues} />
+                </section>
+
+                {/* 우측: 웹캠 패널 */}
+                <section className="monitor-page__right">
+                  <WebcamPanel
+                    isActive={webcam.isActive}
+                    isLoading={webcam.isLoading}
+                    error={webcam.error}
+                    videoRef={webcam.videoRef}
+                    status={session.status}
+                  />
+                </section>
+              </div>
+
+              {/* 하단: 피드백 패널 */}
+              <PostureFeedbackPanel feedback={session.latestFeedback} />
             </div>
+          </main>
+        </div>
 
-            <div className="monitor-page__content">
-              {/* 좌측: 설정 및 통계 */}
-              <section className="monitor-page__left">
-                <MonitoringControls
-                  status={session.status}
-                  times={session.times}
-                  onStart={handleStart}
-                  onPause={session.handlePause}
-                  onResume={session.handleResume}
-                  onEnd={handleEnd}
-                  canStart={canStart}
-                />
-
-                <LiveStatsCard liveStats={session.liveStats} />
-
-                <AccumulatedPostureCard issues={session.accumulatedIssues} />
-              </section>
-
-              {/* 우측: 웹캠 패널 */}
-              <section className="monitor-page__right">
-                <WebcamPanel
-                  isActive={webcam.isActive}
-                  isLoading={webcam.isLoading}
-                  error={webcam.error}
-                  videoRef={webcam.videoRef}
-                  status={session.status}
-                />
-              </section>
-            </div>
-
-            {/* 하단: 피드백 패널 */}
-            <PostureFeedbackPanel feedback={session.latestFeedback} />
-          </div>
-        </main>
+        {/* 도움말 버튼 */}
+        <button className="help-button">?</button>
       </div>
-
-      {/* 도움말 버튼 */}
-      <button className="help-button">?</button>
     </div>
   );
 }

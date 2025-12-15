@@ -3,7 +3,8 @@
 .monitor-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
+  padding-top: 16px; /* TopBar와 메인 섹션 사이 여유 */
 }
 
 .monitor-page__header {
@@ -27,14 +28,16 @@
 
 .monitor-page__content {
   display: grid;
-  grid-template-columns: 1fr 1.6fr;
-  gap: 24px;
+  grid-template-columns: 0.5fr 1.5fr; /* 좌측을 약간 넓힘 */
+  gap: 12px;
+  padding: 0 12px; /* 좌우 여백 확보로 화면 모서리와 분리 */
 }
 
 .monitor-page__left {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
+  max-width: 360px; /* 좌측 컬럼 최대 너비 살짝 확장 */
 }
 
 .monitor-page__right {

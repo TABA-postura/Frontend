@@ -1,13 +1,15 @@
 /* RealtimeFeedbackCard.css */
 
 .realtime-feedback-card {
-  background: white;
+  background: rgba(0, 0, 0, 0.6);
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   width: 100%;
   min-width: 0; /* grid item이 overflow를 올바르게 처리하도록 */
   overflow: hidden;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .realtime-feedback-card__header {
@@ -17,8 +19,9 @@
 .realtime-feedback-card__title {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: white;
   margin: 0;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .realtime-feedback-card__list {
@@ -36,11 +39,11 @@
 }
 
 .realtime-feedback-card__item--warn {
-  background: #FFF8DB;
+  background: rgba(255, 235, 100, 0.2);
 }
 
 .realtime-feedback-card__item--info {
-  background: #EAF2FF;
+  background: rgba(140, 210, 255, 0.2);
 }
 
 .realtime-feedback-card__icon {
@@ -59,22 +62,25 @@
 .realtime-feedback-card__item-title {
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: white;
   margin: 0;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .realtime-feedback-card__item-message {
   font-size: 13px;
-  color: #666;
+  color: rgba(255, 255, 255, 0.7);
   margin: 0;
   line-height: 1.5;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .realtime-feedback-card__empty {
   padding: 24px 0;
   text-align: center;
   font-size: 14px;
-  color: #999;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Pretendard', sans-serif;
 }
 
 /* 반응형 디자인 */
