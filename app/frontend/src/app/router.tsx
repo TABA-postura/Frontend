@@ -7,8 +7,8 @@ import RealtimePosturePage from '../features/monitor/pages/RealtimePosturePage';
 import MonitorPage from '../features/monitor/pages/MonitorPage';
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignupPage from '../features/auth/pages/SignupPage';
-import InformationPage from '../features/selfcare/pages/InformationPage';
-import SelfManagementPage from '../features/selfcare/pages/SelfManagementPage';
+import InformationPage from '../features/information/pages/InformationPage';
+import SelfCarePage from '../features/selfcare/pages/SelfCarePage';
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +37,6 @@ export const router = createBrowserRouter([
   },
   {
     path: '/selfcare',
-    element: <SelfManagementPage />,
+    element: <SelfCarePage />,
   },
 ]);

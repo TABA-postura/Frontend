@@ -9,6 +9,7 @@ import MonitoringControls from '../components/MonitoringControls';
 import LiveStatsCard from '../components/LiveStatsCard';
 import CumulativePostureDataCard from '../components/CumulativePostureDataCard';
 import RealtimeFeedbackCard from '../components/RealtimeFeedbackCard';
+import TopBar from '../../../components/TopBar';
 import './RealtimePosturePage.css';
 
 function RealtimePosturePage() {
@@ -168,6 +169,7 @@ function RealtimePosturePage() {
 
   return (
     <div className="monitor-container">
+      <TopBar />
       <div className="dashboard-content">
         {/* 왼쪽 사이드바 */}
         <aside className="sidebar left-sidebar">

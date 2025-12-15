@@ -1,5 +1,9 @@
+<<<<<<< Updated upstream
 import { useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+=======
+import { useEffect } from 'react';
+>>>>>>> Stashed changes
 import '../../../assets/styles/Home.css';
 import { useWebcam } from '../hooks/useWebcam';
 import { usePoseInference } from '../../ai/hooks/usePoseInference';
@@ -9,11 +13,10 @@ import MonitoringControls from '../components/MonitoringControls';
 import LiveStatsCard from '../components/LiveStatsCard';
 import AccumulatedPostureCard from '../components/AccumulatedPostureCard';
 import PostureFeedbackPanel from '../components/PostureFeedbackPanel';
-import LogoutButton from '../../../components/LogoutButton';
+import TopBar from '../../../components/TopBar';
 import './MonitorPage.css';
 
 function MonitorPage() {
-  const location = useLocation();
   const webcam = useWebcam();
   const session = usePostureSession();
 
@@ -198,38 +201,9 @@ function MonitorPage() {
 
   return (
     <div className="monitor-container">
-      {/* 로그아웃 버튼 - 좌측 상단 고정 */}
-      <LogoutButton />
+      <TopBar />
       
       <div className="dashboard-content">
-        {/* 왼쪽 사이드바 */}
-        <aside className="sidebar left-sidebar">
-          <nav className="sidebar-nav">
-            <Link
-              to="/monitor"
-              className={`nav-item ${location.pathname === '/monitor' ? 'active' : ''}`}
-            >
-              <div className="nav-icon blue">📊</div>
-              <div className="nav-text">
-                <span className="nav-title">실시간 자세 분석</span>
-              </div>
-            </Link>
-            <Link to="/information" className="nav-item">
-              <div className="nav-icon blue">📚</div>
-              <div className="nav-text">
-                <span className="nav-title">정보 제공</span>
-              </div>
-            </Link>
-            <Link to="/self-management" className="nav-item">
-              <div className="nav-icon">👤</div>
-              <div className="nav-text">
-                <span className="nav-title">자기 관리</span>
-              </div>
-            </Link>
-          </nav>
-          <div className="cookie-link">쿠키 관리 또는 옵트 아웃</div>
-        </aside>
-
         {/* 메인 콘텐츠 */}
         <main className="main-content monitor-main">
           <div className="monitor-page">
