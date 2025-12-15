@@ -793,13 +793,6 @@ function SelfCarePage() {
             </button>
           </div>
 
-<<<<<<< Updated upstream
-          {/* 오른쪽: 연속 목표 달성 캘린더 */}
-          <div className="selfcare-calendar-section">
-            <GoalStreakCalendar
-              calendarData={calendarData}
-            />
-=======
           {/* 카드 3: 화면 거리 유지 */}
           <div
             style={{
@@ -886,7 +879,6 @@ function SelfCarePage() {
             >
               추천 스트레칭 보기 →
             </button>
->>>>>>> Stashed changes
           </div>
         </div>
       </div>
