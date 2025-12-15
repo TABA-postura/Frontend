@@ -51,7 +51,7 @@ body {
     color: #4a9eff;
     letter-spacing: 1px;
     margin: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Pretendard', sans-serif;
   }
 
   /* 상단 전체 막대기 */
@@ -253,7 +253,7 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Pretendard', sans-serif;
     box-sizing: border-box;
     display: inline-flex;
     align-items: center;
@@ -294,7 +294,7 @@ body {
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Pretendard', sans-serif;
   }
   
   .signup-button:hover {
@@ -448,7 +448,7 @@ body {
     text-decoration: none;
     font-size: 14px;
     transition: color 0.3s ease;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Pretendard', sans-serif;
   }
 
   .login-footer-link:hover {
@@ -458,19 +458,19 @@ body {
   .login-footer-divider {
     color: #666666;
     font-size: 14px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Pretendard', sans-serif;
   }
 
   .login-footer-copyright {
     text-align: center;
     color: #999999;
     font-size: 12px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Pretendard', sans-serif;
   }
 
   .login-footer-copyright p {
     margin: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Pretendard', sans-serif;
   }
   
   /* 반응형 디자인 */

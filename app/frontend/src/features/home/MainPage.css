@@ -11,7 +11,7 @@
 
 /* 폰트 설정 */
 * {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -37,7 +37,7 @@ body {
   margin: 0 !important;
   padding: 0 !important;
   background-color: transparent !important;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 #root {
@@ -83,7 +83,7 @@ body {
   color: white;
   letter-spacing: 1px;
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 /* 상단 전체 막대기 */
@@ -173,7 +173,7 @@ body {
   line-height: 1.5;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   max-width: 90%;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 /* 로그인 버튼 컨테이너 */
@@ -202,7 +202,7 @@ body {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .main-login-button:hover {
@@ -249,7 +249,7 @@ body {
   padding-bottom: 20px;
   border-bottom: 2px solid #000000; /* 검정색 */
   box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Pretendard', sans-serif;
   max-width: calc(100% - 360px);
 }
 
@@ -263,7 +263,7 @@ body {
   box-sizing: border-box;
   /* 사진 높이만큼은 오른쪽 여백, 그 아래로는 전체 너비 */
   padding-right: 320px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .content-text p {
@@ -325,7 +325,7 @@ body {
   text-decoration: none;
   font-size: 14px;
   transition: color 0.3s ease;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .footer-link:hover {
@@ -335,19 +335,19 @@ body {
 .footer-divider {
   color: #666666;
   font-size: 14px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .footer-copyright {
   text-align: center;
   color: #999999;
   font-size: 12px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .footer-copyright p {
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 /* 반응형 디자인 */

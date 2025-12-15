@@ -1,229 +1,428 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { api } from '../../auth/api/axios';
-import '../../../assets/styles/Home.css';
-import '../../../assets/styles/Information.css';
-
-// ✨ 백엔드 ContentListResponse 구조에 맞춘 타입
-interface InformationItem {
-  id: number;
-  title: string;
-  category: string;
-  s3ImageUrl: string;
-  relatedPosture: string;
-}
+import TopBar from '../../../components/TopBar';
 
 function InformationPage() {
-  const location = useLocation();
-  const [items, setItems] = useState<InformationItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('전체');
-  const [selectedItem, setSelectedItem] = useState<InformationItem | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const videoSrc = '/videos/info-bg0001-0040.mp4';
+  const [activeButton, setActiveButton] = useState<string>('전체');
+  const [isVideoVisible, setIsVideoVisible] = useState(false);
 
-  const categories = ['전체', '질환', '운동'];
-
-  // 🔍 목록 불러오기 (백엔드 API 호출)
   useEffect(() => {
-    const fetchItems = async () => {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        const response = await api.post('/api/content', {
-          keyword: searchQuery || null,
-          category: selectedCategory !== '전체' ? selectedCategory : null,
-        });
-
-        // 백엔드 응답 구조 확인: 배열 또는 { contents: [] } 형태일 수 있음
-        const data = response.data;
-        const itemsArray = Array.isArray(data) ? data : (data?.contents || data?.data || []);
-        
-        setItems(itemsArray);
-      } catch (error: any) {
-        console.error('콘텐츠 불러오기 실패:', error);
-        setError('콘텐츠를 불러오는 중 오류가 발생했습니다.');
-        // 백엔드에서 데이터를 받아오므로 프론트엔드에서 더미 데이터를 설정하지 않음
-        setItems([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchItems();
-  }, [searchQuery, selectedCategory]);
-
-  // 📌 상세 조회
-  const handleItemClick = async (id: number) => {
-    try {
-      const response = await api.get(`/api/content/${id}`);
-      setSelectedItem(response.data);
-    } catch (error) {
-      console.error('상세정보 조회 실패:', error);
-    }
-  };
+    // 페이지 로드 시 애니메이션 시작
+    const timer = setTimeout(() => {
+      setIsVideoVisible(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div className="information-container" style={{ minHeight: '100vh', backgroundColor: '#f5f7fa' }}>
-      <div className="dashboard-content">
-        {/* 왼쪽 사이드바 */}
-        <aside className="sidebar left-sidebar">
-          <nav className="sidebar-nav">
-            <Link to="/monitor" className={`nav-item ${location.pathname === '/monitor' ? 'active' : ''}`}>
-              <div className="nav-icon blue">📊</div>
-              <div className="nav-text"><span className="nav-title">실시간 자세 분석</span></div>
-            </Link>
-            <div className={`nav-item ${location.pathname === '/information' ? 'active' : ''}`}>
-              <div className="nav-icon blue">📚</div>
-              <div className="nav-text"><span className="nav-title">정보 제공</span></div>
-            </div>
-            <Link to="/selfcare" className={`nav-item ${location.pathname === '/selfcare' ? 'active' : ''}`}>
-              <div className="nav-icon">👤</div>
-              <div className="nav-text"><span className="nav-title">자기 관리</span></div>
-            </Link>
-          </nav>
-          <div className="cookie-link">쿠키 관리 또는 옵트 아웃</div>
-        </aside>
-
-        {/* 메인 콘텐츠 */}
-        <main className="main-content information-main">
-          <div className="content-header">
-            <h1 className="main-title">정보 제공</h1>
-            <p className="main-subtitle">자세 관련 질환과 스트레칭 방법을 확인하세요</p>
+    <div style={{ minHeight: '100vh' }}>
+      <TopBar />
+      
+      {/* 16:9 동영상 섹션 - 중간 크기 */}
+      <div
+        style={{
+          width: '100%',
+          position: 'relative',
+          aspectRatio: '20 / 9',
+          overflow: 'hidden',
+          backgroundColor: '#000',
+        }}
+      >
+        <video
+          src={videoSrc}
+          autoPlay
+          loop
+          muted
+          playsInline
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block',
+            opacity: isVideoVisible ? 1 : 0,
+            transform: isVideoVisible ? 'translateY(0)' : 'translateY(30px)',
+            transition: 'opacity 1.2s ease-out, transform 1.2s ease-out',
+          }}
+          onError={(e) => {
+            console.error('동영상 로드 실패:', videoSrc);
+            e.currentTarget.style.display = 'none';
+          }}
+        />
+        {/* 위에서 아래로 그라데이션 오버레이 - 위쪽이 가장 어둡게 (검정색) */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 20%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.2) 80%, rgba(0, 0, 0, 0) 100%)',
+            pointerEvents: 'none',
+            zIndex: 1,
+          }}
+        />
+        
+        {/* 텍스트 오버레이 */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            zIndex: 2,
+            padding: '40px',
+            paddingLeft: '80px',
+          }}
+        >
+          <h1
+            style={{
+              color: 'white',
+              fontSize: '48px',
+              fontWeight: 700,
+              margin: 0,
+              marginBottom: '16px',
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
+              fontFamily: "'Pretendard', sans-serif",
+              textAlign: 'left',
+              pointerEvents: 'none',
+            }}
+          >
+            정보 제공
+          </h1>
+          <p
+            style={{
+              color: 'white',
+              fontSize: '20px',
+              fontWeight: 400,
+              margin: 0,
+              marginBottom: '16px',
+              textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
+              fontFamily: "'Pretendard', sans-serif",
+              textAlign: 'left',
+              pointerEvents: 'none',
+            }}
+          >
+            자세 관련 질환과 스트레칭 방법을 확인하세요
+          </p>
+          
+          {/* 검색창 */}
+          <div
+            style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: '600px',
+              alignSelf: 'center',
+              marginTop: '180px',
+            }}
+          >
+            <input
+              type="text"
+              placeholder="검색어를 입력하세요"
+              style={{
+                width: '100%',
+                padding: '14px 24px',
+                borderRadius: '50px',
+                border: '1px solid #00ffff',
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                color: 'white',
+                fontSize: '16px',
+                fontFamily: "'Pretendard', sans-serif",
+                outline: 'none',
+                backdropFilter: 'blur(10px)',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 0 2px rgba(0, 255, 255, 0.2)',
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#00ffff';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                e.currentTarget.style.boxShadow = '0 0 3px rgba(0, 255, 255, 0.3)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = '#00ffff';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.boxShadow = '0 0 2px rgba(0, 255, 255, 0.2)';
+              }}
+            />
           </div>
-
-          {/* 검색 & 카테고리 */}
-          <div className="search-section">
-            <div className="search-container">
-              <label className="search-label">검색</label>
-              <div className="search-input-wrapper">
-                <span className="search-icon">🔍</span>
-                <input
-                  type="text"
-                  className="search-input"
-                  placeholder="Q 검색어 입력..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <button className="refresh-button" onClick={() => setSearchQuery('')}>↻</button>
-              </div>
-            </div>
-
-            <div className="category-section">
-              <label className="category-label">카테고리</label>
-              <div className="category-buttons">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    className={`category-button ${selectedCategory === category ? 'active' : ''}`}
-                    onClick={() => setSelectedCategory(category)}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* 정보 리스트 */}
-          <div className="information-list">
-            {isLoading ? (
-              <div className="information-empty">
-                <div className="empty-icon">⏳</div>
-                <p className="empty-text">콘텐츠를 불러오는 중...</p>
-              </div>
-            ) : error && items.length === 0 ? (
-              <div className="information-empty">
-                <div className="empty-icon">⚠️</div>
-                <p className="empty-text">{error}</p>
-              </div>
-            ) : items.length === 0 ? (
-              <div className="information-empty">
-                <div className="empty-icon">📭</div>
-                <p className="empty-text">표시할 콘텐츠가 없습니다.</p>
-              </div>
-            ) : (
-              items.map((item) => {
-                // 자세 카드(질환 카테고리)에만 이미지 표시
-                // 일단 모든 카드에 이미지를 표시해서 문제 확인
-                const isPostureCard = true; // 임시로 모든 카드에 표시
-                const imagePath = `/images/pose${item.id}.png`;
-                
-                return (
-                  <div
-                    key={item.id}
-                    className={`info-card ${selectedItem?.id === item.id ? 'selected' : ''}`}
-                    onClick={() => handleItemClick(item.id)}
-                  >
-                    {/* 자세 카드에만 이미지 표시 - 회색 박스에 이미지 넣기 */}
-                    {isPostureCard && (
-                      <div className="card-image-container">
-                        <img
-                          src={imagePath}
-                          alt={item.title}
-                          className="card-image"
-                          onError={(e) => {
-                            console.error('이미지 로드 실패:', imagePath, '카테고리:', item.category, 'ID:', item.id, '제목:', item.title);
-                            // 이미지가 없으면 컨테이너 숨김
-                            const container = e.currentTarget.parentElement;
-                            if (container) {
-                              container.style.display = 'none';
-                            }
-                          }}
-                          onLoad={() => {
-                            console.log('이미지 로드 성공:', imagePath, 'ID:', item.id);
-                          }}
-                        />
-                      </div>
-                    )}
-                    
-                    <div className="card-header">
-                      <span className="card-icon">📘</span>
-                      <h3 className="card-title">{item.title}</h3>
-                    </div>
-
-                    {/* 설명: relatedPosture 표시 */}
-                    <p className="card-description">{item.relatedPosture}</p>
-
-                    {/* 태그 대신 posture 하나만 표시 */}
-                    <div className="card-tags">
-                      <span className="tag">{item.category}</span>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </main>
-
-        {/* 오른쪽 상세 정보 패널 */}
-        <aside className="detail-panel">
-          <h3 className="detail-title">상세 정보</h3>
-
-          {selectedItem ? (
-            <div className="detail-content">
-              <div className="detail-header">
-                <span className="detail-icon">📘</span>
-                <h4 className="detail-item-title">{selectedItem.title}</h4>
-              </div>
-
-              <p className="detail-description">{selectedItem.relatedPosture}</p>
-
-              <div className="detail-tags">
-                <span className="detail-tag">{selectedItem.category}</span>
-              </div>
-            </div>
-          ) : (
-            <div className="detail-empty">
-              <div className="empty-icon">⚠️</div>
-              <p className="empty-text">왼쪽에서 항목을 선택하세요</p>
-            </div>
-          )}
-        </aside>
+        </div>
       </div>
 
-      <button className="help-button">?</button>
+      {/* 버튼 섹션 */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '16px',
+          padding: '20px 80px',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <button
+          onClick={() => setActiveButton('전체')}
+          style={{
+            padding: '8px 24px',
+            borderRadius: '8px',
+            border: `1px solid ${activeButton === '전체' ? '#8bb3c0' : '#d3d3d3'}`,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            backgroundColor: 'transparent',
+            color: activeButton === '전체' ? '#8bb3c0' : '#d3d3d3',
+            fontSize: '14px',
+            fontWeight: 300,
+            fontFamily: "'Pretendard', sans-serif",
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            outline: 'none',
+            boxShadow: 'none',
+            appearance: 'none',
+            WebkitAppearance: 'none',
+            MozAppearance: 'none',
+          } as React.CSSProperties}
+          onMouseEnter={(e) => {
+            if (activeButton !== '전체') {
+              e.currentTarget.style.borderColor = '#b0b0b0';
+              e.currentTarget.style.color = '#b0b0b0';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeButton !== '전체') {
+              e.currentTarget.style.borderColor = '#d3d3d3';
+              e.currentTarget.style.color = '#d3d3d3';
+            }
+          }}
+        >
+          전체
+        </button>
+        <button
+          onClick={() => setActiveButton('자세')}
+          style={{
+            padding: '8px 24px',
+            borderRadius: '8px',
+            border: `1px solid ${activeButton === '자세' ? '#8bb3c0' : '#d3d3d3'}`,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            backgroundColor: 'transparent',
+            color: activeButton === '자세' ? '#8bb3c0' : '#d3d3d3',
+            fontSize: '14px',
+            fontWeight: 300,
+            fontFamily: "'Pretendard', sans-serif",
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            outline: 'none',
+            boxShadow: 'none',
+            appearance: 'none',
+            WebkitAppearance: 'none',
+            MozAppearance: 'none',
+          } as React.CSSProperties}
+          onMouseEnter={(e) => {
+            if (activeButton !== '자세') {
+              e.currentTarget.style.borderColor = '#b0b0b0';
+              e.currentTarget.style.color = '#b0b0b0';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeButton !== '자세') {
+              e.currentTarget.style.borderColor = '#d3d3d3';
+              e.currentTarget.style.color = '#d3d3d3';
+            }
+          }}
+        >
+          자세
+        </button>
+        <button
+          onClick={() => setActiveButton('스트레칭')}
+          style={{
+            padding: '8px 24px',
+            borderRadius: '8px',
+            border: `1px solid ${activeButton === '스트레칭' ? '#8bb3c0' : '#d3d3d3'}`,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            backgroundColor: 'transparent',
+            color: activeButton === '스트레칭' ? '#8bb3c0' : '#d3d3d3',
+            fontSize: '14px',
+            fontWeight: 300,
+            fontFamily: "'Pretendard', sans-serif",
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            outline: 'none',
+            boxShadow: 'none',
+            appearance: 'none',
+            WebkitAppearance: 'none',
+            MozAppearance: 'none',
+          } as React.CSSProperties}
+          onMouseEnter={(e) => {
+            if (activeButton !== '스트레칭') {
+              e.currentTarget.style.borderColor = '#b0b0b0';
+              e.currentTarget.style.color = '#b0b0b0';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeButton !== '스트레칭') {
+              e.currentTarget.style.borderColor = '#d3d3d3';
+              e.currentTarget.style.color = '#d3d3d3';
+            }
+          }}
+        >
+          스트레칭
+        </button>
+                    </div>
+
+      {/* 카드 그리드 섹션 */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '40px',
+          padding: '40px 80px',
+          maxWidth: '1400px',
+          margin: '0 auto',
+        }}
+      >
+        {Array.from({ length: 28 }).map((_, index) => (
+          <div
+            key={index}
+            style={{
+              borderRadius: '8px',
+              backgroundColor: '#ffffff',
+              border: '1px solid #e0e0e0',
+              padding: '24px',
+              aspectRatio: '1 / 1',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+              transition: 'all 0.2s ease',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.15)';
+              e.currentTarget.style.borderColor = '#8bb3c0';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+              e.currentTarget.style.borderColor = '#e0e0e0';
+            }}
+          >
+            {/* 제목 */}
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: 700,
+                color: '#333',
+                margin: 0,
+                fontFamily: "'Pretendard', sans-serif",
+              }}
+            >
+              제목 {index + 1}
+            </h3>
+            
+            {/* 사진 영역 */}
+            <div
+              style={{
+                width: '100%',
+                flex: 1.5,
+                backgroundColor: '#f5f5f5',
+                borderRadius: '4px',
+                minHeight: '180px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px solid #e0e0e0',
+              }}
+            >
+              <span style={{ color: '#999', fontSize: '14px' }}>이미지</span>
+            </div>
+            
+            {/* 한 줄 설명 */}
+            <p
+              style={{
+                fontSize: '14px',
+                color: '#666',
+                margin: 0,
+                fontFamily: "'Pretendard', sans-serif",
+                lineHeight: '1.5',
+              }}
+            >
+              설명 텍스트가 여기에 표시됩니다.
+            </p>
+            
+            {/* 둥근 모서리 버튼 2개 */}
+            <div
+              style={{
+                display: 'flex',
+                gap: '8px',
+                marginTop: 'auto',
+              }}
+            >
+              <button
+                style={{
+                  flex: 1,
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid #e0e0e0',
+                  backgroundColor: '#f5f5f5',
+                  color: '#666',
+                  fontSize: '13px',
+                  fontWeight: 400,
+                  fontFamily: "'Pretendard', sans-serif",
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  outline: 'none',
+                  boxShadow: 'none',
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
+                } as React.CSSProperties}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#8bb3c0';
+                  e.currentTarget.style.color = '#8bb3c0';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#e0e0e0';
+                  e.currentTarget.style.color = '#666';
+                }}
+              >
+                버튼 1
+              </button>
+              <button
+                style={{
+                  flex: 1,
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid #e0e0e0',
+                  backgroundColor: '#f5f5f5',
+                  color: '#666',
+                  fontSize: '13px',
+                  fontWeight: 400,
+                  fontFamily: "'Pretendard', sans-serif",
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  outline: 'none',
+                  boxShadow: 'none',
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
+                } as React.CSSProperties}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#8bb3c0';
+                  e.currentTarget.style.color = '#8bb3c0';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#e0e0e0';
+                  e.currentTarget.style.color = '#666';
+                }}
+              >
+                버튼 2
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

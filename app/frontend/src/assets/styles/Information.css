@@ -123,9 +123,33 @@ body {
 /* 메인 콘텐츠 */
 .main-content {
   flex: 1;
-  padding: 32px;
+  padding: 0;
   overflow-y: auto;
   background: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+}
+
+.information-main {
+  padding: 0;
+  padding-bottom: 32px;
+}
+
+/* 상단 이미지 바 */
+.top-image-bar {
+  width: 100%;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.top-bar-image {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
 }
 
 /* 정보 제공 페이지 메인 래퍼 - 2컬럼 레이아웃 */

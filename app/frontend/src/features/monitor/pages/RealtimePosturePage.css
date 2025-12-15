@@ -1,5 +1,22 @@
 /* RealtimePosturePage.css */
 
+/* 상단 이미지 바 */
+.top-image-bar {
+  width: 100%;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.top-bar-image {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
 .realtime-page {
   display: flex;
   flex-direction: column;

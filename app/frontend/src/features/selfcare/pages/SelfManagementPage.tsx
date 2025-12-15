@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useWeeklyReport } from '../../../hooks/useWeeklyReport';
 import '../../../assets/styles/Home.css';
 import '../../../assets/styles/SelfManagement.css';
+import TopImageBar from '../../../components/TopImageBar';
 import './SelfManagementPage.css';
 
 // Recharts 컴포넌트 import
@@ -167,6 +168,8 @@ function SelfManagementPage() {
 
         {/* 메인 콘텐츠 */}
         <main className="main-content self-management-main">
+          <TopImageBar />
+          
           <div className="content-header">
             <h1 className="main-title">자기 관리</h1>
             <p className="main-subtitle">
