@@ -1,9 +1,4 @@
-<<<<<<< Updated upstream
 import { useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-=======
-import { useEffect } from 'react';
->>>>>>> Stashed changes
 import '../../../assets/styles/Home.css';
 import { useWebcam } from '../hooks/useWebcam';
 import { usePoseInference } from '../../ai/hooks/usePoseInference';
