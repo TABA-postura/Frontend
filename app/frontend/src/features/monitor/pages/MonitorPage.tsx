@@ -7,7 +7,6 @@ import WebcamPanel from '../components/WebcamPanel';
 import MonitoringControls from '../components/MonitoringControls';
 import LiveStatsCard from '../components/LiveStatsCard';
 import AccumulatedPostureCard from '../components/AccumulatedPostureCard';
-import PostureFeedbackPanel from '../components/PostureFeedbackPanel';
 import TopBar from '../../../components/TopBar';
 import './MonitorPage.css';
 
@@ -199,27 +198,27 @@ function MonitorPage() {
       className="monitor-container"
       style={{ 
         minHeight: '100vh',
-        backgroundImage: 'url(/images/posetura_line.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed',
+        height: '100vh', /* 화면 높이에 맞춤 */
         position: 'relative',
+        overflow: 'hidden', /* 스크롤 방지 */
       }}
     >
-      {/* 배경 오버레이 - 밝은 하늘색 반투명 */}
+      {/* 배경 이미지 - 상단 바 제외한 영역에 맞춤 */}
       <div
         style={{
           position: 'absolute',
-          top: 0,
+          top: '150px', /* TopBar 높이 */
           left: 0,
           right: 0,
-          bottom: 0,
-          background: 'rgba(230, 245, 255, 0.25)', // 더 밝은 하늘색
+          height: 'calc(100vh - 150px)', /* 화면 높이에서 TopBar 높이 제외 */
+          backgroundImage: 'url(/images/sincerely-media-gddRiwCKJbA-unsplash.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
           zIndex: 0,
         }}
       />
-      
+
       <div style={{ position: 'relative', zIndex: 1 }}>
         <TopBar />
       
@@ -228,7 +227,7 @@ function MonitorPage() {
           <main className="main-content monitor-main">
             <div className="monitor-page">
               <div className="monitor-page__content">
-                {/* 좌측: 설정 및 통계 */}
+                {/* 좌측: 모니터링 설정 및 실시간 통계 */}
                 <section className="monitor-page__left">
                   <MonitoringControls
                     status={session.status}
@@ -239,26 +238,26 @@ function MonitorPage() {
                     onEnd={handleEnd}
                     canStart={canStart}
                   />
-
                   <LiveStatsCard liveStats={session.liveStats} />
-
-                  <AccumulatedPostureCard issues={session.accumulatedIssues} />
                 </section>
 
-                {/* 우측: 웹캠 패널 */}
-                <section className="monitor-page__right">
+                {/* 중앙: 웹캠 패널 */}
+                <section className="monitor-page__center">
                   <WebcamPanel
                     isActive={webcam.isActive}
                     isLoading={webcam.isLoading}
                     error={webcam.error}
                     videoRef={webcam.videoRef}
                     status={session.status}
+                    feedback={session.latestFeedback}
                   />
                 </section>
-              </div>
 
-              {/* 하단: 피드백 패널 */}
-              <PostureFeedbackPanel feedback={session.latestFeedback} />
+                {/* 우측: 누적 자세 데이터 */}
+                <section className="monitor-page__right">
+                  <AccumulatedPostureCard issues={session.accumulatedIssues} />
+                </section>
+              </div>
             </div>
           </main>
         </div>

@@ -1,20 +1,20 @@
 /* WebcamPanel.css */
 
 .webcam-panel {
-  background: white;
+  background: rgba(255, 255, 255, 0.75);
   border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  padding: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
-  max-width: 90%; /* 우측 영역 안에서 폭을 줄여 좌우 여백 확보 */
+  max-width: 97%; /* 우측 영역 안에서 폭을 줄여 좌우 여백 확보 */
   margin: 0 auto; /* 중앙 정렬 */
   min-width: 0; /* flex item이 overflow를 올바르게 처리하도록 */
   overflow: hidden;
-  backdrop-filter: none;
-  border: 1px solid #00cccc;
+  backdrop-filter: blur(10px);
+  border: none;
 }
 
 .webcam-panel__header {
@@ -26,7 +26,7 @@
 .webcam-panel__title {
   font-size: 15px;
   font-weight: 600;
-  color: #0f172a;
+  color: #13195b;
   margin: 0;
   font-family: 'Pretendard', sans-serif;
 }
@@ -38,11 +38,51 @@
   font-family: 'Pretendard', sans-serif;
 }
 
+.webcam-panel__feedback {
+  margin-top: 6px;
+}
+
+.webcam-panel__feedback-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.webcam-panel__feedback-content {
+  padding: 8px;
+  background: #f5f7fa;
+  border-radius: 8px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.webcam-panel__feedback-message {
+  font-size: 13px;
+  color: #13195b;
+  margin: 0;
+  line-height: 1.6;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.webcam-panel__feedback-empty {
+  font-size: 14px;
+  color: #13195b;
+  margin: 0;
+  font-style: italic;
+  font-family: 'Pretendard', sans-serif;
+}
+
 .webcam-panel__video-wrapper {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%; /* 16:9 비율 */
-  background: #0f172a;
+  padding-bottom: 56.25%; /* 16:9 비율 (9/16 = 0.5625) */
+  background-image: url(/images/chris-appano--sTwytNnqWw-unsplash.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border-radius: 8px;
   overflow: hidden;
 }
@@ -54,7 +94,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  background: #0f172a;
+  background: transparent;
 }
 
 .webcam-panel__overlay {
@@ -67,7 +107,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.2);
   z-index: 10;
 }
 
@@ -76,7 +116,7 @@
 }
 
 .webcam-panel__overlay--idle {
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(15, 23, 42, 0.2);
 }
 
 .webcam-panel__overlay--error {
@@ -84,7 +124,7 @@
 }
 
 .webcam-panel__overlay--status {
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(15, 23, 42, 0.2);
 }
 
 .webcam-panel__overlay--paused {

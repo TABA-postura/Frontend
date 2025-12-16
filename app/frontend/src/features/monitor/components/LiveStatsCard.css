@@ -1,14 +1,14 @@
 /* LiveStatsCard.css */
 
 .live-stats-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.75);
   border-radius: 12px;
   padding: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   width: 100%;
   min-width: 0; /* flex item이 overflow를 올바르게 처리하도록 */
-  backdrop-filter: none;
-  border: 1px solid #00cccc;
+  backdrop-filter: blur(10px);
+  border: none;
 }
 
 .live-stats-card__header {
@@ -18,14 +18,14 @@
 .live-stats-card__title {
   font-size: 15px;
   font-weight: 600;
-  color: #0f172a;
+  color: #13195b;
   margin: 0 0 4px 0;
   font-family: 'Pretendard', sans-serif;
 }
 
 .live-stats-card__description {
   font-size: 11px;
-  color: #4b5563;
+  color: #13195b;
   margin: 0;
   font-family: 'Pretendard', sans-serif;
 }
@@ -50,14 +50,14 @@
 
 .live-stats-card__stat-label {
   font-size: 11px;
-  color: #4b5563;
+  color: #13195b;
   font-family: 'Pretendard', sans-serif;
 }
 
 .live-stats-card__stat-value {
   font-size: 14px;
   font-weight: 600;
-  color: #0f172a;
+  color: #13195b;
   font-family: 'Pretendard', sans-serif;
 }
 

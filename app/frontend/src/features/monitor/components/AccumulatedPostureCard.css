@@ -1,22 +1,26 @@
 /* AccumulatedPostureCard.css */
 
 .accumulated-posture-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.75);
   border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-  backdrop-filter: none;
-  border: 1px solid #00cccc;
+  padding: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border: none;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* 웹캠 피드 창과 높이 맞춤 */
 }
 
 .accumulated-posture-card__header {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  margin-top: 8px; /* 상단 여백 추가 */
 }
 
 .accumulated-posture-card__title {
   font-size: 15px;
   font-weight: 600;
-  color: #0f172a;
+  color: #13195b;
   margin: 0;
   font-family: 'Pretendard', sans-serif;
 }
@@ -25,23 +29,25 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
-  background: rgba(0, 204, 204, 0.08);
-  border-left: 3px solid #00cccc;
+  padding: 10px 10px;
+  background: linear-gradient(180deg, #c5d9ff 0%, #a8d7ff 100%);
+  border-left: 3px solid #6b8bc4;
   border-radius: 6px;
   margin-bottom: 10px;
+  margin-top: 8px; /* 상단 여백 추가 */
+  box-shadow: 0 3px 6px rgba(26, 123, 184, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .accumulated-posture-card__most-frequent-label {
   font-size: 11px;
-  color: #4b5563;
+  color: #13195b;
   font-weight: 500;
   font-family: 'Pretendard', sans-serif;
 }
 
 .accumulated-posture-card__most-frequent-value {
   font-size: 13px;
-  color: #0f172a;
+  color: #13195b;
   font-weight: 600;
   font-family: 'Pretendard', sans-serif;
 }
@@ -49,14 +55,16 @@
 .accumulated-posture-card__issues {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+  flex: 1; /* 남은 공간을 채우도록 */
+  margin-top: 40px; /* 위쪽 여백 추가 */
 }
 
 .accumulated-posture-card__issues-title {
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 600;
-  color: #0f172a;
-  margin: 0 0 6px 0;
+  color: #13195b;
+  margin: 0 0 8px 0;
   font-family: 'Pretendard', sans-serif;
 }
 
@@ -70,7 +78,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
+  padding: 10px 0;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -80,14 +88,14 @@
 
 .accumulated-posture-card__issue-label {
   font-size: 11px;
-  color: #4b5563;
+  color: #13195b;
   font-family: 'Pretendard', sans-serif;
 }
 
 .accumulated-posture-card__issue-count {
   font-size: 11px;
   font-weight: 600;
-  color: #0f172a;
+  color: #13195b;
   font-family: 'Pretendard', sans-serif;
 }
 

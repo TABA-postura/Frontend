@@ -9,7 +9,16 @@ export interface LiveStats {
   goodPostureRate: number;    // 0~100, goodPostureSeconds / elapsedSeconds * 100
 }
 
-export type PostureIssueType = 'FORWARD_HEAD' | 'BENT_BACK' | 'SHOULDER_ASYMMETRY';
+export type PostureIssueType = 
+  | 'FORWARD_HEAD' 
+  | 'BENT_BACK' 
+  | 'SHOULDER_ASYMMETRY'
+  | 'SHOULDER_TILT'
+  | 'UPPER_BODY_TILT'
+  | 'TOO_CLOSE_TO_SCREEN'
+  | 'ARM_SUPPORT_CHIN_REST'
+  | 'LEFT_RIGHT_ASYMMETRY'
+  | 'HEAD_TILT';
 
 export interface PostureIssueStat {
   type: PostureIssueType;
