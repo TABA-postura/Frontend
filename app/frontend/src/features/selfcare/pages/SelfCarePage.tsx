@@ -479,10 +479,11 @@ function SelfCarePage() {
                     cy="50%"
                     labelLine={false}
                     label={({ name, percent }) => `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`}
-                    outerRadius={120}
+                    outerRadius={135}
                     fill="#8884d8"
                     dataKey="value"
-                    stroke="none"
+                    stroke="#7ff5f0"
+                    strokeWidth={1}
                   >
                     {postureDistributionData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />

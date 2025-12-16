@@ -6,7 +6,8 @@ html {
   height: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
-  overflow-x: hidden !important;
+  overflow: hidden !important;
+  background-color: #ffffff !important;
 }
 
 body {
@@ -17,8 +18,8 @@ body {
   min-height: 100vh !important;
   margin: 0 !important;
   padding: 0 !important;
-  overflow-x: hidden !important;
-  background-color: transparent !important;
+  overflow: hidden !important;
+  background-color: #ffffff !important;
 }
 
 #root {
@@ -36,12 +37,12 @@ body {
 .monitor-container {
   width: 100%;
   min-height: 100vh;      /* 화면을 채우되, 바 높이는 상단 패딩으로 해결 */
-  height: auto;           /* 강제 높이 없음 */
+  height: 100vh;          /* 화면 높이에 맞춤 */
   background: transparent;
   padding: 0;             /* TopBar는 바로 상단에 붙도록 */
   margin: 0;
   position: relative;
-  overflow: hidden;
+  overflow: hidden;        /* 스크롤 비활성화 */
 }
 
 /* 대시보드 레이아웃 */
@@ -150,8 +151,7 @@ body {
 .main-content {
   flex: 1;
   padding: 32px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;        /* 스크롤 비활성화 */
   background: transparent;
   min-width: 0; /* flex item이 overflow를 올바르게 처리하도록 */
   width: 100%;
@@ -162,9 +162,9 @@ body {
   display: block;
   width: 100%;
   min-width: 0; /* flex item이 overflow를 올바르게 처리하도록 */
-  padding: 16px 20px; /* 좌우 여백을 늘려 우측 붙음 방지 */
+  padding: 16px 20px 40px 20px; /* 좌우 여백과 하단 여백 추가 */
   max-width: 1000px;
-  margin: 40px auto 0; /* TopBar와 메인 콘텐츠 사이 여백 확대 */
+  margin: 56px auto 0; /* TopBar와 메인 콘텐츠 사이 여백 확대 */
 }
 
 .content-header {

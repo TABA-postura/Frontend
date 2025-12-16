@@ -28,6 +28,12 @@ const INITIAL_ISSUES: PostureIssueStat[] = [
   { type: 'FORWARD_HEAD', label: '거북목', count: 0 },
   { type: 'BENT_BACK', label: '허리 굽힘', count: 0 },
   { type: 'SHOULDER_ASYMMETRY', label: '어깨 비대칭', count: 0 },
+  { type: 'SHOULDER_TILT', label: '한쪽 어깨 기울임', count: 0 },
+  { type: 'UPPER_BODY_TILT', label: '상체 기울임', count: 0 },
+  { type: 'TOO_CLOSE_TO_SCREEN', label: '화면 과도하게 가까움', count: 0 },
+  { type: 'ARM_SUPPORT_CHIN_REST', label: '팔 지지 / 턱 괴기', count: 0 },
+  { type: 'LEFT_RIGHT_ASYMMETRY', label: '좌우 비대칭 자세', count: 0 },
+  { type: 'HEAD_TILT', label: '머리 기울임', count: 0 },
 ];
 
 const FEEDBACK_MESSAGES = {

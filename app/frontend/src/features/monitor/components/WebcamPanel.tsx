@@ -7,6 +7,7 @@ export type WebcamPanelProps = {
   error: string | null;
   videoRef: React.RefObject<HTMLVideoElement | null>;
   status: SessionStatus;
+  feedback: string | null;
 };
 
 function WebcamPanel({
@@ -15,6 +16,7 @@ function WebcamPanel({
   error,
   videoRef,
   status,
+  feedback,
 }: WebcamPanelProps) {
   // 상태별 오버레이 메시지 결정
   const getOverlayMessage = () => {
@@ -38,7 +40,19 @@ function WebcamPanel({
     <div className="webcam-panel">
       <div className="webcam-panel__header">
         <h2 className="webcam-panel__title">실시간 웹캠 피드</h2>
-        <p className="webcam-panel__description">설정을 완료하고 모니터링을 시작하세요</p>
+      </div>
+
+      {/* 실시간 자세 피드백 */}
+      <div className="webcam-panel__feedback">
+        <div className="webcam-panel__feedback-content">
+          {feedback ? (
+            <p className="webcam-panel__feedback-message">{feedback}</p>
+          ) : (
+            <p className="webcam-panel__feedback-empty">
+              아직 피드백이 없습니다. 모니터링을 시작해주세요.
+            </p>
+          )}
+        </div>
       </div>
 
       <div className="webcam-panel__video-wrapper">
