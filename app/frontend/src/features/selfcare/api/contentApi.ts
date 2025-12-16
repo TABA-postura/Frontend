@@ -7,7 +7,7 @@
  */
 
 import apiClient from '../../../api/api';
-import type { ContentItem, ApiResponse, StretchingRecommendationResponse } from '../../../types/content';
+import type { ContentItem, ContentDetail, ApiResponse, StretchingRecommendationResponse } from '../../../types/content';
 
 /**
  * 자세 가이드 목록 조회
@@ -148,6 +148,31 @@ export async function getContentDetail(guideId: number): Promise<ContentItem> {
     throw new Error('콘텐츠 상세 조회에 실패했습니다.');
   } catch (error) {
     console.error('[Content API] getContentDetail error', error);
+    
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as any;
+      const errorMessage = axiosError.response?.data?.message || axiosError.message || '콘텐츠 상세 조회에 실패했습니다.';
+      throw new Error(errorMessage);
+    }
+    
+    throw new Error('콘텐츠 상세 조회에 실패했습니다.');
+  }
+}
+
+/**
+ * 콘텐츠 상세 조회 (새로운 API 엔드포인트)
+ * GET /api/content/{id}
+ * 
+ * @param id 콘텐츠 ID
+ * @returns 콘텐츠 상세 정보
+ * @throws Error API 호출 실패 시
+ */
+export async function getContentById(id: number): Promise<ContentDetail> {
+  try {
+    const response = await apiClient.get<ContentDetail>(`/api/content/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('[Content API] getContentById error', error);
     
     if (error && typeof error === 'object' && 'response' in error) {
       const axiosError = error as any;

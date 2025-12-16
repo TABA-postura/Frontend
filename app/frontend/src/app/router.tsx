@@ -9,6 +9,7 @@ import LoginPage from '../features/auth/pages/LoginPage';
 import SignupPage from '../features/auth/pages/SignupPage';
 import OAuthRedirectPage from '../features/auth/pages/OAuthRedirectPage';
 import InformationPage from '../features/information/pages/InformationPage';
+import ContentDetailPage from '../features/information/pages/ContentDetailPage';
 import SelfCarePage from '../features/selfcare/pages/SelfCarePage';
 import PrivateRoute from '../routes/PrivateRoute';
 
@@ -33,6 +34,15 @@ export const router = createBrowserRouter([
     path: '/oauth/redirect',
     element: <OAuthRedirectPage />,
   },
+  // 정보 제공 페이지는 public으로 접근 가능
+  {
+    path: '/information',
+    element: <InformationPage />,
+  },
+  {
+    path: '/content/:id',
+    element: <ContentDetailPage />,
+  },
   // 인증이 필요한 페이지들
   {
     element: <PrivateRoute />,
@@ -40,10 +50,6 @@ export const router = createBrowserRouter([
       {
         path: '/monitor',
         element: <MonitorPage />,
-      },
-      {
-        path: '/information',
-        element: <InformationPage />,
       },
       {
         path: '/selfcare',
