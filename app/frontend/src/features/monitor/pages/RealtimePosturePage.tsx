@@ -299,6 +299,7 @@ function RealtimePosturePage() {
                     error={webcam.error}
                     videoRef={webcam.videoRef}
                     status={session.status}
+                    feedback={session.latestFeedback}
                   />
                 </div>
               </section>

@@ -251,9 +251,14 @@ export function usePostureSession(): UsePostureSessionResult {
             prev.map((issue) => {
               // 백엔드 키를 프론트엔드 타입으로 매핑
               let backendKey: string = issue.type;
-              if (issue.type === 'SHOULDER_ASYMMETRY') {
-                backendKey = 'UNEQUAL_SHOULDERS';
-              }
+              
+              // 백엔드와 프론트엔드 키 매핑
+              const keyMapping: Record<string, string> = {
+                'SHOULDER_ASYMMETRY': 'UNEQUAL_SHOULDERS',
+                'TOO_CLOSE_TO_SCREEN': 'TOO_CLOSE', // 백엔드에서 사용하는 키
+              };
+              
+              backendKey = keyMapping[issue.type] || issue.type;
               const count = feedback.postureTypeCounts[backendKey] || 0;
               return { ...issue, count };
             })
