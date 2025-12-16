@@ -60,6 +60,7 @@ apiClient.interceptors.request.use(
       '/api/auth/signup',
       '/api/auth/login',
       '/api/auth/reissue',
+      '/api/contents', // Content API는 public (정보 제공 페이지)
     ];
 
     const isPublicEndpoint = publicEndpoints.some((endpoint) =>

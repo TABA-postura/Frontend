@@ -1,5 +1,12 @@
 // Monitor feature 공용 타입 정의
 
+/**
+ * 모니터링 세션 상태
+ * - IDLE: 초기 상태, 세션 시작 전
+ * - RUNNING: 모니터링 실행 중 (START 또는 RESUME 후)
+ * - PAUSED: 일시정지 상태
+ * - ENDED: 종료 상태 (COMPLETE 후)
+ */
 export type SessionStatus = 'IDLE' | 'RUNNING' | 'PAUSED' | 'ENDED';
 
 export interface LiveStats {

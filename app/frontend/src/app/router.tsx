@@ -7,8 +7,10 @@ import RealtimePosturePage from '../features/monitor/pages/RealtimePosturePage';
 import MonitorPage from '../features/monitor/pages/MonitorPage';
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignupPage from '../features/auth/pages/SignupPage';
+import OAuthRedirectPage from '../features/auth/pages/OAuthRedirectPage';
 import InformationPage from '../features/information/pages/InformationPage';
 import SelfCarePage from '../features/selfcare/pages/SelfCarePage';
+import PrivateRoute from '../routes/PrivateRoute';
 
 export const router = createBrowserRouter([
   {
@@ -20,10 +22,6 @@ export const router = createBrowserRouter([
     element: <RealtimePosturePage />,
   },
   {
-    path: '/monitor',
-    element: <MonitorPage />,
-  },
-  {
     path: '/login',
     element: <LoginPage />,
   },
@@ -32,11 +30,25 @@ export const router = createBrowserRouter([
     element: <SignupPage />,
   },
   {
-    path: '/information',
-    element: <InformationPage />,
+    path: '/oauth/redirect',
+    element: <OAuthRedirectPage />,
   },
+  // 인증이 필요한 페이지들
   {
-    path: '/selfcare',
-    element: <SelfCarePage />,
+    element: <PrivateRoute />,
+    children: [
+      {
+        path: '/monitor',
+        element: <MonitorPage />,
+      },
+      {
+        path: '/information',
+        element: <InformationPage />,
+      },
+      {
+        path: '/selfcare',
+        element: <SelfCarePage />,
+      },
+    ],
   },
 ]);

@@ -8,6 +8,7 @@ import MonitoringControls from '../components/MonitoringControls';
 import LiveStatsCard from '../components/LiveStatsCard';
 import AccumulatedPostureCard from '../components/AccumulatedPostureCard';
 import TopBar from '../../../components/TopBar';
+import type { SessionStatus } from '../types';
 import './MonitorPage.css';
 
 function MonitorPage() {
@@ -15,9 +16,11 @@ function MonitorPage() {
   const session = usePostureSession();
 
   // AI 추론 훅: sendFrame 함수를 받아옴
+  // sessionId는 프레임 전송 시점에 동적으로 전달되므로, 초기화 시점의 값은 중요하지 않음
+  // 하지만 usePoseInference는 sessionId를 의존성으로 사용하므로, 최신 값을 전달
   const poseInference = usePoseInference({
     videoRef: webcam.videoRef,
-    sessionId: session.sessionId || 0, // sessionId가 없으면 0 (실제로는 사용 안 됨)
+    sessionId: session.sessionId || 0, // 초기화 시점에는 0일 수 있음 (RUNNING 상태가 되면 업데이트됨)
     debugLogRaw: true,
     onResult: (result) => {
       console.log("[AI RESULT]", result);
@@ -41,20 +44,32 @@ function MonitorPage() {
   // 현재 세션 ID 추적: 세션이 변경되면 reset 플래그 초기화
   const currentSessionIdRef = useRef<number | null>(null);
 
-  // 세션 시작 시 reset 플래그 초기화
+  // 이전 상태 추적 (resume 감지용)
+  const prevStatusRef = useRef<SessionStatus>('IDLE');
+
+  // 세션 시작 및 재개 시 reset 플래그 초기화
   useEffect(() => {
-    // 새 세션이 시작되면 reset 플래그를 false로 초기화
+    // 새 세션이 시작되거나 재개되면 reset 플래그를 false로 초기화
     if (session.status === 'RUNNING' && session.sessionId !== null) {
-      // 세션 ID가 변경되었을 때만 reset 플래그 초기화
-      if (currentSessionIdRef.current !== session.sessionId) {
+      // 세션 ID가 변경되었거나 (새 세션 시작)
+      // PAUSED에서 RUNNING으로 변경된 경우 (resume) reset 플래그 초기화
+      const isNewSession = currentSessionIdRef.current !== session.sessionId;
+      const isResume = prevStatusRef.current === 'PAUSED' && session.status === 'RUNNING';
+      
+      if (isNewSession || isResume) {
         resetSentRef.current = false;
         currentSessionIdRef.current = session.sessionId;
       }
     } else {
       // 세션이 종료되면 reset 플래그 초기화
-      resetSentRef.current = false;
-      currentSessionIdRef.current = null;
+      if (session.status === 'ENDED' || session.status === 'IDLE') {
+        resetSentRef.current = false;
+        currentSessionIdRef.current = null;
+      }
     }
+    
+    // 이전 상태 업데이트
+    prevStatusRef.current = session.status;
   }, [session.status, session.sessionId]);
 
   // 프레임 전송 루프 관리
@@ -99,7 +114,19 @@ function MonitorPage() {
 
     const sendFrameLoop = async () => {
       // 세션이 종료되었거나 취소되었으면 중단
-      if (!isRunning || abortSignal.aborted || session.status !== 'RUNNING' || session.sessionId === null) {
+      if (!isRunning || abortSignal.aborted || session.status !== 'RUNNING') {
+        return;
+      }
+
+      // ✅ 조건 1: sessionId가 확보된 후에만 전송
+      // sessionId가 없거나 유효하지 않으면 전송하지 않음
+      const currentSessionId = session.sessionId;
+      if (currentSessionId === null || currentSessionId === 0) {
+        // sessionId가 아직 없으면 다음 프레임에서 재시도
+        console.warn('⚠️ [Frame Send] sessionId 없음, 대기 중... | current:', currentSessionId);
+        if (isRunning && !abortSignal.aborted && session.status === 'RUNNING') {
+          animationFrameRef.current = requestAnimationFrame(sendFrameLoop);
+        }
         return;
       }
 
@@ -109,14 +136,23 @@ function MonitorPage() {
       if (now - lastFrameTime >= FRAME_INTERVAL_MS) {
         lastFrameTime = now;
         
+        // ✅ 조건 2: 첫 프레임은 무조건 reset=true
         // reset 플래그 결정: 아직 reset을 보내지 않았으면 true, 이후는 false
         const shouldReset = !resetSentRef.current;
         if (shouldReset) {
           resetSentRef.current = true; // 한 번만 reset=true 전송
+          console.log('📸 [Frame Send] 첫 프레임 전송 | sessionId:', currentSessionId, '| reset:', shouldReset);
+        } else {
+          // 첫 프레임이 아닌 경우 간헐적으로만 로그 (너무 많은 로그 방지)
+          const logInterval = 5000; // 5초마다
+          if (now % logInterval < 100) {
+            console.log('📷 [Frame Send] 프레임 전송 | sessionId:', currentSessionId, '| reset:', shouldReset);
+          }
         }
 
         try {
           // AbortController를 통해 요청 취소 가능하도록 전달
+          // sendFrame 호출 시점에 sessionId가 유효함을 보장 (위에서 체크)
           await poseInference.sendFrame(shouldReset, abortSignal);
         } catch (error) {
           // AbortError는 정상적인 취소이므로 무시
@@ -128,7 +164,7 @@ function MonitorPage() {
       }
 
       // 다음 프레임 요청 (세션 상태 재확인)
-      if (isRunning && !abortSignal.aborted && session.status === 'RUNNING' && session.sessionId !== null) {
+      if (isRunning && !abortSignal.aborted && session.status === 'RUNNING') {
         animationFrameRef.current = requestAnimationFrame(sendFrameLoop);
       }
     };
@@ -152,16 +188,16 @@ function MonitorPage() {
     };
   }, [
     session.status,
-    session.sessionId,
+    session.sessionId, // sessionId 변경 시 effect 재실행하여 최신 sessionId 사용
     webcam.videoRef,
-    poseInference,
+    poseInference, // poseInference의 sendFrame이 sessionId 변경 시 재생성되므로 의존성에 포함
   ]);
 
   // 세션 시작 시 웹캠 시작
   const handleStart = async () => {
     try {
       await webcam.start();
-      session.handleStart();
+      await session.handleStart();
     } catch (err) {
       // 에러는 useWebcam에서 처리됨
       console.error('웹캠 시작 실패:', err);

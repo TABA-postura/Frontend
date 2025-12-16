@@ -1,54 +1,51 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useContentList, useContentDetail } from '../../../hooks/useContent';
-import type { ContentCategory } from '../../../types/content';
+import { 
+  usePostureGuides, 
+  useStretchings,
+  useContentDetail 
+} from '../hooks/useContent';
+import type { ContentItem } from '../../../types/content';
 import '../../../assets/styles/Home.css';
 import '../../../assets/styles/Information.css';
 import './InformationPage.css';
 
-// 카테고리 매핑: UI 카테고리 -> API 카테고리
-type UICategory = 'all' | 'posture' | 'stretching' | 'exercise';
-const categoryMapping: Record<UICategory, ContentCategory | 'all'> = {
-  all: 'all',
-  posture: '자세',
-  stretching: '스트레칭',
-  exercise: '교정 운동',
-};
-
-// 기본 이미지 경로 (s3ImageUrl이 null일 때 사용)
+// 기본 이미지 경로 (imageUrl이 null일 때 사용)
 const DEFAULT_IMAGE_PATH = '/images/default-content.jpg';
 
 function InformationPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<UICategory>('all');
-  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+  // 상태 관리: 선택된 자세
+  const [selectedPosture, setSelectedPosture] = useState<ContentItem | null>(null);
 
-  // API 카테고리 변환
-  const apiCategory = useMemo(() => {
-    return categoryMapping[selectedCategory] === 'all' 
-      ? undefined 
-      : (categoryMapping[selectedCategory] as ContentCategory);
-  }, [selectedCategory]);
+  // 1. 페이지 로드 시 → 자세 카드 리스트 조회
+  const { 
+    data: postureGuides, 
+    loading: postureLoading, 
+    error: postureError 
+  } = usePostureGuides();
 
-  // 콘텐츠 목록 조회
-  const { data: contentList, isLoading, error } = useContentList(
-    searchTerm || undefined,
-    apiCategory
-  );
+  // 2. 카드 클릭 시 → 선택된 자세의 상세 정보 조회
+  const { 
+    data: contentDetail, 
+    loading: detailLoading, 
+    error: detailError 
+  } = useContentDetail(selectedPosture?.guideId || null);
 
-  // 콘텐츠 상세 조회
-  const { data: contentDetail, isLoading: isDetailLoading } = useContentDetail(selectedItemId);
+  // 3. 카드 클릭 시 → posture 코드 기반 스트레칭 목록 조회
+  const { 
+    data: recommendedStretchings, 
+    loading: stretchingLoading, 
+    error: stretchingError 
+  } = useStretchings(selectedPosture?.posture || null);
 
-  const handleReset = () => {
-    setSearchTerm('');
-    setSelectedCategory('all');
+  // 자세 카드 클릭 핸들러
+  const handlePostureClick = (item: ContentItem) => {
+    setSelectedPosture(item);
   };
 
-  const categoryLabels: Record<UICategory, string> = {
-    all: '전체',
-    posture: '자세',
-    stretching: '스트레칭',
-    exercise: '교정 운동',
+  // 닫기 핸들러
+  const handleClose = () => {
+    setSelectedPosture(null);
   };
 
   return (
@@ -87,78 +84,45 @@ function InformationPage() {
 
         {/* 메인 콘텐츠 영역 - 2컬럼 레이아웃 */}
         <div className="information-main-wrapper">
-          {/* 왼쪽: 검색, 카테고리, 리스트 */}
+          {/* 왼쪽: 자세 카드 리스트 */}
           <main className="information-main-left">
-
-            {/* 검색 & 카테고리 */}
             <div className="search-section">
-              <div className="search-container">
-                <div className="search-input-wrapper">
-                  <input
-                    type="text"
-                    className="search-input"
-                    placeholder="검색어를 입력하세요"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                  {searchTerm && (
-                    <button className="refresh-button" onClick={handleReset} title="초기화">
-                      ↻
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <div className="category-section">
-                <div className="category-buttons">
-                  {(['all', 'posture', 'stretching', 'exercise'] as UICategory[]).map((category) => (
-                    <button
-                      key={category}
-                      className={`category-button category-button-${category} ${selectedCategory === category ? 'active' : ''}`}
-                      onClick={() => setSelectedCategory(category)}
-                    >
-                      {categoryLabels[category]}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <h2 style={{ marginBottom: '16px', fontSize: '20px', fontWeight: 600 }}>자세 가이드</h2>
             </div>
 
-            {/* 정보 리스트 - 세로 스크롤 */}
             <div className="information-list-container">
-              {isLoading ? (
+              {postureLoading ? (
                 <div className="information-empty">
                   <div className="empty-icon">⏳</div>
                   <p className="empty-text">로딩 중...</p>
                 </div>
-              ) : error ? (
+              ) : postureError ? (
                 <div className="information-empty">
                   <div className="empty-icon">⚠️</div>
-                  <p className="empty-text">콘텐츠를 불러오는 중 오류가 발생했습니다.</p>
+                  <p className="empty-text">자세 가이드를 불러오는 중 오류가 발생했습니다.</p>
                   <p className="empty-text" style={{ fontSize: '12px', color: '#999' }}>
-                    {error.message}
+                    {postureError}
                   </p>
                 </div>
-              ) : contentList.length === 0 ? (
+              ) : !postureGuides || postureGuides.length === 0 ? (
                 <div className="information-empty">
                   <div className="empty-icon">📭</div>
-                  <p className="empty-text">검색 결과가 없습니다.</p>
+                  <p className="empty-text">자세 가이드가 없습니다.</p>
                 </div>
               ) : (
-                contentList.map((item) => {
-                  // 카테고리 기반 CSS 클래스 매핑
-                  const categoryClass = item.category === '자세' ? 'posture' 
-                    : item.category === '스트레칭' ? 'stretching'
-                    : 'exercise';
-                  
-                  // 이미지 URL 처리: s3ImageUrl이 있으면 사용, 없으면 기본 이미지
-                  const imageUrl = item.s3ImageUrl || DEFAULT_IMAGE_PATH;
+                postureGuides.map((item) => {
+                  if (!item || !item.guideId || !item.title) {
+                    return null;
+                  }
+
+                  const imageUrl = item.imageUrl || DEFAULT_IMAGE_PATH;
+                  const isSelected = selectedPosture?.guideId === item.guideId;
                   
                   return (
                     <div
-                      key={item.id}
-                      className={`info-card info-card-${categoryClass} ${selectedItemId === item.id ? 'selected' : ''}`}
-                      onClick={() => setSelectedItemId(item.id)}
+                      key={item.guideId}
+                      className={`info-card info-card-posture ${isSelected ? 'selected' : ''}`}
+                      onClick={() => handlePostureClick(item)}
                     >
                       <div className="card-content-wrapper">
                         <div className="card-header">
@@ -171,21 +135,19 @@ function InformationPage() {
                             alt={item.title}
                             className="card-image"
                             onError={(e) => {
-                              // 이미지 로드 실패 시 기본 이미지로 대체
                               if (e.currentTarget.src !== DEFAULT_IMAGE_PATH) {
                                 e.currentTarget.src = DEFAULT_IMAGE_PATH;
                               } else {
-                                // 기본 이미지도 실패하면 숨김 처리
                                 e.currentTarget.style.display = 'none';
                               }
                             }}
                           />
                         </div>
 
-                        <p className="card-description">{item.relatedPart}</p>
+                        <p className="card-description">{item.relatedPart || ''}</p>
 
                         <div className="card-tags">
-                          <span className="tag">{item.category}</span>
+                          <span className="tag">{item.posture}</span>
                           {item.relatedPart && (
                             <span className="tag">{item.relatedPart}</span>
                           )}
@@ -193,39 +155,67 @@ function InformationPage() {
                       </div>
                     </div>
                   );
-                })
+                }).filter(Boolean)
               )}
             </div>
           </main>
-        </div>
-      </div>
 
-      {/* 모달 팝업 */}
-      {selectedItemId !== null && (
-        <div className="info-modal-overlay" onClick={() => setSelectedItemId(null)}>
-          <div className="info-modal-content" onClick={(e) => e.stopPropagation()}>
-            {isDetailLoading ? (
-              <div style={{ padding: '40px', textAlign: 'center' }}>
+          {/* 오른쪽: 상세 설명 + 스트레칭 목록 */}
+          {selectedPosture && (
+            <aside className="information-main-right">
+              <div className="detail-panel">
+                {/* 닫기 버튼 */}
+                <button 
+                  className="close-button" 
+                  onClick={handleClose}
+                  style={{
+                    position: 'absolute',
+                    top: '16px',
+                    right: '16px',
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '24px',
+                    cursor: 'pointer',
+                    color: '#666',
+                  }}
+                >
+                  ×
+                </button>
+
+                {/* 자세 상세 설명 */}
+                <div className="detail-section">
+                  <h3 className="detail-section-title">자세 상세 설명</h3>
+                  
+                  {detailLoading ? (
+                    <div style={{ padding: '20px', textAlign: 'center' }}>
                 <div className="empty-icon">⏳</div>
                 <p className="empty-text">로딩 중...</p>
               </div>
+                  ) : detailError ? (
+                    <div style={{ padding: '20px', textAlign: 'center' }}>
+                      <div className="empty-icon">⚠️</div>
+                      <p className="empty-text">상세 정보를 불러오는 중 오류가 발생했습니다.</p>
+                    </div>
             ) : contentDetail ? (
               <>
                 <div className="detail-header">
                   <h4 className="detail-item-title">{contentDetail.title}</h4>
-                  {contentDetail.category && (
-                    <span className="detail-category-tag">{contentDetail.category}</span>
+                        <div style={{ marginTop: '8px' }}>
+                          <span className="detail-category-tag">{contentDetail.posture}</span>
+                          {contentDetail.relatedPart && (
+                            <span className="detail-category-tag">{contentDetail.relatedPart}</span>
                   )}
+                        </div>
                 </div>
 
-                {contentDetail.s3ImageUrl && (
-                  <div className="detail-image-container" style={{ marginBottom: '24px' }}>
+                      {contentDetail.imageUrl && (
+                        <div className="detail-image-container" style={{ marginTop: '16px', marginBottom: '16px' }}>
                     <img
-                      src={contentDetail.s3ImageUrl}
+                            src={contentDetail.imageUrl}
                       alt={contentDetail.title}
                       style={{
                         width: '100%',
-                        maxHeight: '400px',
+                              maxHeight: '300px',
                         objectFit: 'cover',
                         borderRadius: '8px',
                       }}
@@ -236,31 +226,120 @@ function InformationPage() {
                   </div>
                 )}
 
-                <div className="detail-section">
-                  <h5 className="detail-section-title">내용</h5>
-                  <div className="description-box">
-                    <p className="detail-description" style={{ whiteSpace: 'pre-wrap' }}>
+                      <div className="description-box" style={{ marginTop: '16px' }}>
+                        <p className="detail-description" style={{ whiteSpace: 'pre-line' }}>
                       {contentDetail.contentText}
                     </p>
                   </div>
+                    </>
+                  ) : (
+                    <div style={{ padding: '20px', textAlign: 'center' }}>
+                      <div className="empty-icon">⚠️</div>
+                      <p className="empty-text">상세 정보를 불러올 수 없습니다.</p>
+                    </div>
+                  )}
                 </div>
 
-                {contentDetail.relatedPart && (
-                  <div className="detail-section">
-                    <h5 className="detail-section-title">관련 부위</h5>
-                    <p className="detail-text">{contentDetail.relatedPart}</p>
+                {/* 추천 스트레칭 목록 */}
+                <div className="detail-section" style={{ marginTop: '32px' }}>
+                  <h3 className="detail-section-title">
+                    추천 스트레칭 ({selectedPosture.posture})
+                  </h3>
+
+                  {stretchingLoading ? (
+                    <div style={{ padding: '20px', textAlign: 'center' }}>
+                      <div className="empty-icon">⏳</div>
+                      <p className="empty-text">스트레칭을 불러오는 중...</p>
+                    </div>
+                  ) : stretchingError ? (
+                    <div style={{ padding: '20px', textAlign: 'center' }}>
+                      <div className="empty-icon">⚠️</div>
+                      <p className="empty-text">스트레칭 목록을 불러오는 중 오류가 발생했습니다.</p>
+                      <p className="empty-text" style={{ fontSize: '12px', color: '#999' }}>
+                        {stretchingError}
+                      </p>
+                    </div>
+                  ) : !recommendedStretchings || recommendedStretchings.length === 0 ? (
+                    <div style={{ padding: '20px', textAlign: 'center' }}>
+                      <div className="empty-icon">📭</div>
+                      <p className="empty-text">추천 스트레칭이 없습니다.</p>
+                    </div>
+                  ) : (
+                    <div className="stretching-list">
+                      {recommendedStretchings.map((stretching) => {
+                        if (!stretching || !stretching.guideId || !stretching.title) {
+                          return null;
+                        }
+
+                        const stretchingImageUrl = stretching.imageUrl || DEFAULT_IMAGE_PATH;
+
+                        return (
+                          <div
+                            key={stretching.guideId}
+                            className="stretching-card"
+                            style={{
+                              background: 'white',
+                              borderRadius: '8px',
+                              padding: '16px',
+                              marginBottom: '12px',
+                              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                            }}
+                          >
+                            <h4 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 600 }}>
+                              {stretching.title}
+                            </h4>
+                            
+                            {stretching.imageUrl && (
+                              <div style={{ marginBottom: '8px' }}>
+                                <img
+                                  src={stretchingImageUrl}
+                                  alt={stretching.title}
+                                  style={{
+                                    width: '100%',
+                                    maxHeight: '200px',
+                                    objectFit: 'cover',
+                                    borderRadius: '4px',
+                                  }}
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                  }}
+                                />
                   </div>
                 )}
-              </>
-            ) : (
-              <div style={{ padding: '40px', textAlign: 'center' }}>
-                <div className="empty-icon">⚠️</div>
-                <p className="empty-text">콘텐츠를 불러올 수 없습니다.</p>
+
+                            <p style={{ margin: '8px 0', fontSize: '14px', color: '#666' }}>
+                              {stretching.relatedPart && (
+                                <span style={{ marginRight: '8px' }}>부위: {stretching.relatedPart}</span>
+                              )}
+                            </p>
+
+                            {stretching.contentText && (
+                              <p 
+                                style={{ 
+                                  margin: '8px 0 0 0', 
+                                  fontSize: '14px', 
+                                  color: '#333',
+                                  whiteSpace: 'pre-line',
+                                  lineHeight: '1.6',
+                                }}
+                              >
+                                {stretching.contentText.length > 100 
+                                  ? `${stretching.contentText.substring(0, 100)}...` 
+                                  : stretching.contentText}
+                              </p>
+                            )}
+                          </div>
+                        );
+                      }).filter(Boolean)}
               </div>
             )}
           </div>
         </div>
+            </aside>
       )}
+        </div>
+      </div>
+
 
       <button className="help-button">?</button>
     </div>
