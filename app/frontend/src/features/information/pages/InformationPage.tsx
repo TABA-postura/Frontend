@@ -1,12 +1,34 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TopBar from '../../../components/TopBar';
+import { useInfoData } from '../hooks/useInfoData';
+import { InfoImage } from '../components/InfoImage';
+import type { Category } from '../types/info';
 import '../../../assets/styles/Information.css';
 
 function InformationPage() {
+  const navigate = useNavigate();
   const videoSrc = '/videos/info-bg0001-0040.mp4';
   const [activeButton, setActiveButton] = useState<string>('전체');
   const [isVideoVisible, setIsVideoVisible] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
+
+  // 카테고리 매핑: '전체' -> undefined, '자세' -> '자세', '스트레칭' -> '스트레칭'
+  const categoryMap: Record<string, Category> = {
+    '전체': 'all',
+    '자세': '자세',
+    '스트레칭': '스트레칭',
+  };
+
+  // API 데이터 조회
+  const category = categoryMap[activeButton] || 'all';
+  const apiCategory = category === 'all' ? undefined : category;
+  const { data: infoItems, isLoading, error, refetch } = useInfoData({
+    category: apiCategory,
+    keyword: searchKeyword || undefined,
+    autoFetch: true,
+  });
 
   useEffect(() => {
     // 페이지 로드 시 애니메이션 시작
@@ -135,6 +157,8 @@ function InformationPage() {
             <input
               type="text"
               placeholder="검색어를 입력하세요"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
               style={{
                 width: '100%',
                 padding: '14px 24px',
@@ -298,145 +322,127 @@ function InformationPage() {
           margin: '0 auto',
         }}
       >
-        {Array.from({ length: 28 }).map((_, index) => (
-          <div
-            key={index}
-            style={{
-              borderRadius: '8px',
-              backgroundColor: '#ffffff',
-              border: '1px solid #e0e0e0',
-              padding: '24px',
-              aspectRatio: '1 / 1',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.2s ease',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.15)';
-              e.currentTarget.style.borderColor = '#8bb3c0';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
-              e.currentTarget.style.borderColor = '#e0e0e0';
-            }}
-          >
-            {/* 제목 */}
-            <h3
-              style={{
-                fontSize: '18px',
-                fontWeight: 700,
-                color: '#333',
-                margin: 0,
-                fontFamily: "'Pretendard', sans-serif",
-              }}
-            >
-              제목 {index + 1}
-            </h3>
-            
-            {/* 사진 영역 */}
-            <div
-              style={{
-                width: '100%',
-                flex: 1.5,
-                backgroundColor: '#f5f5f5',
-                borderRadius: '4px',
-                minHeight: '180px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <span style={{ color: '#999', fontSize: '14px' }}>이미지</span>
-            </div>
-            
-            {/* 한 줄 설명 */}
-            <p
-              style={{
-                fontSize: '14px',
-                color: '#666',
-                margin: 0,
-                fontFamily: "'Pretendard', sans-serif",
-                lineHeight: '1.5',
-              }}
-            >
-              설명 텍스트가 여기에 표시됩니다.
+        {isLoading ? (
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
+            <p style={{ color: '#666', fontSize: '16px' }}>로딩 중...</p>
+          </div>
+        ) : error ? (
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
+            <p style={{ color: '#d32f2f', fontSize: '16px', marginBottom: '16px' }}>
+              데이터를 불러오는데 실패했습니다.
             </p>
-            
-            {/* 둥근 모서리 버튼 2개 */}
-            <div
-              style={{
-                display: 'flex',
-                gap: '8px',
-                marginTop: 'auto',
-              }}
-            >
+            {error.message && (
+              <p style={{ color: '#999', fontSize: '14px', marginBottom: '16px' }}>
+                {error.message}
+              </p>
+            )}
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
               <button
+                onClick={() => refetch()}
                 style={{
-                  flex: 1,
-                  padding: '8px 16px',
+                  padding: '8px 24px',
                   borderRadius: '8px',
-                  border: '1px solid #e0e0e0',
-                  backgroundColor: '#f5f5f5',
-                  color: '#666',
-                  fontSize: '13px',
+                  border: '1px solid #8bb3c0',
+                  backgroundColor: '#ffffff',
+                  color: '#8bb3c0',
+                  fontSize: '14px',
                   fontWeight: 400,
                   fontFamily: "'Pretendard', sans-serif",
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
-                  outline: 'none',
-                  boxShadow: 'none',
-                  appearance: 'none',
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'none',
-                } as React.CSSProperties}
+                }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#8bb3c0';
-                  e.currentTarget.style.color = '#8bb3c0';
+                  e.currentTarget.style.backgroundColor = '#f0f8ff';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#e0e0e0';
-                  e.currentTarget.style.color = '#666';
+                  e.currentTarget.style.backgroundColor = '#ffffff';
                 }}
               >
-                버튼 1
-              </button>
-              <button
-                style={{
-                  flex: 1,
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  border: '1px solid #e0e0e0',
-                  backgroundColor: '#f5f5f5',
-                  color: '#666',
-                  fontSize: '13px',
-                  fontWeight: 400,
-                  fontFamily: "'Pretendard', sans-serif",
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  outline: 'none',
-                  boxShadow: 'none',
-                  appearance: 'none',
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'none',
-                } as React.CSSProperties}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#8bb3c0';
-                  e.currentTarget.style.color = '#8bb3c0';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#e0e0e0';
-                  e.currentTarget.style.color = '#666';
-                }}
-              >
-                버튼 2
+                다시 시도
               </button>
             </div>
           </div>
-        ))}
+        ) : infoItems && infoItems.length > 0 ? (
+          infoItems.map((item) => (
+            <div
+              key={item.id}
+              style={{
+                borderRadius: '8px',
+                backgroundColor: '#ffffff',
+                border: '1px solid #e0e0e0',
+                padding: '24px',
+                aspectRatio: '1 / 1',
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+              }}
+              onClick={() => navigate(`/content/${item.id}`)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.15)';
+                e.currentTarget.style.borderColor = '#8bb3c0';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+                e.currentTarget.style.borderColor = '#e0e0e0';
+              }}
+            >
+              {/* 제목 */}
+              <h3
+                style={{
+                  fontSize: '18px',
+                  fontWeight: 700,
+                  color: '#333',
+                  margin: 0,
+                  fontFamily: "'Pretendard', sans-serif",
+                }}
+              >
+                {item.title}
+              </h3>
+              
+              {/* 사진 영역 */}
+              <InfoImage
+                s3ImageUrl={item.s3ImageUrl}
+                title={item.title}
+                fallbackText={item.relatedPart}
+              />
+              
+              {/* 관련 부위 */}
+              <p
+                style={{
+                  fontSize: '14px',
+                  color: '#666',
+                  margin: 0,
+                  fontFamily: "'Pretendard', sans-serif",
+                  lineHeight: '1.5',
+                }}
+              >
+                관련 부위: {item.relatedPart}
+              </p>
+              
+              {/* 카테고리 */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                <span
+                  style={{
+                    fontSize: '11px',
+                    color: '#8bb3c0',
+                    backgroundColor: '#f0f8ff',
+                    padding: '2px 8px',
+                    borderRadius: '12px',
+                  }}
+                >
+                  {item.category}
+                </span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
+            <p style={{ color: '#666', fontSize: '16px' }}>표시할 정보가 없습니다.</p>
+          </div>
+        )}
       </div>
     </div>
   );

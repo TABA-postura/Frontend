@@ -99,18 +99,17 @@ function MonitorPage() {
       animationFrameRef.current = null;
     }
     
-    // 기존 요청 취소
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
+    // AbortController는 cleanup에서만 사용 (세션 종료 시에만 취소)
+    // effect 재실행 시에는 이전 요청을 취소하지 않음
+    if (!abortControllerRef.current) {
+      abortControllerRef.current = new AbortController();
     }
-    
-    // 새로운 AbortController 생성
-    abortControllerRef.current = new AbortController();
     const abortSignal = abortControllerRef.current.signal;
 
     // requestAnimationFrame 기반으로 프레임 전송
     let lastFrameTime = 0;
     let isRunning = true; // 루프 실행 플래그
+    let inFlight = false; // 요청 진행 중 플래그 (겹쳐 보내기 방지)
 
     const sendFrameLoop = async () => {
       // 세션이 종료되었거나 취소되었으면 중단
@@ -132,6 +131,15 @@ function MonitorPage() {
 
       const now = Date.now();
       
+      // ✅ inFlight 가드: 이전 요청이 완료될 때까지 대기
+      if (inFlight) {
+        // 요청이 진행 중이면 다음 프레임에서 재시도
+        if (isRunning && !abortSignal.aborted && session.status === 'RUNNING') {
+          animationFrameRef.current = requestAnimationFrame(sendFrameLoop);
+        }
+        return;
+      }
+      
       // FRAME_INTERVAL_MS 간격으로 전송
       if (now - lastFrameTime >= FRAME_INTERVAL_MS) {
         lastFrameTime = now;
@@ -150,16 +158,22 @@ function MonitorPage() {
           }
         }
 
+        // inFlight 플래그 설정
+        inFlight = true;
+        
         try {
-          // AbortController를 통해 요청 취소 가능하도록 전달
-          // sendFrame 호출 시점에 sessionId가 유효함을 보장 (위에서 체크)
-          await poseInference.sendFrame(shouldReset, abortSignal);
+          // AbortSignal은 세션 종료 시에만 사용 (요청 취소용)
+          // 일반적인 요청에는 전달하지 않음 (요청이 완료될 때까지 기다림)
+          await poseInference.sendFrame(shouldReset, undefined);
         } catch (error) {
           // AbortError는 정상적인 취소이므로 무시
           if (error instanceof Error && error.name === 'AbortError') {
             return;
           }
           console.error('프레임 전송 실패:', error);
+        } finally {
+          // 요청 완료 후 inFlight 플래그 해제
+          inFlight = false;
         }
       }
 

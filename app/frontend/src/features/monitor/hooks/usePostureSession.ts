@@ -354,8 +354,16 @@ export function usePostureSession(): UsePostureSessionResult {
       setTimeout(() => {
         startPolling();
       }, 100);
-    } catch (error) {
+    } catch (error: any) {
       console.error('[usePostureSession] 세션 시작 실패:', error);
+      
+      // 401 에러인 경우 사용자에게 알림 (api.ts 인터셉터가 이미 리다이렉트 처리)
+      if (error?.message?.includes('로그인') || error?.response?.status === 401) {
+        // 로그인 페이지로 리다이렉트는 api.ts 인터셉터에서 처리됨
+        // 여기서는 추가 로그만 남김
+        console.warn('[usePostureSession] 인증이 필요합니다. 로그인 페이지로 이동합니다.');
+      }
+      
       // 에러 발생 시 상태 롤백하지 않음 (사용자가 재시도할 수 있도록)
     } finally {
       isStartingRef.current = false;

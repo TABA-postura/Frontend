@@ -3,8 +3,30 @@ import React, { useMemo, useCallback } from "react";
 import { AiClient } from "../api/aiClient";
 import type { AnalyzeResponse } from "../api/aiClient";
 
-const DEFAULT_AI_BASE_URL =
-  (import.meta as any).env?.VITE_AI_BASE_URL ?? "https://ai.taba-postura.com";
+// 프로덕션 환경에서는 CloudFront 프록시를 사용
+// 개발 환경에서는 직접 AI 서버 URL 사용
+const getAiBaseUrl = () => {
+  // 환경 변수가 설정되어 있으면 사용
+  if ((import.meta as any).env?.VITE_AI_BASE_URL) {
+    return (import.meta as any).env.VITE_AI_BASE_URL;
+  }
+  
+  // 프로덕션 환경인지 확인 (localhost가 아니면 프로덕션)
+  const isProduction = 
+    typeof window !== 'undefined' && 
+    window.location.hostname !== 'localhost' && 
+    window.location.hostname !== '127.0.0.1';
+  
+  if (isProduction) {
+    // 프로덕션: 프록시를 통해 요청 (상대 경로)
+    return '';
+  }
+  
+  // 개발 환경: 직접 AI 서버 URL 사용
+  return "https://ai.taba-postura.com";
+};
+
+const DEFAULT_AI_BASE_URL = getAiBaseUrl();
 
 export type SessionStatus = "IDLE" | "RUNNING" | "PAUSED" | "ENDED";
 
@@ -125,6 +147,19 @@ export function usePoseInference(
         if (e instanceof Error && e.name === 'AbortError') {
           return null;
         }
+        // CORS 에러는 서버 측 문제이므로 명확히 로그
+        if (e instanceof Error && e.name === 'CORSError') {
+          // CORS 에러는 5초마다 한 번만 로그 (너무 많은 로그 방지)
+          const now = Date.now();
+          const lastCorsLogKey = 'lastCorsErrorLog';
+          const lastLogTime = parseInt(sessionStorage.getItem(lastCorsLogKey) || '0', 10);
+          if (now - lastLogTime > 5000) {
+            console.error("⚠️ [AI] CORS 에러 발생:", e.message);
+            sessionStorage.setItem(lastCorsLogKey, String(now));
+          }
+          return null;
+        }
+        // 기타 에러는 로그만 하고 재시도
         console.error("AI analyze 호출 실패:", e);
         return null;
       }

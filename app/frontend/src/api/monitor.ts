@@ -65,8 +65,26 @@ export async function startMonitoringSession(): Promise<SessionStartResponse> {
       '/api/monitor/start'
     );
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('[Monitor API] startMonitoringSession error', error);
+    
+    // 401 에러인 경우 인증 문제로 처리
+    if (error?.response?.status === 401) {
+      const errorMessage = 
+        error.response?.data?.message || 
+        '로그인이 필요합니다. 로그인 페이지로 이동합니다.';
+      
+      // 토큰이 없거나 refresh 실패 시 로그인 페이지로 리다이렉트
+      // (api.ts의 인터셉터가 이미 처리하지만, 명시적으로 확인)
+      if (!error.config?._retry) {
+        // refresh를 시도하지 않은 경우 (토큰이 없는 경우)
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 1000);
+      }
+      
+      throw new Error(errorMessage);
+    }
     
     // 에러 메시지 추출
     if (error && typeof error === 'object' && 'response' in error) {
