@@ -1,0 +1,69 @@
+.oauth-redirect-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.oauth-redirect-content {
+  text-align: center;
+  background: #fff;
+  padding: 48px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+}
+
+.oauth-redirect-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4a9eff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 24px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.oauth-redirect-success-icon {
+  font-size: 64px;
+  color: #4caf50;
+  margin-bottom: 24px;
+}
+
+.oauth-redirect-error-icon {
+  font-size: 64px;
+  color: #e74c3c;
+  margin-bottom: 24px;
+}
+
+.oauth-redirect-message,
+.oauth-redirect-success-message,
+.oauth-redirect-error-message {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.oauth-redirect-error-message {
+  color: #e74c3c;
+}
+
+.oauth-redirect-sub-message {
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+}
+

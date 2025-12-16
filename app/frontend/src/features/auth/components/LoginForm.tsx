@@ -171,8 +171,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
               type="button"
               className="social-login-button google-login"
               onClick={() => {
-                // Google OAuth 인증 URL로 리다이렉트 (CloudFront 프록시 사용)
-                window.location.href = '/api/oauth2/authorization/google';
+                window.location.href = 'https://api.taba-postura.com/oauth2/authorization/google';
               }}
               disabled={isLoading}
             >
@@ -184,8 +183,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
               type="button"
               className="social-login-button kakao-login"
               onClick={() => {
-                // Kakao OAuth 인증 URL로 리다이렉트 (CloudFront 프록시 사용)
-                window.location.href = '/api/oauth2/authorization/kakao';
+                window.location.href = 'https://api.taba-postura.com/oauth2/authorization/kakao';
               }}
               disabled={isLoading}
             >

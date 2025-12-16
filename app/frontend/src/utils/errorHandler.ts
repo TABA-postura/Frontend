@@ -6,8 +6,18 @@
 /**
  * 무시해도 되는 에러인지 확인
  */
-function isIgnorableError(error: Error | string): boolean {
-  const errorMessage = typeof error === 'string' ? error : error.message;
+function isIgnorableError(error: Error | string | unknown): boolean {
+  // 에러 메시지 추출
+  let errorMessage = '';
+  if (typeof error === 'string') {
+    errorMessage = error;
+  } else if (error instanceof Error) {
+    errorMessage = error.message;
+  } else if (error && typeof error === 'object' && 'message' in error) {
+    errorMessage = String(error.message);
+  } else {
+    errorMessage = String(error);
+  }
   
   // Chrome 확장 프로그램 관련 에러 (무시 가능)
   const ignorablePatterns = [
@@ -16,6 +26,8 @@ function isIgnorableError(error: Error | string): boolean {
     /Extension context invalidated/i,
     /Receiving end does not exist/i,
     /Could not establish connection/i,
+    /A listener indicated an asynchronous response/i,
+    /but the message channel closed/i,
   ];
 
   return ignorablePatterns.some(pattern => pattern.test(errorMessage));
@@ -29,13 +41,10 @@ export function setupGlobalErrorHandler(): void {
   window.addEventListener('unhandledrejection', (event) => {
     const error = event.reason;
     
-    // 무시해도 되는 에러는 로깅만 하고 기본 동작 방지
+    // 무시해도 되는 에러는 조용히 무시
     if (isIgnorableError(error)) {
-      // 개발 환경에서만 로깅
-      if (import.meta.env.DEV) {
-        console.debug('[Ignored] Extension error:', error);
-      }
       event.preventDefault(); // 에러 전파 방지
+      event.stopPropagation(); // 이벤트 전파 중지
       return;
     }
 
@@ -47,17 +56,15 @@ export function setupGlobalErrorHandler(): void {
   window.addEventListener('error', (event) => {
     const error = event.error || event.message;
     
-    // 무시해도 되는 에러는 로깅만 하고 기본 동작 방지
+    // 무시해도 되는 에러는 조용히 무시
     if (isIgnorableError(error)) {
-      if (import.meta.env.DEV) {
-        console.debug('[Ignored] Extension error:', error);
-      }
       event.preventDefault();
+      event.stopPropagation();
       return;
     }
 
     // 실제 에러는 로깅
     console.error('[Global Error]', error);
-  });
+  }, true); // capture phase에서도 처리
 }
 

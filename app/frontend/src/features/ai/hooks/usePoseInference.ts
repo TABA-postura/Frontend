@@ -99,6 +99,9 @@ export function usePoseInference(
           return null;
         }
 
+        // sessionId 로그
+        console.log('🤖 [AI Send] analyze 호출 | sessionId:', sessionId, '| reset:', reset);
+
         const result = await aiClient.analyze({
           sessionId,
           imageBlob: blob,

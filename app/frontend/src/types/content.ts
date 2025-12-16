@@ -42,3 +42,34 @@ export interface ContentSearchParams {
   category?: ContentCategory;
 }
 
+/**
+ * Content API 명세에 따른 콘텐츠 아이템 타입
+ * GET /api/contents/* 응답 구조
+ */
+export interface ContentItem {
+  guideId: number;
+  title: string;
+  category?: '자세' | '스트레칭';
+  posture: string;
+  relatedPart: string;
+  contentText: string;
+  imageUrl: string | null;
+}
+
+/**
+ * API 응답 래퍼 타입
+ */
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+}
+
+/**
+ * 스트레칭 추천 응답 타입
+ */
+export interface StretchingRecommendationResponse {
+  success: boolean;
+  posture: string;
+  data: ContentItem[];
+}
+

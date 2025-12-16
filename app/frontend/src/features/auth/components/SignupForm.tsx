@@ -150,22 +150,31 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
         return;
       }
       
-      // 403 에러에 대한 명확한 메시지 표시
-      if (err?.response?.status === 403) {
-        setValidationError(
-          '서버에서 요청을 거부했습니다. ' +
-          'CORS 설정이나 서버 권한을 확인하거나, 잠시 후 다시 시도해주세요.'
-        );
-      } else if (err?.response?.status === 400) {
+      // 409 CONFLICT 또는 401 UNAUTHORIZED: 이미 가입된 이메일
+      if (err?.response?.status === 409 || err?.response?.status === 401) {
         setValidationError(
           err?.response?.data?.message || 
-          '입력한 정보를 확인해주세요. 이메일이 이미 사용 중일 수 있습니다.'
+          '이미 가입된 이메일입니다.'
         );
-      } else if (err?.response?.status >= 500) {
+      } 
+      // 400 에러: 입력값 검증 오류
+      else if (err?.response?.status === 400) {
+        setValidationError(
+          err?.response?.data?.message || 
+          '입력한 정보를 확인해주세요.'
+        );
+      } 
+      // 500번대 서버 오류
+      else if (err?.response?.status >= 500) {
         setValidationError('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      } else if (err?.code === 'ERR_NETWORK') {
+      } 
+      // 네트워크 오류
+      else if (err?.code === 'ERR_NETWORK') {
         setValidationError('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
-      } else {
+      } 
+      // 기타 오류
+      else {
+        setValidationError('회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
         console.error('Signup error:', err);
       }
     }
