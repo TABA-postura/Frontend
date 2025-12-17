@@ -195,22 +195,25 @@ export function usePostureSession(): UsePostureSessionResult {
         }
         
         // 피드백 데이터를 상태에 반영
+        // 피드백 메시지가 있으면 경고, 없으면 좋은 자세
         if (feedback.feedbackMessages && feedback.feedbackMessages.length > 0) {
-          const latestMessage = feedback.feedbackMessages[feedback.feedbackMessages.length - 1];
-          setLatestFeedback(latestMessage);
-
-          // 피드백 리스트에 추가
-          setFeedbackList((prev) => {
-            const newFeedback: FeedbackItem = {
-              type: 'WARN',
-              title: '자세 피드백',
-              message: latestMessage,
-              timestamp: Date.now(),
-            };
-            return [newFeedback, ...prev].slice(0, MAX_FEEDBACK_LIST_SIZE);
-          });
+          // 최신 피드백 메시지들만 표시 (누적하지 않고 교체)
+          const newFeedbackList: FeedbackItem[] = feedback.feedbackMessages.map((msg) => ({
+            type: 'WARN' as const,
+            title: '자세 피드백',
+            message: msg,
+            timestamp: Date.now(),
+          }));
+          setFeedbackList(newFeedbackList.slice(0, MAX_FEEDBACK_LIST_SIZE));
+          setLatestFeedback(feedback.feedbackMessages[feedback.feedbackMessages.length - 1]);
         } else {
-          // 피드백 메시지가 없으면 GOOD 상태로 간주
+          // 피드백 메시지가 없으면 GOOD 상태
+          setFeedbackList([{
+            type: 'INFO',
+            title: '좋은 자세',
+            message: '훌륭합니다! 현재 바른 자세를 유지하고 있습니다.',
+            timestamp: Date.now(),
+          }]);
           setLatestFeedback(null);
         }
 
