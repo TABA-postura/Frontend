@@ -46,18 +46,30 @@ function WebcamPanel({
 
       {/* 실시간 자세 피드백 */}
       <div className="webcam-panel__feedback">
-        <div className="webcam-panel__feedback-content">
-          {feedbackList.length > 0 ? (
-            <div className="webcam-panel__feedback-list">
-              {feedbackList.map((item, index) => (
-                <p
-                  key={index}
-                  className={`webcam-panel__feedback-message webcam-panel__feedback-message--${item.type === 'WARN' ? 'warn' : 'info'}`}
-                >
-                  {item.type === 'WARN' ? '⚠️' : '✅'} {item.message}
-                </p>
-              ))}
-            </div>
+        <div className={`webcam-panel__feedback-content ${
+          status === 'RUNNING' 
+            ? (feedbackList.length > 0 && feedbackList[0]?.type === 'WARN' 
+                ? 'webcam-panel__feedback-content--warn' 
+                : 'webcam-panel__feedback-content--good')
+            : 'webcam-panel__feedback-content--idle'
+        }`}>
+          {status === 'RUNNING' ? (
+            feedbackList.length > 0 ? (
+              <div className="webcam-panel__feedback-list">
+                {feedbackList.slice(0, 3).map((item, index) => (
+                  <p
+                    key={index}
+                    className={`webcam-panel__feedback-message webcam-panel__feedback-message--${item.type === 'WARN' ? 'warn' : 'info'}`}
+                  >
+                    {item.type === 'WARN' ? '⚠️' : '✅'} {item.message}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <p className="webcam-panel__feedback-message webcam-panel__feedback-message--info">
+                ✅ 바른 자세를 유지하고 있습니다!
+              </p>
+            )
           ) : feedback ? (
             <p className="webcam-panel__feedback-message">{feedback}</p>
           ) : (

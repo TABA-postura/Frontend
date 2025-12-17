@@ -46,7 +46,7 @@ function InformationPage() {
   }, []);
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
       <TopBar />
       
       {/* 16:9 동영상 섹션 - 중간 크기 */}

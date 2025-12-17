@@ -41,13 +41,15 @@ const TopBar = () => {
           e.currentTarget.parentElement!.style.backgroundColor = '#1e3a8a';
         }}
       />
-      {/* Postura 로고 - 메인 화면과 동일한 위치와 스타일 */}
-      <div
+      {/* Postura 로고 - 클릭시 메인 화면으로 이동 */}
+      <Link
+        to="/"
         style={{
           position: 'absolute',
           top: '40px',
           left: '80px',
           zIndex: 100,
+          textDecoration: 'none',
         }}
       >
         <span
@@ -58,11 +60,12 @@ const TopBar = () => {
             letterSpacing: '1px',
             margin: 0,
             fontFamily: "'Pretendard', sans-serif",
+            cursor: 'pointer',
           }}
         >
           Postura
         </span>
-      </div>
+      </Link>
       
       {/* 네비게이션 링크 */}
       <div

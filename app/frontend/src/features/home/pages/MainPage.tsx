@@ -1,7 +1,18 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../auth/hooks/useAuth';
 import '../MainPage.css';
 
 const MainPage = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  const handleStart = () => {
+    if (isAuthenticated) {
+      navigate('/monitor');
+    } else {
+      navigate('/login');
+    }
+  };
   // 📌 Router가 가로채지 못하도록 Vite 방식 경로 생성
   const mediaSrc = new URL('/videos/postura_main_final.mp4', import.meta.url).href;
   const contentImageSrc = new URL('/photo/content-image.jpg', import.meta.url).href;
@@ -40,9 +51,9 @@ const MainPage = () => {
             </h1>
 
             <div className="login-button-container">
-              <Link to="/login" className="main-login-button">
-                Login
-              </Link>
+              <button onClick={handleStart} className="main-login-button">
+                Start
+              </button>
             </div>
           </div>
         </div>

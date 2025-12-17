@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import '../../../assets/styles/Home.css';
 import { useWebcam } from '../hooks/useWebcam';
 import { usePoseInference } from '../../ai/hooks/usePoseInference';
@@ -7,11 +7,23 @@ import WebcamPanel from '../components/WebcamPanel';
 import MonitoringControls from '../components/MonitoringControls';
 import LiveStatsCard from '../components/LiveStatsCard';
 import AccumulatedPostureCard from '../components/AccumulatedPostureCard';
+import GuideTour from '../components/GuideTour';
 import TopBar from '../../../components/TopBar';
 import type { SessionStatus } from '../types';
 import './MonitorPage.css';
 
+const GUIDE_TOUR_STORAGE_KEY = 'postura_guide_tour_completed';
+
 function MonitorPage() {
+  // 가이드 투어 상태 (로컬스토리지에서 확인)
+  const [showGuideTour, setShowGuideTour] = useState(() => {
+    return !localStorage.getItem(GUIDE_TOUR_STORAGE_KEY);
+  });
+
+  const handleGuideTourComplete = () => {
+    localStorage.setItem(GUIDE_TOUR_STORAGE_KEY, 'true');
+    setShowGuideTour(false);
+  };
   const webcam = useWebcam();
   const session = usePostureSession();
 
@@ -245,6 +257,9 @@ function MonitorPage() {
 
   return (
     <div className="monitor-container">
+      {/* 가이드 투어 */}
+      {showGuideTour && <GuideTour onComplete={handleGuideTourComplete} />}
+
       <div style={{ position: 'relative', zIndex: 1 }}>
         <TopBar />
       
@@ -255,6 +270,36 @@ function MonitorPage() {
               <div className="monitor-page__content">
                 {/* 좌측: 모니터링 설정 및 실시간 통계 */}
                 <section className="monitor-page__left">
+                  {/* 가이드 다시 보기 버튼 */}
+                  <button
+                    onClick={() => setShowGuideTour(true)}
+                    className="guide-btn"
+                    style={{
+                      background: 'linear-gradient(180deg, #bdd0e5 0%, #a0bbd5 100%)',
+                      border: 'none',
+                      borderLeft: 'none',
+                      borderRadius: '6px',
+                      color: '#2e3d52',
+                      padding: '10px 10px',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      marginBottom: '12px',
+                      fontFamily: "'Pretendard', sans-serif",
+                      width: '100%',
+                      textAlign: 'center',
+                      boxShadow: '0 2px 4px rgba(60, 90, 130, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                      outline: 'none',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(180deg, #b0c5db 0%, #94b0cc 100%)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(180deg, #bdd0e5 0%, #a0bbd5 100%)';
+                    }}
+                  >
+                    가이드 다시 보기
+                  </button>
                   <MonitoringControls
                     status={session.status}
                     times={session.times}

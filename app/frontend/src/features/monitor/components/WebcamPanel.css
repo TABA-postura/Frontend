@@ -54,12 +54,29 @@
 }
 
 .webcam-panel__feedback-content {
-  padding: 8px;
+  padding: 12px;
   background: #f5f7fa;
-  border-radius: 8px;
-  min-height: 40px;
+  border-radius: 11px;
+  min-height: 50px;
   display: flex;
   align-items: center;
+  transition: all 0.3s ease;
+  border: 1.5px solid transparent;
+}
+
+.webcam-panel__feedback-content--good {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: #22c55e;
+}
+
+.webcam-panel__feedback-content--warn {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+}
+
+.webcam-panel__feedback-content--idle {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #667eea;
 }
 
 .webcam-panel__feedback-list {
