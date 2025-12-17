@@ -18,6 +18,27 @@ import {
 } from 'recharts';
 import { useWeeklyReport } from '../hooks/useWeeklyReport';
 
+// 자세 이름 한국어 변환
+const POSTURE_KOREAN_NAMES: Record<string, string> = {
+  'TURTLE_NECK': '거북목',
+  'FORWARD_HEAD': '거북목',
+  'UNEQUAL_SHOULDERS': '어깨 불균형',
+  'HEAD_TILT': '머리 기울임',
+  'SHOULDER_TILT': '어깨 기울임',
+  'SHOULDER_ASYMMETRY': '어깨 비대칭',
+  'LEAN_BACK': '뒤로 기울임',
+  'LEAN_FORWARD': '앞으로 기울임',
+  'UPPER_BODY_TILT': '상체 기울임',
+  'TOO_CLOSE_TO_SCREEN': '화면 과도하게 가까움',
+  'ARM_SUPPORT_CHIN_REST': '팔 지지 / 턱 괴기',
+  'LEFT_RIGHT_ASYMMETRY': '좌우 비대칭 자세',
+  'BENT_BACK': '허리 굽힘',
+};
+
+const getPostureKoreanName = (posture: string): string => {
+  return POSTURE_KOREAN_NAMES[posture] || posture;
+};
+
 function SelfCarePage() {
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState<'weekly' | 'distribution'>('weekly');
@@ -69,6 +90,110 @@ function SelfCarePage() {
           color: colors[index % colors.length],
         };
       })
+    : [];
+
+  // 문제 유형별 추천 정보 매핑 (백엔드 키 사용)
+  const issueRecommendations: Record<string, { title: string; description: string; icon: string; iconBg: string; iconColor: string; youtubeUrl: string }> = {
+    'FORWARD_HEAD': {
+      title: '거북목 개선 필요',
+      description: '가장 많이 발생하는 문제입니다. 모니터 높이를 조정하고 목 스트레칭을 실시하세요.',
+      icon: '▲',
+      iconBg: '#fce7f3',
+      iconColor: '#ef4444',
+      youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
+    },
+    'SLOUCHING': {
+      title: '허리 굽힘 개선 필요',
+      description: '허리가 굽어지는 문제가 발생합니다. 허리 스트레칭을 실시하세요.',
+      icon: '▲',
+      iconBg: '#fef3c7',
+      iconColor: '#f59e0b',
+      youtubeUrl: 'https://www.youtube.com/watch?v=abiyAQu-Pf0',
+    },
+    'UNEQUAL_SHOULDERS': {
+      title: '어깨 불균형',
+      description: '어깨 높이 차이가 자주 감지됩니다. 양쪽 어깨를 균등하게 사용하도록 주의하세요.',
+      icon: '◆',
+      iconBg: '#fed7aa',
+      iconColor: '#fb923c',
+      youtubeUrl: 'https://www.youtube.com/watch?v=mUnSpfItRf0',
+    },
+    'SHOULDER_TILT': {
+      title: '어깨 기울임 개선 필요',
+      description: '한쪽 어깨가 기울어지는 문제가 발생합니다. 어깨 스트레칭을 실시하세요.',
+      icon: '◆',
+      iconBg: '#fed7aa',
+      iconColor: '#fb923c',
+      youtubeUrl: 'https://www.youtube.com/watch?v=mUnSpfItRf0',
+    },
+    'BODY_TILT': {
+      title: '상체 기울임 개선 필요',
+      description: '상체가 기울어지는 문제가 발생합니다. 코어 강화 운동을 실시하세요.',
+      icon: '▲',
+      iconBg: '#e0e7ff',
+      iconColor: '#6366f1',
+      youtubeUrl: 'https://www.youtube.com/watch?v=abiyAQu-Pf0',
+    },
+    'TOO_CLOSE': {
+      title: '화면 거리 유지',
+      description: '모니터와의 거리가 가까워지는 경향이 있습니다. 최소 50cm 이상 거리를 유지하세요.',
+      icon: '◎',
+      iconBg: '#dbeafe',
+      iconColor: '#3b82f6',
+      youtubeUrl: 'https://www.youtube.com/watch?v=euBLyvbjly0',
+    },
+    'ARM_SUPPORT': {
+      title: '팔 지지 자세 감지',
+      description: '손목/전완부 스트레칭 후, 양손을 무릎 위에 올려 바른 자세를 취해주세요.',
+      icon: '●',
+      iconBg: '#fef3c7',
+      iconColor: '#f59e0b',
+      youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
+    },
+    'CHIN_REST': {
+      title: '턱 괴기 자세 감지',
+      description: '턱 당기기 운동을 하거나 화면과 거리를 두고 목을 뒤로 밀어주세요.',
+      icon: '●',
+      iconBg: '#fef3c7',
+      iconColor: '#f59e0b',
+      youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
+    },
+    'ASYMMETRIC': {
+      title: '복합 비대칭 자세',
+      description: '좌우 비대칭 자세가 감지됩니다. 균형 잡힌 자세를 유지하세요.',
+      icon: '◆',
+      iconBg: '#e0e7ff',
+      iconColor: '#6366f1',
+      youtubeUrl: 'https://www.youtube.com/watch?v=TMrxOWW3MsA',
+    },
+    'HEAD_TILT': {
+      title: '머리 기울임 개선',
+      description: '머리가 기울어지는 문제가 발생합니다. 목 스트레칭을 실시하세요.',
+      icon: '▲',
+      iconBg: '#fce7f3',
+      iconColor: '#ef4444',
+      youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
+    },
+  };
+
+  // 상위 3개 문제 유형 추출
+  const top3Issues = reportData?.postureDistribution
+    ? Object.entries(reportData.postureDistribution)
+        .filter(([_, count]) => count > 0)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([name, count]) => ({
+          name,
+          count,
+          ...issueRecommendations[name] || {
+            title: name,
+            description: '해당 문제에 대한 스트레칭을 실시하세요.',
+            icon: '▲',
+            iconBg: '#e5e7eb',
+            iconColor: '#6b7280',
+            youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
+          },
+        }))
     : [];
 
   // 캘린더 데이터 생성 (현재 월 기준, 백엔드 데이터 사용)
@@ -296,7 +421,7 @@ function SelfCarePage() {
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: 'auto' }}>
             <div style={{ color: 'white', fontSize: '24px', fontWeight: 600, fontFamily: "'Pretendard', sans-serif" }}>
-              {isLoading ? '...' : reportData?.mostFrequentIssue ?? '데이터 없음'}
+              {isLoading ? '...' : (reportData?.mostFrequentIssue ? getPostureKoreanName(reportData.mostFrequentIssue) : '데이터 없음')}
             </div>
             {reportData?.postureDistribution && reportData.mostFrequentIssue && (
               <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', fontFamily: "'Pretendard', sans-serif" }}>
@@ -819,7 +944,7 @@ function SelfCarePage() {
         </div>
       )}
 
-      {/* 기존 하드코딩된 추천 섹션 (TODO: API 데이터로 교체 완료 후 제거 가능) */}
+      {/* 동적 맞춤 개선 추천 섹션 - 상위 3개 문제 유형 기반 */}
       {(!reportData?.recommendations || reportData.recommendations.length === 0) && (
         <div
           style={{
@@ -847,269 +972,111 @@ function SelfCarePage() {
               gap: '24px',
             }}
           >
-          {/* 카드 1: 거북목 개선 필요 */}
-          <div
-            style={{
-              borderRadius: '12px',
-              backgroundColor: 'rgba(0, 0, 0, 0.6)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              padding: '24px',
-              backdropFilter: 'blur(10px)',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '16px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.2)';
-            }}
-          >
-            <div
-              style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '8px',
-                backgroundColor: '#fce7f3',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <span style={{ color: '#ef4444', fontSize: '24px', fontWeight: 'bold' }}>▲</span>
-            </div>
-            <h3
-              style={{
-                color: 'white',
-                fontSize: '18px',
-                fontWeight: 600,
-                margin: 0,
-                fontFamily: "'Pretendard', sans-serif",
-              }}
-            >
-              거북목 개선 필요
-            </h3>
-            <p
-              style={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontSize: '14px',
-                lineHeight: '1.6',
-                margin: 0,
-                fontFamily: "'Pretendard', sans-serif",
-              }}
-            >
-              가장 많이 발생하는 문제입니다. 모니터 높이를 조정하고 목 스트레칭을 실시하세요.
-            </p>
-            <button
-              style={{
-                marginTop: 'auto',
-                padding: '10px 16px',
-                borderRadius: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                color: 'white',
-                fontSize: '14px',
-                fontWeight: 500,
-                fontFamily: "'Pretendard', sans-serif",
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                alignSelf: 'flex-start',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-              }}
-            >
-              추천 스트레칭 보기 →
-            </button>
-        </div>
-
-          {/* 카드 2: 어깨 불균형 */}
-          <div
-            style={{
-              borderRadius: '12px',
-              backgroundColor: 'rgba(0, 0, 0, 0.6)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              padding: '24px',
-              backdropFilter: 'blur(10px)',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '16px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.2)';
-            }}
-          >
-            <div
-              style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '8px',
-                backgroundColor: '#fed7aa',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <span style={{ color: '#fb923c', fontSize: '24px', fontWeight: 'bold' }}>▲</span>
-            </div>
-            <h3
-              style={{
-                color: 'white',
-                fontSize: '18px',
-                fontWeight: 600,
-                margin: 0,
-                fontFamily: "'Pretendard', sans-serif",
-              }}
-            >
-              어깨 불균형
-            </h3>
-            <p
-              style={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontSize: '14px',
-                lineHeight: '1.6',
-                margin: 0,
-                fontFamily: "'Pretendard', sans-serif",
-              }}
-            >
-              어깨 높이 차이가 자주 감지됩니다. 양쪽 어깨를 균등하게 사용하도록 주의하세요.
-            </p>
-            <button
-              style={{
-                marginTop: 'auto',
-                padding: '10px 16px',
-                borderRadius: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                color: 'white',
-                fontSize: '14px',
-                fontWeight: 500,
-                fontFamily: "'Pretendard', sans-serif",
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                alignSelf: 'flex-start',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-              }}
-            >
-              추천 스트레칭 보기 →
-            </button>
-          </div>
-
-          {/* 카드 3: 화면 거리 유지 */}
-          <div
-            style={{
-              borderRadius: '12px',
-              backgroundColor: 'rgba(0, 0, 0, 0.6)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              padding: '24px',
-              backdropFilter: 'blur(10px)',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '16px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.2)';
-            }}
-          >
-            <div
-              style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '8px',
-                backgroundColor: '#dbeafe',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <span style={{ color: '#3b82f6', fontSize: '24px', fontWeight: 'bold' }}>◎</span>
-            </div>
-            <h3
-              style={{
-                color: 'white',
-                fontSize: '18px',
-                fontWeight: 600,
-                margin: 0,
-                fontFamily: "'Pretendard', sans-serif",
-              }}
-            >
-              화면 거리 유지
-            </h3>
-            <p
-              style={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontSize: '14px',
-                lineHeight: '1.6',
-                margin: 0,
-                fontFamily: "'Pretendard', sans-serif",
-              }}
-            >
-              모니터와의 거리가 가까워지는 경향이 있습니다. 최소 50cm 이상 거리를 유지하세요.
-            </p>
-            <button
-              style={{
-                marginTop: 'auto',
-                padding: '10px 16px',
-                borderRadius: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                color: 'white',
-                fontSize: '14px',
-                fontWeight: 500,
-                fontFamily: "'Pretendard', sans-serif",
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                alignSelf: 'flex-start',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-              }}
-            >
-              추천 스트레칭 보기 →
-            </button>
-          </div>
+            {top3Issues.length > 0 ? (
+              top3Issues.map((issue, index) => (
+                <div
+                  key={index}
+                  style={{
+                    borderRadius: '12px',
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    padding: '24px',
+                    backdropFilter: 'blur(10px)',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '16px',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.2)';
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '8px',
+                      backgroundColor: issue.iconBg,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <span style={{ color: issue.iconColor, fontSize: '24px', fontWeight: 'bold' }}>{issue.icon}</span>
+                  </div>
+                  <h3
+                    style={{
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: 600,
+                      margin: 0,
+                      fontFamily: "'Pretendard', sans-serif",
+                    }}
+                  >
+                    {issue.title}
+                  </h3>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '14px',
+                      lineHeight: '1.6',
+                      margin: 0,
+                      fontFamily: "'Pretendard', sans-serif",
+                    }}
+                  >
+                    {issue.description} ({issue.count}회 발생)
+                  </p>
+                  <button
+                    onClick={() => window.open(issue.youtubeUrl, '_blank')}
+                    style={{
+                      marginTop: 'auto',
+                      padding: '10px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      fontFamily: "'Pretendard', sans-serif",
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      alignSelf: 'flex-start',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    }}
+                  >
+                    추천 스트레칭 보기 →
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div
+                style={{
+                  gridColumn: '1 / -1',
+                  textAlign: 'center',
+                  padding: '40px',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '16px',
+                  fontFamily: "'Pretendard', sans-serif",
+                }}
+              >
+                아직 측정된 자세 데이터가 없습니다. 모니터링을 시작해주세요.
+              </div>
+            )}
           </div>
         </div>
       )}
