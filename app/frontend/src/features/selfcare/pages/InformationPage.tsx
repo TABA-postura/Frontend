@@ -77,7 +77,7 @@ function InformationPage() {
             }}
           />
           <div className="header-text-overlay">
-            <h1 className="main-title">정보 제공</h1>
+            <h1 className="main-title">보보 제공</h1>
             <p className="main-subtitle">자세 관련 질환과 스트레칭 방법을 확인하세요</p>
           </div>
         </div>
@@ -341,7 +341,6 @@ function InformationPage() {
       </div>
 
 
-      <button className="help-button">?</button>
     </div>
   );
 }

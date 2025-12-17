@@ -1,5 +1,5 @@
 import './WebcamPanel.css';
-import type { SessionStatus } from '../types';
+import type { SessionStatus, FeedbackItem } from '../types';
 
 export type WebcamPanelProps = {
   isActive: boolean;
@@ -8,6 +8,7 @@ export type WebcamPanelProps = {
   videoRef: React.RefObject<HTMLVideoElement | null>;
   status: SessionStatus;
   feedback: string | null;
+  feedbackList?: FeedbackItem[];
 };
 
 function WebcamPanel({
@@ -17,13 +18,14 @@ function WebcamPanel({
   videoRef,
   status,
   feedback,
+  feedbackList = [],
 }: WebcamPanelProps) {
   // 상태별 오버레이 메시지 결정
   const getOverlayMessage = () => {
     if (isLoading) return null;
     if (error) return null;
     if (!isActive) {
-      if (status === 'IDLE') return '모니터링 대기 중';
+      if (status === 'IDLE') return <span className="webcam-panel__waiting-text">모니터링 대기 중...</span>;
       if (status === 'RUNNING') return '웹캠 비활성화 상태입니다';
       if (status === 'PAUSED') return '일시정지됨 – 재개 버튼을 눌러주세요';
       if (status === 'ENDED') return '모니터링이 종료되었습니다';
@@ -45,7 +47,18 @@ function WebcamPanel({
       {/* 실시간 자세 피드백 */}
       <div className="webcam-panel__feedback">
         <div className="webcam-panel__feedback-content">
-          {feedback ? (
+          {feedbackList.length > 0 ? (
+            <div className="webcam-panel__feedback-list">
+              {feedbackList.map((item, index) => (
+                <p
+                  key={index}
+                  className={`webcam-panel__feedback-message webcam-panel__feedback-message--${item.type === 'WARN' ? 'warn' : 'info'}`}
+                >
+                  {item.type === 'WARN' ? '⚠️' : '✅'} {item.message}
+                </p>
+              ))}
+            </div>
+          ) : feedback ? (
             <p className="webcam-panel__feedback-message">{feedback}</p>
           ) : (
             <p className="webcam-panel__feedback-empty">

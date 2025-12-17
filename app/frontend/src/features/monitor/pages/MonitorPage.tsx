@@ -244,31 +244,7 @@ function MonitorPage() {
   }, [session.status, webcam.isActive, webcam]);
 
   return (
-    <div 
-      className="monitor-container"
-      style={{ 
-        minHeight: '100vh',
-        height: '100vh', /* 화면 높이에 맞춤 */
-        position: 'relative',
-        overflow: 'hidden', /* 스크롤 방지 */
-      }}
-    >
-      {/* 배경 이미지 - 상단 바 제외한 영역에 맞춤 */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '150px', /* TopBar 높이 */
-          left: 0,
-          right: 0,
-          height: 'calc(100vh - 150px)', /* 화면 높이에서 TopBar 높이 제외 */
-          backgroundImage: 'url(/images/sincerely-media-gddRiwCKJbA-unsplash.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          zIndex: 0,
-        }}
-      />
-
+    <div className="monitor-container">
       <div style={{ position: 'relative', zIndex: 1 }}>
         <TopBar />
       
@@ -300,6 +276,7 @@ function MonitorPage() {
                     videoRef={webcam.videoRef}
                     status={session.status}
                     feedback={session.latestFeedback}
+                    feedbackList={session.feedbackList}
                   />
                 </section>
 
@@ -312,8 +289,6 @@ function MonitorPage() {
           </main>
         </div>
 
-        {/* 도움말 버튼 */}
-        <button className="help-button">?</button>
       </div>
     </div>
   );

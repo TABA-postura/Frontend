@@ -329,8 +329,6 @@ function RealtimePosturePage() {
           </main>
         </div>
 
-        {/* 도움말 버튼 */}
-        <button className="help-button">?</button>
       </div>
     </div>
   );

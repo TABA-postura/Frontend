@@ -122,10 +122,44 @@ function ContentDetailPage() {
     );
   }
 
-  // contentText를 줄바꿈 기준으로 분리하여 단락으로 표시
-  const contentParagraphs = content.contentText
-    .split('\n')
-    .filter((para) => para.trim().length > 0);
+  // contentText를 소제목별로 파싱하여 섹션으로 분리
+  const parseContentSections = (text: string) => {
+    const sections: { title: string; content: string }[] = [];
+    const lines = text.split('\n').filter((line) => line.trim().length > 0);
+    
+    // 알려진 소제목 목록
+    const knownTitles = ['자세 유형', '탐지 특징', '설명', '주요 원인', '동반 증상', '교정 필요성'];
+    
+    let currentSection: { title: string; content: string } | null = null;
+    
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      
+      // 소제목인지 확인
+      if (knownTitles.includes(trimmedLine)) {
+        // 이전 섹션 저장
+        if (currentSection) {
+          sections.push(currentSection);
+        }
+        currentSection = { title: trimmedLine, content: '' };
+      } else if (currentSection) {
+        // 현재 섹션에 내용 추가
+        currentSection.content += (currentSection.content ? '\n' : '') + trimmedLine;
+      } else {
+        // 소제목 없이 시작하는 내용
+        sections.push({ title: '', content: trimmedLine });
+      }
+    }
+    
+    // 마지막 섹션 저장
+    if (currentSection) {
+      sections.push(currentSection);
+    }
+    
+    return sections;
+  };
+  
+  const contentSections = parseContentSections(content.contentText);
 
   // 메타 정보 추출
   const targetParts = getTargetParts(content.relatedPart, (content as any).posture);
@@ -168,32 +202,50 @@ function ContentDetailPage() {
           />
         </div>
 
-        {/* 본문 설명 */}
-        {contentParagraphs.length > 0 && (
-          <div style={{ marginBottom: '40px' }}>
-            <div
-              style={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e0e0e0',
-                borderRadius: '8px',
-                padding: '24px',
-              }}
-            >
-              {contentParagraphs.map((paragraph, index) => (
+        {/* 본문 설명 - 소제목별 개별 카드 */}
+        {contentSections.length > 0 && (
+          <div style={{ marginBottom: '40px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {contentSections.map((section, index) => (
+              <div
+                key={index}
+                style={{
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #e0e0e0',
+                  borderRadius: '12px',
+                  padding: '20px 24px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+                }}
+              >
+                {section.title && (
+                  <h3
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: 600,
+                      color: '#333',
+                      margin: '0 0 12px 0',
+                      fontFamily: "'Pretendard', sans-serif",
+                      borderBottom: '2px solid #667eea',
+                      paddingBottom: '8px',
+                      display: 'inline-block',
+                    }}
+                  >
+                    {section.title}
+                  </h3>
+                )}
                 <p
-                  key={index}
                   style={{
                     fontSize: '15px',
                     color: '#555',
                     lineHeight: '1.8',
-                    margin: index > 0 ? '16px 0 0 0' : '0',
+                    margin: 0,
                     fontFamily: "'Pretendard', sans-serif",
+                    whiteSpace: 'pre-line',
                   }}
                 >
-                  {paragraph}
+                  {section.content}
                 </p>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         )}
 
