@@ -12,6 +12,7 @@ export interface InfoDetail {
   methods: string[];
   effect?: string;
   recommendedStretching?: string[];
+  youtubeUrl?: string;
 }
 
 export interface InfoItem {
@@ -357,6 +358,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '목 근육 긴장 완화, 자세 개선, 두통 예방',
       recommendedStretching: ['턱 당기기', '목 좌우 기울이기', '목 앞뒤 굽히기', '목 돌리기'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
     },
   },
   {
@@ -382,6 +384,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '허리 통증 완화, 척추 유연성 향상, 재발 방지',
       recommendedStretching: ['고양이-소 자세', '무릎 가슴 당기기', '골반 기울이기', '허리 비틀기'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=abiyAQu-Pf0',
     },
   },
   {
@@ -407,6 +410,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '어깨 균형 개선, 통증 완화, 자세 대칭성 향상',
       recommendedStretching: ['어깨 올리기', '어깨 돌리기', '팔 벌리기', '한쪽 팔 당기기'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=mUnSpfItRf0',
     },
   },
   {
@@ -432,6 +436,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '목과 어깨 상부 긴장 완화, 유연성 향상, 통증 감소',
       recommendedStretching: ['상부 승모근 스트레칭', '목 스트레칭', '어깨 스트레칭'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=WiaeXN_MaZo',
     },
   },
   {
@@ -457,6 +462,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '목 옆면 근육 이완, 목 통증 완화, 유연성 향상',
       recommendedStretching: ['사각근 스트레칭', '목 스트레칭', '상부 승모근 스트레칭'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=FoZ1tR9JIoc',
     },
   },
   {
@@ -482,6 +488,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '등 상부 근육 이완, 어깨 통증 완화, 유연성 향상',
       recommendedStretching: ['광배근 스트레칭', '어깨 스트레칭', '흉근 스트레칭'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=CQhvTjDoWxU',
     },
   },
   {
@@ -507,6 +514,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '가슴 근육 이완, 어깨 자세 개선, 통증 완화',
       recommendedStretching: ['흉근 스트레칭', '어깨 스트레칭', '광배근 스트레칭'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=Nqbm-QWtIY8',
     },
   },
   {
@@ -532,6 +540,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '목 근육 강화, 거북목 개선, 목 안정성 향상',
       recommendedStretching: ['Chin Tuck', '목 스트레칭', '상부 승모근 스트레칭'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=7rnlAVhAK-8',
     },
   },
   {
@@ -557,6 +566,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '다리 뒤쪽 근육 이완, 허리 통증 완화, 유연성 향상',
       recommendedStretching: ['햄스트링 스트레칭', '허리 스트레칭', '요방형근 스트레칭'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=crQ4Nu2H0oA',
     },
   },
   {
@@ -582,6 +592,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '허리 옆면 근육 이완, 허리 통증 완화, 좌우 균형 개선',
       recommendedStretching: ['요방형근 스트레칭', '허리 스트레칭', '햄스트링 스트레칭'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=TMrxOWW3MsA',
     },
   },
   {
@@ -607,6 +618,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '목과 가슴 근육 이완, 거북목 개선, 어깨 통증 완화',
       recommendedStretching: ['경흉근 스트레칭', '흉근 스트레칭', '목 스트레칭'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=8MtXHjSU1n0',
     },
   },
   {
@@ -632,6 +644,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '턱 근육 이완, 턱 관절 통증 완화, 두통 감소',
       recommendedStretching: ['측두근 이완 스트레칭', '목 스트레칭', '사각근 스트레칭'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=MxFbtmD8fok',
     },
   },
   {
@@ -657,6 +670,7 @@ export const infoData: InfoItem[] = [
       ],
       effect: '눈 피로 완화, 건조함 감소, 시력 보호',
       recommendedStretching: ['20-20-20 눈 휴식법', '눈 운동', '목 스트레칭'],
+      youtubeUrl: 'https://www.youtube.com/watch?v=euBLyvbjly0',
     },
   },
 ];

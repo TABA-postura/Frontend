@@ -125,35 +125,32 @@ function ContentDetailPage() {
   // contentText를 소제목별로 파싱하여 섹션으로 분리
   const parseContentSections = (text: string) => {
     const sections: { title: string; content: string }[] = [];
-    const lines = text.split('\n').filter((line) => line.trim().length > 0);
     
-    // 알려진 소제목 목록
-    const knownTitles = ['자세 유형', '탐지 특징', '설명', '주요 원인', '동반 증상', '교정 필요성'];
+    // 알려진 소제목 목록 (정규식으로 매칭)
+    const knownTitles = ['자세 유형', '체간 기울기 이상', '탐지 특징', '설명', '주요 원인', '동반 증상', '교정 필요성'];
     
-    let currentSection: { title: string; content: string } | null = null;
+    // 소제목 패턴으로 분리 (소제목 + 그 뒤 내용)
+    const titlePattern = new RegExp(`(${knownTitles.join('|')})\\s*`, 'g');
     
-    for (const line of lines) {
-      const trimmedLine = line.trim();
+    // 텍스트를 소제목 기준으로 분할
+    const parts = text.split(titlePattern).filter(part => part.trim().length > 0);
+    
+    let i = 0;
+    while (i < parts.length) {
+      const part = parts[i].trim();
       
-      // 소제목인지 확인
-      if (knownTitles.includes(trimmedLine)) {
-        // 이전 섹션 저장
-        if (currentSection) {
-          sections.push(currentSection);
-        }
-        currentSection = { title: trimmedLine, content: '' };
-      } else if (currentSection) {
-        // 현재 섹션에 내용 추가
-        currentSection.content += (currentSection.content ? '\n' : '') + trimmedLine;
+      if (knownTitles.includes(part)) {
+        // 소제목인 경우, 다음 파트가 내용
+        const content = (i + 1 < parts.length && !knownTitles.includes(parts[i + 1].trim()))
+          ? parts[i + 1].trim()
+          : '';
+        sections.push({ title: part, content });
+        i += content ? 2 : 1;
       } else {
         // 소제목 없이 시작하는 내용
-        sections.push({ title: '', content: trimmedLine });
+        sections.push({ title: '', content: part });
+        i++;
       }
-    }
-    
-    // 마지막 섹션 저장
-    if (currentSection) {
-      sections.push(currentSection);
     }
     
     return sections;

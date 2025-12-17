@@ -1,0 +1,140 @@
+.guide-tour {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.guide-tour__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+}
+
+.guide-tour__highlight {
+  position: absolute;
+  border: 3px solid #667eea;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: #667eea;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 20px rgba(102, 126, 234, 0.5);
+  }
+  50% {
+    border-color: #a5b4fc;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 30px rgba(102, 126, 234, 0.8);
+  }
+}
+
+.guide-tour__tooltip {
+  position: absolute;
+  width: 280px;
+  max-height: 200px;
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  pointer-events: auto;
+  animation: fadeIn 0.3s ease-out;
+  overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.guide-tour__tooltip-header {
+  margin-bottom: 12px;
+}
+
+.guide-tour__step-indicator {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.guide-tour__tooltip-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #13195b;
+  margin: 0;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.guide-tour__tooltip-description {
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.guide-tour__tooltip-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.guide-tour__skip-btn {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+  font-family: 'Pretendard', sans-serif;
+  transition: color 0.2s ease;
+}
+
+.guide-tour__skip-btn:hover {
+  color: #6b7280;
+}
+
+.guide-tour__next-btn {
+  background: #667eea;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Pretendard', sans-serif;
+  transition: all 0.2s ease;
+}
+
+.guide-tour__next-btn:hover {
+  background: #5568d3;
+  transform: translateY(-1px);
+}
+
+.guide-tour__next-btn:active {
+  transform: translateY(0);
+}

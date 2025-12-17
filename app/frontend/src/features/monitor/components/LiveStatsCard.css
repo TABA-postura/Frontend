@@ -10,8 +10,9 @@
   backdrop-filter: blur(10px);
   border: none;
   box-sizing: border-box;
-  flex: 1;
+  flex: 0 0 auto;
   min-height: 0;
+  height: fit-content;
 }
 
 .live-stats-card__header {
