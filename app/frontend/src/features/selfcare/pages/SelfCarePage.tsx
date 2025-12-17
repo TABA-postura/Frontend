@@ -92,9 +92,9 @@ function SelfCarePage() {
       })
     : [];
 
-  // 문제 유형별 추천 정보 매핑
+  // 문제 유형별 추천 정보 매핑 (백엔드 키 사용)
   const issueRecommendations: Record<string, { title: string; description: string; icon: string; iconBg: string; iconColor: string; youtubeUrl: string }> = {
-    '거북목': {
+    'FORWARD_HEAD': {
       title: '거북목 개선 필요',
       description: '가장 많이 발생하는 문제입니다. 모니터 높이를 조정하고 목 스트레칭을 실시하세요.',
       icon: '▲',
@@ -102,7 +102,7 @@ function SelfCarePage() {
       iconColor: '#ef4444',
       youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
     },
-    '허리 굽힘': {
+    'SLOUCHING': {
       title: '허리 굽힘 개선 필요',
       description: '허리가 굽어지는 문제가 발생합니다. 허리 스트레칭을 실시하세요.',
       icon: '▲',
@@ -110,23 +110,23 @@ function SelfCarePage() {
       iconColor: '#f59e0b',
       youtubeUrl: 'https://www.youtube.com/watch?v=abiyAQu-Pf0',
     },
-    '어깨 비대칭': {
+    'UNEQUAL_SHOULDERS': {
       title: '어깨 불균형',
       description: '어깨 높이 차이가 자주 감지됩니다. 양쪽 어깨를 균등하게 사용하도록 주의하세요.',
-      icon: '▲',
+      icon: '◆',
       iconBg: '#fed7aa',
       iconColor: '#fb923c',
       youtubeUrl: 'https://www.youtube.com/watch?v=mUnSpfItRf0',
     },
-    '한쪽 어깨 기울임': {
+    'SHOULDER_TILT': {
       title: '어깨 기울임 개선 필요',
       description: '한쪽 어깨가 기울어지는 문제가 발생합니다. 어깨 스트레칭을 실시하세요.',
-      icon: '▲',
+      icon: '◆',
       iconBg: '#fed7aa',
       iconColor: '#fb923c',
       youtubeUrl: 'https://www.youtube.com/watch?v=mUnSpfItRf0',
     },
-    '상체 기울임': {
+    'BODY_TILT': {
       title: '상체 기울임 개선 필요',
       description: '상체가 기울어지는 문제가 발생합니다. 코어 강화 운동을 실시하세요.',
       icon: '▲',
@@ -134,7 +134,7 @@ function SelfCarePage() {
       iconColor: '#6366f1',
       youtubeUrl: 'https://www.youtube.com/watch?v=abiyAQu-Pf0',
     },
-    '화면 과도하게 가까움': {
+    'TOO_CLOSE': {
       title: '화면 거리 유지',
       description: '모니터와의 거리가 가까워지는 경향이 있습니다. 최소 50cm 이상 거리를 유지하세요.',
       icon: '◎',
@@ -142,23 +142,31 @@ function SelfCarePage() {
       iconColor: '#3b82f6',
       youtubeUrl: 'https://www.youtube.com/watch?v=euBLyvbjly0',
     },
-    '팔 지지 / 턱 괴기': {
-      title: '팔 지지 / 턱 괴기 개선',
-      description: '팔을 지지하거나 턱을 괴는 습관이 있습니다. 올바른 자세를 유지하세요.',
-      icon: '▲',
+    'ARM_SUPPORT': {
+      title: '팔 지지 자세 감지',
+      description: '손목/전완부 스트레칭 후, 양손을 무릎 위에 올려 바른 자세를 취해주세요.',
+      icon: '●',
       iconBg: '#fef3c7',
       iconColor: '#f59e0b',
       youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
     },
-    '좌우 비대칭 자세': {
-      title: '좌우 비대칭 개선',
+    'CHIN_REST': {
+      title: '턱 괴기 자세 감지',
+      description: '턱 당기기 운동을 하거나 화면과 거리를 두고 목을 뒤로 밀어주세요.',
+      icon: '●',
+      iconBg: '#fef3c7',
+      iconColor: '#f59e0b',
+      youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
+    },
+    'ASYMMETRIC': {
+      title: '복합 비대칭 자세',
       description: '좌우 비대칭 자세가 감지됩니다. 균형 잡힌 자세를 유지하세요.',
-      icon: '▲',
+      icon: '◆',
       iconBg: '#e0e7ff',
       iconColor: '#6366f1',
       youtubeUrl: 'https://www.youtube.com/watch?v=TMrxOWW3MsA',
     },
-    '머리 기울임': {
+    'HEAD_TILT': {
       title: '머리 기울임 개선',
       description: '머리가 기울어지는 문제가 발생합니다. 목 스트레칭을 실시하세요.',
       icon: '▲',
