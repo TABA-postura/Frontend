@@ -17,31 +17,6 @@
   object-fit: contain;
 }
 
-/* 도움말 버튼 */
-.help-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #333;
-  color: white;
-  border: none;
-  font-size: 20px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-}
-
-.help-button:hover {
-  background: #555;
-}
-
-.help-button:active {
-  background: #222;
-}
 
 /* 하단 섹션 그리드 */
 .bottom-section {

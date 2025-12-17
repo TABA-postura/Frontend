@@ -25,6 +25,34 @@ import {
 
 type TabValue = 'weekly' | 'distribution';
 
+// 자세별 유튜브 링크 매핑
+const YOUTUBE_LINKS: Record<string, string> = {
+  'TURTLE_NECK': 'https://www.youtube.com/watch?v=QhL1dqR0XWU', // 거북목
+  'UNEQUAL_SHOULDERS': 'https://www.youtube.com/watch?v=4vTJHUDB5ak', // 어깨 불균형
+  'HEAD_TILT': 'https://www.youtube.com/watch?v=4vTJHUDB5ak', // 머리 기울임
+  'SHOULDER_TILT': 'https://www.youtube.com/watch?v=4vTJHUDB5ak', // 어깨 기울임
+  'LEAN_BACK': 'https://www.youtube.com/watch?v=QhL1dqR0XWU', // 뒤로 기울임
+  'LEAN_FORWARD': 'https://www.youtube.com/watch?v=QhL1dqR0XWU', // 앞으로 기울임
+  'CLOSE_TO_SCREEN': 'https://www.youtube.com/watch?v=QhL1dqR0XWU', // 화면 거리 유지
+};
+
+// 자세 이름 한글 매핑
+const POSTURE_KOREAN_NAMES: Record<string, string> = {
+  'TURTLE_NECK': '거북목',
+  'UNEQUAL_SHOULDERS': '어깨 불균형',
+  'HEAD_TILT': '머리 기울임',
+  'SHOULDER_TILT': '어깨 기울임',
+  'LEAN_BACK': '뒤로 기울임',
+  'LEAN_FORWARD': '앞으로 기울임',
+  'CLOSE_TO_SCREEN': '화면 거리 유지',
+  'NORMAL': '정상',
+};
+
+// 자세 이름 변환 함수
+const getPostureKoreanName = (posture: string): string => {
+  return POSTURE_KOREAN_NAMES[posture] || posture.replace(/_/g, ' ');
+};
+
 // 파이 차트 색상 팔레트
 const PIE_CHART_COLORS = [
   '#667eea',
@@ -72,7 +100,7 @@ function SelfManagementPage() {
   const pieChartData = useMemo(() => {
     if (!reportData?.postureDistribution) return [];
     return Object.entries(reportData.postureDistribution).map(([name, value], index) => ({
-      name: name.replace(/_/g, ' '),
+      name: getPostureKoreanName(name),
       value,
       color: PIE_CHART_COLORS[index % PIE_CHART_COLORS.length],
     }));
@@ -97,10 +125,10 @@ function SelfManagementPage() {
     return 'calendar-day--green';
   };
 
-  // 추천 스트레칭 클릭 핸들러
-  const handleRecommendationClick = (guideId: number) => {
-    // InformationPage로 이동하고 해당 guideId의 상세 정보 표시
-    navigate(`/information?guideId=${guideId}`);
+  // 추천 스트레칭 클릭 핸들러 - 유튜브 링크로 이동
+  const handleRecommendationClick = (problemType: string) => {
+    const youtubeUrl = YOUTUBE_LINKS[problemType] || 'https://www.youtube.com/results?search_query=자세+스트레칭';
+    window.open(youtubeUrl, '_blank');
   };
 
   // 로딩 상태
@@ -209,7 +237,7 @@ function SelfManagementPage() {
               </div>
               <div className="stat-card__value">{Math.round(reportData.weeklyAvgRatio)}%</div>
               <div className="stat-card__change positive">
-                {reportData.mostFrequentIssue ? `주요 문제: ${reportData.mostFrequentIssue.replace(/_/g, ' ')}` : '데이터 없음'}
+                {reportData.mostFrequentIssue ? `주요 문제: ${getPostureKoreanName(reportData.mostFrequentIssue)}` : '데이터 없음'}
               </div>
             </div>
 
@@ -351,14 +379,14 @@ function SelfManagementPage() {
                     <div key={index} className="recommendation-card">
                       <div className="rec-header">
                         <span className="rec-icon warning">⚠️</span>
-                        <h4 className="rec-title">{rec.problemType.replace(/_/g, ' ')}</h4>
+                        <h4 className="rec-title">{getPostureKoreanName(rec.problemType)}</h4>
                       </div>
                       <p className="rec-description">
                         {rec.recommendedGuideTitle} 스트레칭을 추천합니다.
                       </p>
                       <button
                         className="rec-button"
-                        onClick={() => handleRecommendationClick(rec.guideId)}
+                        onClick={() => handleRecommendationClick(rec.problemType)}
                       >
                         <span>추천 스트레칭 보기</span>
                         <span className="rec-button-icon">→</span>
@@ -376,8 +404,6 @@ function SelfManagementPage() {
         </main>
       </div>
 
-      {/* 도움말 버튼 */}
-      <button className="help-button">?</button>
     </div>
   );
 }

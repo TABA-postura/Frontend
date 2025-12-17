@@ -6,8 +6,8 @@ html {
   height: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
-  overflow: hidden !important;
-  background-color: #ffffff !important;
+  min-height: 100vh !important;
+  background-color: #0b0f14 !important;
 }
 
 body {
@@ -18,8 +18,7 @@ body {
   min-height: 100vh !important;
   margin: 0 !important;
   padding: 0 !important;
-  overflow: hidden !important;
-  background-color: #ffffff !important;
+  background-color: #0b0f14 !important;
 }
 
 #root {
@@ -28,22 +27,34 @@ body {
   padding: 0 !important;
   text-align: left !important;
   width: 100% !important;
-  height: 100% !important;
   min-height: 100vh !important;
-  overflow-x: hidden !important;
+  background-color: #0b0f14 !important;
+}
+
+/* 전역 스크롤바 숨기기 (스크롤은 가능하지만 바는 안 보임) */
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* 컨테이너 */
 .monitor-container {
-  width: 100%;
-  min-height: 100vh;      /* 화면을 채우되, 바 높이는 상단 패딩으로 해결 */
-  height: 100vh;          /* 화면 높이에 맞춤 */
-  background: transparent;
-  padding: 0;             /* TopBar는 바로 상단에 붙도록 */
+  width: 100vw;
+  min-height: 100vh;
+  height: 100vh;
+  padding: 0;
   margin: 0;
-  position: relative;
-  overflow: hidden;        /* 스크롤 비활성화 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  background-color: #e8ebf0;
 }
+
 
 /* 대시보드 레이아웃 */
 .dashboard-content {
@@ -230,31 +241,6 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* 도움말 버튼 */
-.help-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #333;
-  color: white;
-  border: none;
-  font-size: 20px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-}
-
-.help-button:hover {
-  background: #555;
-}
-
-.help-button:active {
-  background: #222;
-}
 
 /* 문제 유형별 누적 횟수 */
 .problem-list-title {

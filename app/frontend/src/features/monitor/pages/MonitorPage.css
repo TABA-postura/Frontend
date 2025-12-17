@@ -3,9 +3,23 @@
 .monitor-page {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-top: 32px; /* TopBar와 메인 섹션 사이 여유 */
-  padding-bottom: 40px; /* 하단 여백 추가 */
+  gap: 1vh;
+  padding-top: 1vh;
+  padding-bottom: 1vh;
+  height: calc(100vh - 22vh);
+  box-sizing: border-box;
+}
+
+/* 스크롤바 숨기기 */
+.monitor-page::-webkit-scrollbar,
+.monitor-page *::-webkit-scrollbar {
+  display: none;
+}
+
+.monitor-page,
+.monitor-page * {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .monitor-page__header {
@@ -29,33 +43,38 @@
 
 .monitor-page__content {
   display: grid;
-  grid-template-columns: 0.38fr 1.24fr 0.38fr; /* 좌측, 중앙, 우측 3열 - 97%에 맞게 조정 */
-  gap: 12px;
-  padding: 0 12px; /* 좌우 여백 확보로 화면 모서리와 분리 */
-  align-items: stretch; /* 모든 섹션 높이를 동일하게 맞춤 */
+  grid-template-columns: 0.38fr 1.24fr 0.38fr;
+  gap: 1vw;
+  padding: 0 1vw;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0; /* flex 컨테이너 내 overflow 처리 */
 }
 
 .monitor-page__left {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-width: 250px; /* 좌측 컬럼 최대 너비 더 줄임 */
-  height: 100%; /* 우측 섹션과 높이 맞춤 */
+  gap: 1vh;
+  max-width: 18vw;
+  height: 100%;
+  min-height: 0;
 }
 
 .monitor-page__center {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  height: 100%; /* 다른 섹션과 높이 맞춤 */
+  gap: 1vh;
+  height: 100%;
+  min-height: 0;
 }
 
 .monitor-page__right {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  height: 100%; /* 다른 섹션과 높이 맞춤 */
-  max-width: 300px; /* 우측 컬럼 최대 너비 */
+  gap: 1vh;
+  height: 100%;
+  max-width: 18vw;
+  min-height: 0;
 }
 
 .monitor-page__card {
@@ -209,37 +228,51 @@
 /* 반응형 디자인 */
 @media (max-width: 1200px) {
   .monitor-page__content {
-    grid-template-columns: 1fr;
+    grid-template-columns: 0.4fr 1fr 0.4fr;
   }
 
+  .monitor-page__left,
   .monitor-page__right {
-    order: -1; /* 모바일에서 웹캠 패널을 위로 */
+    max-width: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .monitor-page__content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .monitor-page__center {
+    order: -1;
+  }
+
+  .monitor-page__left,
+  .monitor-page__right {
+    max-width: 100%;
   }
 }
 
 @media (max-width: 768px) {
   .monitor-page {
-    gap: 16px;
+    gap: 1vh;
+    padding: 1vh 1vw;
   }
 
   .monitor-page__content {
-    gap: 16px;
-  }
-
-  .monitor-page__left {
-    gap: 16px;
+    gap: 1vh;
   }
 
   .monitor-page__card {
-    padding: 16px;
+    padding: 2vw;
   }
 
   .monitor-page__card-title {
-    font-size: 16px;
+    font-size: clamp(14px, 2vw, 16px);
   }
 
   .monitor-page__stat-value {
-    font-size: 16px;
+    font-size: clamp(14px, 2vw, 16px);
   }
 }
 
