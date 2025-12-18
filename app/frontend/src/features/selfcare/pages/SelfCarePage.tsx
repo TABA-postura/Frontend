@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import TopBar from '../../../components/TopBar';
 import {
   LineChart,
@@ -40,7 +39,6 @@ const getPostureKoreanName = (posture: string): string => {
 };
 
 function SelfCarePage() {
-  const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState<'weekly' | 'distribution'>('weekly');
   const [isVisible, setIsVisible] = useState(false);
 
