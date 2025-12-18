@@ -37,25 +37,17 @@ export function InfoImage({ s3ImageUrl, title, fallbackText }: InfoImageProps) {
     setImageError(true);
     setImageLoading(false);
     
+    // 이미지 로딩 에러를 전역 에러 핸들러로 전파하지 않도록 방지
+    e.stopPropagation();
+    
     if (import.meta.env.DEV) {
       const img = e.currentTarget;
-      console.error('[InfoImage] 이미지 로드 실패:', {
+      console.warn('[InfoImage] 이미지 로드 실패 (이미 fallback 처리됨):', {
         title,
         originalUrl: s3ImageUrl,
         resolvedUrl: imageUrl,
-        // 브라우저가 실제로 요청한 URL 확인
-        // Network 탭에서 이 URL을 확인할 수 있습니다
         networkUrl: img.src,
       });
-      
-      // 트러블슈팅 가이드 출력
-      console.group('🔍 이미지 로딩 실패 트러블슈팅');
-      console.log('1. 브라우저 개발자 도구 > Network 탭에서 이미지 요청 확인');
-      console.log('2. 요청 URL:', imageUrl);
-      console.log('3. 응답 상태 코드 확인 (404: 파일 없음, 401: 인증 필요, 403: 권한 없음)');
-      console.log('4. 백엔드 서버가 실행 중인지 확인');
-      console.log('5. 파일 경로가 정확한지 확인:', s3ImageUrl);
-      console.groupEnd();
     }
   };
 

@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 export default function PrivateRoute() {
   // TODO: 개발 완료 후 아래 주석 해제하고 return <Outlet /> 삭제

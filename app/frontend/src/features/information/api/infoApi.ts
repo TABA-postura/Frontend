@@ -37,9 +37,25 @@ export async function getInfoList(params?: {
     
     console.log('[Info API] getInfoList 성공:', {
       itemCount: response.data?.length || 0,
+      sampleItem: response.data?.[0], // 첫 번째 아이템 샘플 출력
     });
     
-    return response.data;
+    // 백엔드 응답에서 imageUrl 필드를 s3ImageUrl로 매핑 (필드 이름이 다른 경우 대비)
+    const mappedData = response.data?.map((item: any) => {
+      // imageUrl 필드를 우선적으로 사용 (백엔드에서 실제로 사용하는 필드명)
+      const imageUrl = item.imageUrl || item.s3ImageUrl || item.image_url || null;
+      return {
+        ...item,
+        s3ImageUrl: imageUrl,
+      };
+    }) || [];
+    
+    console.log('[Info API] 매핑된 데이터 샘플:', {
+      original: response.data?.[0],
+      mapped: mappedData[0],
+    });
+    
+    return mappedData;
   } catch (error) {
     console.error('[Info API] getInfoList error', error);
     
@@ -67,7 +83,27 @@ export async function getInfoDetail(id: number): Promise<InfoDetail> {
   try {
     // 정보 제공 API는 public이므로 accessToken이 없어도 호출 가능
     const response = await apiClient.get<InfoDetail>(`/api/content/${id}`);
-    return response.data;
+    
+    console.log('[Info API] getInfoDetail 성공:', {
+      id,
+      data: response.data,
+    });
+    
+    // 백엔드 응답에서 imageUrl 필드를 s3ImageUrl로 매핑 (필드 이름이 다른 경우 대비)
+    const data = response.data as any;
+    // imageUrl 필드를 우선적으로 사용 (백엔드에서 실제로 사용하는 필드명)
+    const imageUrl = data.imageUrl || data.s3ImageUrl || data.image_url || null;
+    const mappedData: InfoDetail = {
+      ...data,
+      s3ImageUrl: imageUrl,
+    };
+    
+    console.log('[Info API] 매핑된 상세 데이터:', {
+      original: data,
+      mapped: mappedData,
+    });
+    
+    return mappedData;
   } catch (error) {
     console.error('[Info API] getInfoDetail error', error);
     

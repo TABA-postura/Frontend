@@ -28,6 +28,10 @@ function isIgnorableError(error: Error | string | unknown): boolean {
     /Could not establish connection/i,
     /A listener indicated an asynchronous response/i,
     /but the message channel closed/i,
+    // 이미지 로딩 실패는 이미 컴포넌트에서 처리하므로 무시
+    /Failed to load resource/i,
+    /The resource.*could not be loaded/i,
+    /img.*error/i,
   ];
 
   return ignorablePatterns.some(pattern => pattern.test(errorMessage));

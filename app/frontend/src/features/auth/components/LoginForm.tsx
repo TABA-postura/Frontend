@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -8,13 +8,37 @@ export interface LoginFormProps {
   onSuccess?: () => void;
 }
 
+interface OAuthError {
+  type: string;
+  message: string;
+  provider?: string;
+}
+
 const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [oauthError, setOAuthError] = useState<OAuthError | null>(null);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
-  const { login, isLoading, error: authError } = useAuth();
+  const { login, isLoading } = useAuth();
+
+  // OAuth 에러 체크 (페이지 로드 시)
+  useEffect(() => {
+    const oauthErrorStr = localStorage.getItem('oauth_error');
+    if (oauthErrorStr) {
+      try {
+        const error: OAuthError = JSON.parse(oauthErrorStr);
+        setOAuthError(error);
+        // 표시 후 localStorage에서 제거
+        localStorage.removeItem('oauth_error');
+      } catch (e) {
+        console.error('OAuth error parsing failed:', e);
+        localStorage.removeItem('oauth_error');
+      }
+    }
+  }, []);
 
   /**
    * 폼 유효성 검사
@@ -55,17 +79,27 @@ const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
     try {
       await login(email, password);
 
+      // 성공 시 에러 초기화
+      setLoginError(null);
+
       if (onSuccess) {
         onSuccess();
       }
-    } catch (err) {
-      // useAuth에서 이미 처리됨
-      console.error('Login error:', err);
+    } catch (err: any) {
+      // 백엔드 응답 형식: { "code": "BAD_CREDENTIALS", "message": "..." }
+      if (err?.response?.status === 401) {
+        const errorMessage = err?.response?.data?.message || '이메일 또는 비밀번호가 올바르지 않습니다.';
+        setLoginError(errorMessage);
+      } else {
+        // 기타 에러
+        setLoginError('로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        console.error('Login error:', err);
+      }
     }
   };
 
-  // 최종 표시할 에러 메시지
-  const displayError = validationError || authError;
+  // 최종 표시할 에러 메시지 (OAuth 에러 우선, 그 다음 로그인 에러, 마지막 유효성 검사 에러)
+  const displayError = oauthError?.message || loginError || validationError;
 
   return (
     <div className="login-container">
@@ -130,7 +164,20 @@ const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
                   aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                   disabled={isLoading}
                 >
-                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                  {showPassword ? (
+                    // 숨김 아이콘 (대각선이 그어진 눈)
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  ) : (
+                    // 보기 아이콘 (일반 눈)
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
                 </button>
               </div>
             </div>
@@ -143,9 +190,20 @@ const LoginForm = ({ onSuccess }: LoginFormProps = {}) => {
                   fontSize: '14px',
                   marginBottom: '16px',
                   textAlign: 'center',
+                  padding: '12px',
+                  backgroundColor: oauthError?.type === 'provider_mismatch' ? '#fff3cd' : '#f8d7da',
+                  border: `1px solid ${oauthError?.type === 'provider_mismatch' ? '#ffc107' : '#f5c6cb'}`,
+                  borderRadius: '4px',
                 }}
               >
                 {displayError}
+                {oauthError?.type === 'provider_mismatch' && (
+                  <div style={{ marginTop: '8px', fontSize: '12px', color: '#856404' }}>
+                    {oauthError.provider 
+                      ? `${oauthError.provider === 'google' ? 'Kakao' : oauthError.provider === 'kakao' ? 'Google' : '다른 소셜 로그인'}로 로그인해 주세요.`
+                      : '아래 소셜 로그인 버튼을 사용해 주세요.'}
+                  </div>
+                )}
               </div>
             )}
 
