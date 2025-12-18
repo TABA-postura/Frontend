@@ -25,15 +25,24 @@ import {
 
 type TabValue = 'weekly' | 'distribution';
 
-// 자세별 유튜브 링크 매핑
+// 자세별 유튜브 링크 매핑 (백엔드 키 사용, SelfCarePage의 issueRecommendations와 동일)
 const YOUTUBE_LINKS: Record<string, string> = {
-  'TURTLE_NECK': 'https://www.youtube.com/watch?v=QhL1dqR0XWU', // 거북목
-  'UNEQUAL_SHOULDERS': 'https://www.youtube.com/watch?v=4vTJHUDB5ak', // 어깨 불균형
-  'HEAD_TILT': 'https://www.youtube.com/watch?v=4vTJHUDB5ak', // 머리 기울임
-  'SHOULDER_TILT': 'https://www.youtube.com/watch?v=4vTJHUDB5ak', // 어깨 기울임
-  'LEAN_BACK': 'https://www.youtube.com/watch?v=QhL1dqR0XWU', // 뒤로 기울임
-  'LEAN_FORWARD': 'https://www.youtube.com/watch?v=QhL1dqR0XWU', // 앞으로 기울임
-  'CLOSE_TO_SCREEN': 'https://www.youtube.com/watch?v=QhL1dqR0XWU', // 화면 거리 유지
+  'FORWARD_HEAD': 'https://www.youtube.com/watch?v=kgCj8UUEWjU', // 거북목
+  'SLOUCHING': 'https://www.youtube.com/watch?v=abiyAQu-Pf0', // 허리 굽힘
+  'UNEQUAL_SHOULDERS': 'https://www.youtube.com/watch?v=mUnSpfItRf0', // 어깨 불균형
+  'SHOULDER_TILT': 'https://www.youtube.com/watch?v=mUnSpfItRf0', // 어깨 기울임
+  'BODY_TILT': 'https://www.youtube.com/watch?v=abiyAQu-Pf0', // 상체 기울임
+  'UPPER_BODY_TILT': 'https://www.youtube.com/watch?v=abiyAQu-Pf0', // 상체 기울임
+  'TOO_CLOSE': 'https://www.youtube.com/watch?v=euBLyvbjly0', // 화면 거리 유지
+  'ARM_SUPPORT': 'https://www.youtube.com/watch?v=kgCj8UUEWjU', // 팔 지지 자세
+  'CHIN_REST': 'https://www.youtube.com/watch?v=kgCj8UUEWjU', // 턱 괴기 자세
+  'ASYMMETRIC': 'https://www.youtube.com/watch?v=TMrxOWW3MsA', // 복합 비대칭 자세
+  'HEAD_TILT': 'https://www.youtube.com/watch?v=kgCj8UUEWjU', // 머리 기울임
+  // 이전 키 호환성 유지
+  'TURTLE_NECK': 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
+  'LEAN_BACK': 'https://www.youtube.com/watch?v=abiyAQu-Pf0',
+  'LEAN_FORWARD': 'https://www.youtube.com/watch?v=abiyAQu-Pf0',
+  'CLOSE_TO_SCREEN': 'https://www.youtube.com/watch?v=euBLyvbjly0',
 };
 
 // 자세 이름 한글 매핑
