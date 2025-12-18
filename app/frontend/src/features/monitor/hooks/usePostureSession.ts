@@ -75,9 +75,7 @@ export interface UsePostureSessionResult {
  */
 const INITIAL_ISSUES: PostureIssueStat[] = [
   { type: 'FORWARD_HEAD', label: '거북목', count: 0 },
-  { type: 'BENT_BACK', label: '허리 굽힘', count: 0 },
-  { type: 'SHOULDER_ASYMMETRY', label: '어깨 비대칭', count: 0 },
-  { type: 'SHOULDER_TILT', label: '한쪽 어깨 기울임', count: 0 },
+  { type: 'SHOULDER_ASYMMETRY', label: '한쪽 어깨 기울임', count: 0 },
   { type: 'UPPER_BODY_TILT', label: '상체 기울임', count: 0 },
   { type: 'TOO_CLOSE_TO_SCREEN', label: '화면 과도하게 가까움', count: 0 },
   { type: 'ARM_SUPPORT_CHIN_REST', label: '팔 지지 / 턱 괴기', count: 0 },
@@ -198,12 +196,16 @@ export function usePostureSession(): UsePostureSessionResult {
         // 피드백 메시지가 있으면 경고, 없으면 좋은 자세
         if (feedback.feedbackMessages && feedback.feedbackMessages.length > 0) {
           // 최신 피드백 메시지들만 표시 (누적하지 않고 교체)
-          const newFeedbackList: FeedbackItem[] = feedback.feedbackMessages.map((msg) => ({
-            type: 'WARN' as const,
-            title: '자세 피드백',
-            message: msg,
-            timestamp: Date.now(),
-          }));
+          // 메시지 내용에 따라 타입 결정: "훌륭합니다" 같은 긍정 메시지는 INFO, 나머지는 WARN
+          const newFeedbackList: FeedbackItem[] = feedback.feedbackMessages.map((msg) => {
+            const isPositiveMessage = msg.includes('훌륭합니다') || msg.includes('바른 자세') || msg.includes('좋은 자세');
+            return {
+              type: isPositiveMessage ? 'INFO' as const : 'WARN' as const,
+              title: '자세 피드백',
+              message: msg,
+              timestamp: Date.now(),
+            };
+          });
           setFeedbackList(newFeedbackList.slice(0, MAX_FEEDBACK_LIST_SIZE));
           setLatestFeedback(feedback.feedbackMessages[feedback.feedbackMessages.length - 1]);
         } else {

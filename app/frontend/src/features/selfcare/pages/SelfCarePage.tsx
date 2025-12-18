@@ -105,7 +105,7 @@ function SelfCarePage() {
     'SLOUCHING': {
       title: '허리 굽힘 개선 필요',
       description: '허리가 굽어지는 문제가 발생합니다. 허리 스트레칭을 실시하세요.',
-      icon: '▲',
+      icon: '▼',
       iconBg: '#fef3c7',
       iconColor: '#f59e0b',
       youtubeUrl: 'https://www.youtube.com/watch?v=abiyAQu-Pf0',
@@ -113,7 +113,7 @@ function SelfCarePage() {
     'UNEQUAL_SHOULDERS': {
       title: '어깨 불균형',
       description: '어깨 높이 차이가 자주 감지됩니다. 양쪽 어깨를 균등하게 사용하도록 주의하세요.',
-      icon: '◆',
+      icon: '●',
       iconBg: '#fed7aa',
       iconColor: '#fb923c',
       youtubeUrl: 'https://www.youtube.com/watch?v=mUnSpfItRf0',
@@ -129,7 +129,15 @@ function SelfCarePage() {
     'BODY_TILT': {
       title: '상체 기울임 개선 필요',
       description: '상체가 기울어지는 문제가 발생합니다. 코어 강화 운동을 실시하세요.',
-      icon: '▲',
+      icon: '◀',
+      iconBg: '#e0e7ff',
+      iconColor: '#6366f1',
+      youtubeUrl: 'https://www.youtube.com/watch?v=abiyAQu-Pf0',
+    },
+    'UPPER_BODY_TILT': {
+      title: '상체 기울임 개선 필요',
+      description: '상체가 기울어지는 문제가 발생합니다. 코어 강화 운동을 실시하세요.',
+      icon: '■',
       iconBg: '#e0e7ff',
       iconColor: '#6366f1',
       youtubeUrl: 'https://www.youtube.com/watch?v=abiyAQu-Pf0',
@@ -145,7 +153,7 @@ function SelfCarePage() {
     'ARM_SUPPORT': {
       title: '팔 지지 자세 감지',
       description: '손목/전완부 스트레칭 후, 양손을 무릎 위에 올려 바른 자세를 취해주세요.',
-      icon: '●',
+      icon: '◉',
       iconBg: '#fef3c7',
       iconColor: '#f59e0b',
       youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
@@ -153,7 +161,7 @@ function SelfCarePage() {
     'CHIN_REST': {
       title: '턱 괴기 자세 감지',
       description: '턱 당기기 운동을 하거나 화면과 거리를 두고 목을 뒤로 밀어주세요.',
-      icon: '●',
+      icon: '◇',
       iconBg: '#fef3c7',
       iconColor: '#f59e0b',
       youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
@@ -161,7 +169,7 @@ function SelfCarePage() {
     'ASYMMETRIC': {
       title: '복합 비대칭 자세',
       description: '좌우 비대칭 자세가 감지됩니다. 균형 잡힌 자세를 유지하세요.',
-      icon: '◆',
+      icon: '▶',
       iconBg: '#e0e7ff',
       iconColor: '#6366f1',
       youtubeUrl: 'https://www.youtube.com/watch?v=TMrxOWW3MsA',
@@ -169,7 +177,7 @@ function SelfCarePage() {
     'HEAD_TILT': {
       title: '머리 기울임 개선',
       description: '머리가 기울어지는 문제가 발생합니다. 목 스트레칭을 실시하세요.',
-      icon: '▲',
+      icon: '★',
       iconBg: '#fce7f3',
       iconColor: '#ef4444',
       youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
@@ -850,7 +858,16 @@ function SelfCarePage() {
               gap: '24px',
             }}
           >
-            {reportData.recommendations.map((recommendation, index) => (
+            {reportData.recommendations.map((recommendation, index) => {
+              const issueInfo = issueRecommendations[recommendation.problemType] || {
+                title: recommendation.problemType,
+                icon: '▲',
+                iconBg: '#fce7f3',
+                iconColor: '#ef4444',
+                youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
+              };
+              
+              return (
               <div
                 key={index}
                 style={{
@@ -881,13 +898,13 @@ function SelfCarePage() {
                     width: '48px',
                     height: '48px',
                     borderRadius: '8px',
-                    backgroundColor: '#fce7f3',
+                    backgroundColor: issueInfo.iconBg,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  <span style={{ color: '#ef4444', fontSize: '24px', fontWeight: 'bold' }}>▲</span>
+                  <span style={{ color: issueInfo.iconColor, fontSize: '24px', fontWeight: 'bold' }}>{issueInfo.icon}</span>
                 </div>
                 <h3
                   style={{
@@ -898,7 +915,7 @@ function SelfCarePage() {
                     fontFamily: "'Pretendard', sans-serif",
                   }}
                 >
-                  {recommendation.problemType}
+                  {issueInfo.title}
                 </h3>
                 <p
                   style={{
@@ -912,7 +929,7 @@ function SelfCarePage() {
                   {recommendation.recommendedGuideTitle}를 추천합니다.
                 </p>
                 <button
-                  onClick={() => navigate(`/selfcare/stretching/${recommendation.guideId}`)}
+                  onClick={() => window.open(issueInfo.youtubeUrl || 'https://www.youtube.com/watch?v=kgCj8UUEWjU', '_blank')}
                   style={{
                     marginTop: 'auto',
                     padding: '10px 16px',
@@ -939,7 +956,8 @@ function SelfCarePage() {
                   추천 스트레칭 보기 →
                 </button>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
