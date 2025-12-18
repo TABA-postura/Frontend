@@ -150,20 +150,30 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
         return;
       }
       
-      // 409 CONFLICT 또는 401 UNAUTHORIZED: 이미 가입된 이메일
-      if (err?.response?.status === 409 || err?.response?.status === 401) {
-        setValidationError(
-          err?.response?.data?.message || 
-          '이미 가입된 이메일입니다.'
-        );
-      } 
+      // 409 CONFLICT: 이미 가입된 이메일
+      if (err?.response?.status === 409) {
+        const errorData = err?.response?.data;
+        // 백엔드 응답 형식: { "code": "DUPLICATE_EMAIL", "message": "이미 가입된 이메일입니다: user@example.com" }
+        const errorCode = errorData?.code;
+        const errorMessage = errorData?.message || '';
+        
+        // code가 DUPLICATE_EMAIL이거나 message에 관련 키워드가 있으면 그대로 사용
+        if (errorCode === 'DUPLICATE_EMAIL' || errorMessage.includes('이메일') || errorMessage.includes('이미') || errorMessage.includes('존재')) {
+          setValidationError(errorMessage || '이미 가입된 이메일입니다.');
+        } else {
+          setValidationError('이미 가입된 이메일입니다. 다른 이메일을 사용하거나 로그인해주세요.');
+        }
+      }
       // 400 에러: 입력값 검증 오류
       else if (err?.response?.status === 400) {
-        setValidationError(
-          err?.response?.data?.message || 
-          '입력한 정보를 확인해주세요.'
-        );
-      } 
+        const errorMessage = err?.response?.data?.message || '';
+        // 이메일 관련 에러인지 확인
+        if (errorMessage.toLowerCase().includes('email') || errorMessage.includes('이메일')) {
+          setValidationError('이미 가입된 이메일입니다. 다른 이메일을 사용하거나 로그인해주세요.');
+        } else {
+          setValidationError(errorMessage || '입력한 정보를 확인해주세요.');
+        }
+      }
       // 500번대 서버 오류
       else if (err?.response?.status >= 500) {
         setValidationError('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
@@ -174,7 +184,13 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
       } 
       // 기타 오류
       else {
-        setValidationError('회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        // 에러 메시지에 이메일 관련 내용이 있는지 확인
+        const errorMessage = err?.message || '';
+        if (errorMessage.toLowerCase().includes('email') || errorMessage.includes('이메일') || errorMessage.includes('이미')) {
+          setValidationError('이미 가입된 이메일입니다. 다른 이메일을 사용하거나 로그인해주세요.');
+        } else {
+          setValidationError('회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        }
         console.error('Signup error:', err);
       }
     }
@@ -256,7 +272,20 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
                   aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                   disabled={isLoading}
                 >
-                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                  {showPassword ? (
+                    // 숨김 아이콘 (대각선이 그어진 눈)
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  ) : (
+                    // 보기 아이콘 (일반 눈)
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
                 </button>
               </div>
             </div>
@@ -280,7 +309,20 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
                   aria-label={showConfirmPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                   disabled={isLoading}
                 >
-                  {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                  {showConfirmPassword ? (
+                    // 숨김 아이콘 (대각선이 그어진 눈)
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  ) : (
+                    // 보기 아이콘 (일반 눈)
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
                 </button>
               </div>
               {passwordError && (

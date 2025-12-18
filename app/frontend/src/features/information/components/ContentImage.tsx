@@ -36,9 +36,20 @@ export function ContentImage({
     setImageLoading(false);
   };
 
-  const handleImageError = () => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     setImageError(true);
     setImageLoading(false);
+    
+    // 이미지 로딩 에러를 전역 에러 핸들러로 전파하지 않도록 방지
+    e.stopPropagation();
+    
+    if (import.meta.env.DEV) {
+      console.warn('[ContentImage] 이미지 로드 실패 (이미 fallback 처리됨):', {
+        alt,
+        s3ImageUrl,
+        fallbackImageUrl,
+      });
+    }
   };
 
   return (

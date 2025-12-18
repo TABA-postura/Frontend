@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useWeeklyReport } from '../../../hooks/useWeeklyReport';
 import '../../../assets/styles/Home.css';
 import '../../../assets/styles/SelfManagement.css';
@@ -69,7 +69,6 @@ const PIE_CHART_COLORS = [
 
 function SelfManagementPage() {
   const location = useLocation();
-  const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState<TabValue>('weekly');
 
   // 백엔드 API에서 주간 리포트 데이터 조회 (이번 주 월요일 자동 계산)
