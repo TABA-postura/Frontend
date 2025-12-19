@@ -34,8 +34,10 @@ export default defineConfig(({ mode }) => {
       //   'Content-Security-Policy': "script-src 'self' 'unsafe-eval' 'unsafe-inline' http://localhost:* https://localhost:*; object-src 'none'; base-uri 'self';"
       // }
       // 개발 환경에서 이미지 요청을 백엔드로 프록시 (CORS 문제 해결)
+      // /images/content/ 경로만 백엔드로 프록시 (백엔드에서 제공하는 이미지)
+      // 나머지 /images/ 경로는 로컬 public 폴더에서 서빙
       proxy: {
-        '/images': {
+        '/images/content': {
           target: apiBaseUrl,
           changeOrigin: true,
           secure: true,
