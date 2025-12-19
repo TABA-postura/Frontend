@@ -30,10 +30,10 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
 
   // 인증 훅 사용
   const { signup, isLoading, error: authError } = useAuth();
-  
+
   // timeout 정리를 위한 ref
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
+
   // 컴포넌트 언마운트 시 timeout 정리
   useEffect(() => {
     return () => {
@@ -42,6 +42,14 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
       }
     };
   }, []);
+
+  // [FIX] 어떤 값이 와도 JSX에 안전하게 뿌릴 수 있도록 문자열로 정규화
+  const safeText = (v: any): string => {
+    if (typeof v === 'string') return v;
+    if (v == null) return '';
+    if (typeof v === 'object' && 'message' in v) return String((v as any).message ?? '');
+    return String(v);
+  };
 
   /**
    * 비밀번호 변경 핸들러
@@ -126,10 +134,11 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
 
     try {
       // 회원가입 API 호출
-      const message = await signup(email, password, name);
+      const result = await signup(email, password, name);
 
-      // 성공 메시지 표시
-      setSuccessMessage(message || '회원가입이 성공적으로 완료되었습니다.');
+      // [FIX] signup()이 객체를 반환해도 화면에는 문자열만 렌더링되게 처리
+      const msg = safeText(result) || '회원가입이 성공적으로 완료되었습니다.';
+      setSuccessMessage(msg);
 
       // 성공 시 콜백 호출 (보통 로그인 페이지로 이동)
       if (onSuccess) {
@@ -137,7 +146,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
         }
-        
+
         // 약간의 지연 후 콜백 호출 (사용자가 성공 메시지를 볼 수 있도록)
         timeoutRef.current = setTimeout(() => {
           onSuccess();
@@ -149,16 +158,21 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
       if (err instanceof Error && err.message.includes('message channel')) {
         return;
       }
-      
+
       // 409 CONFLICT: 이미 가입된 이메일
       if (err?.response?.status === 409) {
         const errorData = err?.response?.data;
         // 백엔드 응답 형식: { "code": "DUPLICATE_EMAIL", "message": "이미 가입된 이메일입니다: user@example.com" }
         const errorCode = errorData?.code;
-        const errorMessage = errorData?.message || '';
-        
+        const errorMessage = safeText(errorData?.message) || '';
+
         // code가 DUPLICATE_EMAIL이거나 message에 관련 키워드가 있으면 그대로 사용
-        if (errorCode === 'DUPLICATE_EMAIL' || errorMessage.includes('이메일') || errorMessage.includes('이미') || errorMessage.includes('존재')) {
+        if (
+          errorCode === 'DUPLICATE_EMAIL' ||
+          errorMessage.includes('이메일') ||
+          errorMessage.includes('이미') ||
+          errorMessage.includes('존재')
+        ) {
           setValidationError(errorMessage || '이미 가입된 이메일입니다.');
         } else {
           setValidationError('이미 가입된 이메일입니다. 다른 이메일을 사용하거나 로그인해주세요.');
@@ -166,7 +180,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
       }
       // 400 에러: 입력값 검증 오류
       else if (err?.response?.status === 400) {
-        const errorMessage = err?.response?.data?.message || '';
+        const errorMessage = safeText(err?.response?.data?.message) || '';
         // 이메일 관련 에러인지 확인
         if (errorMessage.toLowerCase().includes('email') || errorMessage.includes('이메일')) {
           setValidationError('이미 가입된 이메일입니다. 다른 이메일을 사용하거나 로그인해주세요.');
@@ -177,15 +191,15 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
       // 500번대 서버 오류
       else if (err?.response?.status >= 500) {
         setValidationError('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      } 
+      }
       // 네트워크 오류
       else if (err?.code === 'ERR_NETWORK') {
         setValidationError('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
-      } 
+      }
       // 기타 오류
       else {
         // 에러 메시지에 이메일 관련 내용이 있는지 확인
-        const errorMessage = err?.message || '';
+        const errorMessage = safeText(err?.message) || '';
         if (errorMessage.toLowerCase().includes('email') || errorMessage.includes('이메일') || errorMessage.includes('이미')) {
           setValidationError('이미 가입된 이메일입니다. 다른 이메일을 사용하거나 로그인해주세요.');
         } else {
@@ -197,7 +211,8 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
   };
 
   // 표시할 에러 메시지 (유효성 검사 에러 또는 인증 에러)
-  const displayError = validationError || authError;
+  // [FIX] authError가 혹시 객체로 들어와도 안전하게 문자열 처리
+  const displayError = safeText(validationError) || safeText(authError) || null;
 
   return (
     <div className="signup-container">
@@ -208,7 +223,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
             <span className="signup-logo-text">Postura</span>
           </Link>
         </div>
-        
+
         {/* 상단 전체 막대기 */}
         <div className="signup-top-bar-line"></div>
       </div>
@@ -216,9 +231,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
       <div className="signup-content">
         <div className="system-intro">
           <h1 className="system-title">자세 분석 시스템</h1>
-          <p className="system-description">
-            올바른 자세를 유지하고 건강한 생활을 시작하세요
-          </p>
+          <p className="system-description">올바른 자세를 유지하고 건강한 생활을 시작하세요</p>
         </div>
 
         <div className="signup-card">
@@ -273,17 +286,39 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
                   disabled={isLoading}
                 >
                   {showPassword ? (
-                    // 숨김 아이콘 (대각선이 그어진 눈)
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      <path
+                        d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   ) : (
-                    // 보기 아이콘 (일반 눈)
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path
+                        d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   )}
                 </button>
@@ -310,56 +345,78 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
                   disabled={isLoading}
                 >
                   {showConfirmPassword ? (
-                    // 숨김 아이콘 (대각선이 그어진 눈)
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      <path
+                        d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   ) : (
-                    // 보기 아이콘 (일반 눈)
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path
+                        d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   )}
                 </button>
               </div>
-              {passwordError && (
-                <span className="error-message">{passwordError}</span>
-              )}
+              {passwordError && <span className="error-message">{passwordError}</span>}
             </div>
 
             {/* 성공 메시지 표시 */}
             {successMessage && (
-              <div className="success-message" style={{ 
-                color: '#27ae60', 
-                fontSize: '14px', 
-                marginBottom: '16px',
-                textAlign: 'center',
-                fontWeight: '500'
-              }}>
+              <div
+                className="success-message"
+                style={{
+                  color: '#27ae60',
+                  fontSize: '14px',
+                  marginBottom: '16px',
+                  textAlign: 'center',
+                  fontWeight: '500',
+                }}
+              >
                 {successMessage}
               </div>
             )}
 
             {/* 에러 메시지 표시 */}
             {displayError && (
-              <div className="error-message" style={{ 
-                color: '#e74c3c', 
-                fontSize: '14px', 
-                marginBottom: '16px',
-                textAlign: 'center'
-              }}>
+              <div
+                className="error-message"
+                style={{
+                  color: '#e74c3c',
+                  fontSize: '14px',
+                  marginBottom: '16px',
+                  textAlign: 'center',
+                }}
+              >
                 {displayError}
               </div>
             )}
 
-            <button 
-              type="submit" 
-              className="signup-button"
-              disabled={isLoading}
-            >
+            <button type="submit" className="signup-button" disabled={isLoading}>
               {isLoading ? '로딩 중...' : 'Sign Up'}
             </button>
           </form>
@@ -369,11 +426,17 @@ const SignupForm = ({ onSuccess }: SignupFormProps = {}) => {
       <footer className="signup-footer">
         <div className="signup-footer-content">
           <div className="signup-footer-links">
-            <a href="#" className="signup-footer-link">개인정보처리방침</a>
+            <a href="#" className="signup-footer-link">
+              개인정보처리방침
+            </a>
             <span className="signup-footer-divider">|</span>
-            <a href="#" className="signup-footer-link">이용약관</a>
+            <a href="#" className="signup-footer-link">
+              이용약관
+            </a>
             <span className="signup-footer-divider">|</span>
-            <a href="#" className="signup-footer-link">문의하기</a>
+            <a href="#" className="signup-footer-link">
+              문의하기
+            </a>
           </div>
           <div className="signup-footer-copyright">
             <p>Copyright (C) POSTURA All rights reserved.</p>
