@@ -24,7 +24,7 @@ const GUIDE_STEPS: GuideStep[] = [
   {
     target: '.webcam-panel',
     title: '실시간 웹캠 피드',
-    description: '웹캠을 통해 자세를 실시간으로 분석합니다. 피드백 창의 색상으로 현재 자세 상태를 확인하세요. (초록: 정상, 빨강: 교정 필요)',
+    description: '웹캠을 통해 자세를 실시간으로 분석합니다. 화면에 사용자가 감지되지 않을 경우 유지율이 떨어질 수 있습니다',
     position: 'right',
   },
   {
