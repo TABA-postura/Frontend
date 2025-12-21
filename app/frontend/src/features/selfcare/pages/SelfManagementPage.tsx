@@ -54,12 +54,77 @@ const POSTURE_KOREAN_NAMES: Record<string, string> = {
   'LEAN_BACK': '뒤로 기울임',
   'LEAN_FORWARD': '앞으로 기울임',
   'CLOSE_TO_SCREEN': '화면 거리 유지',
+  'TOO_CLOSE': '화면과 가까움',
+  'TOO_CLOSE_TO_SCREEN': '화면 과도하게 가까움',
+  'LEANING_ON_ARM': '팔 지지 자세',
+  'ARM_SUPPORT_CHIN_REST': '팔 지지 / 턱 괴기',
+  'ASYMMETRIC_POSTURE': '비대칭 자세',
   'NORMAL': '정상',
 };
 
 // 자세 이름 변환 함수
 const getPostureKoreanName = (posture: string): string => {
   return POSTURE_KOREAN_NAMES[posture] || posture.replace(/_/g, ' ');
+};
+
+// NORMAL 계열 posture enum 값들 (초록색으로 표시)
+const NORMAL_POSTURE_TYPES = ['NORMAL', 'GOOD', 'CORRECT_POSTURE'];
+
+// posture enum에 따른 색상 결정 함수
+const getPostureColor = (posture: string): string => {
+  // NORMAL 계열만 초록색
+  if (NORMAL_POSTURE_TYPES.includes(posture)) {
+    return '#43e97b'; // 초록색
+  }
+  
+  // 그 외 모든 교정 대상 자세는 경고 색상
+  const warningColors = [
+    '#fa709a', // 빨강
+    '#fee140', // 노랑
+    '#f093fb', // 보라
+    '#667eea', // 파랑
+    '#764ba2', // 진한 보라
+    '#4facfe', // 하늘색
+    '#00f2fe', // 청록
+    '#30cfd0', // 청록
+    '#a8edea', // 연한 청록
+  ];
+  
+  // posture enum 값의 해시를 사용하여 일관된 색상 할당
+  let hash = 0;
+  for (let i = 0; i < posture.length; i++) {
+    hash = posture.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return warningColors[Math.abs(hash) % warningColors.length];
+};
+
+// 가이드 제목 영어 → 한글 매핑
+const GUIDE_TITLE_KOREAN_NAMES: Record<string, string> = {
+  'Wall Angel': '월 엔젤 스트레칭',
+  'wall angel': '월 엔젤 스트레칭',
+  'WALL_ANGEL': '월 엔젤 스트레칭',
+  'Levator Scapulae': '견갑거근 스트레칭',
+  'levator scapulae': '견갑거근 스트레칭',
+  'LEVATOR_SCAPULAE': '견갑거근 스트레칭',
+  'Door Frame': '가슴 열기 스트레칭(문틀)',
+  'door frame': '가슴 열기 스트레칭(문틀)',
+  'DOOR_FRAME': '가슴 열기 스트레칭(문틀)',
+  'Chest Opening': '가슴 열기 스트레칭',
+  'chest opening': '가슴 열기 스트레칭',
+  'CHEST_OPENING': '가슴 열기 스트레칭',
+  'Chest Opening (Door Frame)': '가슴 열기 스트레칭(문틀)',
+  'chest opening (door frame)': '가슴 열기 스트레칭(문틀)',
+};
+
+// 가이드 제목 한글 변환 함수
+const getGuideTitleKorean = (title: string): string => {
+  // 이미 한글이 포함되어 있으면 그대로 반환
+  if (/[가-힣]/.test(title)) {
+    return title;
+  }
+  
+  // 영어 제목을 한글로 변환
+  return GUIDE_TITLE_KOREAN_NAMES[title] || title;
 };
 
 // 파이 차트 색상 팔레트
@@ -107,10 +172,10 @@ function SelfManagementPage() {
   // 파이 차트용 데이터 변환
   const pieChartData = useMemo(() => {
     if (!reportData?.postureDistribution) return [];
-    return Object.entries(reportData.postureDistribution).map(([name, value], index) => ({
+    return Object.entries(reportData.postureDistribution).map(([name, value]) => ({
       name: getPostureKoreanName(name),
       value,
-      color: PIE_CHART_COLORS[index % PIE_CHART_COLORS.length],
+      color: getPostureColor(name), // posture enum 기반 색상 결정
     }));
   }, [reportData]);
 
@@ -335,7 +400,12 @@ function SelfManagementPage() {
                               <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
                           </Pie>
-                          <Tooltip />
+                          <Tooltip 
+                            formatter={(value: number, name: string) => [
+                              `${value}회`,
+                              name // 이미 한글로 변환된 name 사용
+                            ]}
+                          />
                         </PieChart>
                       </ResponsiveContainer>
                     ) : (
@@ -390,7 +460,7 @@ function SelfManagementPage() {
                         <h4 className="rec-title">{getPostureKoreanName(rec.problemType)}</h4>
                       </div>
                       <p className="rec-description">
-                        {rec.recommendedGuideTitle} 스트레칭을 추천합니다.
+                        {getGuideTitleKorean(rec.recommendedGuideTitle)} 스트레칭을 추천합니다.
                       </p>
                       <button
                         className="rec-button"

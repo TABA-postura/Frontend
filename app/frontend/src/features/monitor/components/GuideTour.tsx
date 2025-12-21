@@ -24,7 +24,7 @@ const GUIDE_STEPS: GuideStep[] = [
   {
     target: '.webcam-panel',
     title: '실시간 웹캠 피드',
-    description: '웹캠을 통해 자세를 실시간으로 분석합니다. 화면에 사용자가 감지되지 않을 경우 유지율이 떨어질 수 있습니다',
+    description: '웹캠을 통해 자세를 실시간으로 분석합니다. 화면에 사용자가 감지되지 않을 경우 유지율이 떨어질 수 있습니다.',
     position: 'right',
   },
   {
