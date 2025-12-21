@@ -127,20 +127,6 @@ const getGuideTitleKorean = (title: string): string => {
   return GUIDE_TITLE_KOREAN_NAMES[title] || title;
 };
 
-// 파이 차트 색상 팔레트
-const PIE_CHART_COLORS = [
-  '#667eea',
-  '#764ba2',
-  '#f093fb',
-  '#4facfe',
-  '#00f2fe',
-  '#43e97b',
-  '#fa709a',
-  '#fee140',
-  '#30cfd0',
-  '#a8edea',
-];
-
 function SelfManagementPage() {
   const location = useLocation();
   const [selectedTab, setSelectedTab] = useState<TabValue>('weekly');
