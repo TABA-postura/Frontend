@@ -7,9 +7,13 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   width: 100%;
   min-width: 0;
+  min-height: fit-content; /* 내용에 맞는 최소 높이 */
   backdrop-filter: blur(10px);
   border: none;
   box-sizing: border-box;
+  display: block !important; /* 항상 표시 */
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .monitoring-controls__header {

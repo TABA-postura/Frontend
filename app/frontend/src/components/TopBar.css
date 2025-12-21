@@ -1,0 +1,190 @@
+/* TopBar.css */
+
+.topbar {
+  width: 100%;
+  height: 150px;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.topbar__logo {
+  position: absolute;
+  top: 40px;
+  left: 80px;
+  z-index: 100;
+  text-decoration: none;
+}
+
+.topbar__logo-text {
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 1px;
+  margin: 0;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+}
+
+.topbar__nav {
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 100;
+  display: flex;
+  gap: 80px;
+  align-items: center;
+}
+
+.topbar__nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 400;
+  font-family: 'Pretendard', sans-serif;
+  transition: opacity 0.3s ease;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
+
+.topbar__nav-link:hover {
+  opacity: 0.8;
+}
+
+.topbar__nav-link--active {
+  font-weight: 700;
+}
+
+.topbar__logout {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  z-index: 100;
+}
+
+.topbar__logout-button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 400;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.3s ease;
+}
+
+.topbar__logout-button:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+.topbar__logout-button:disabled {
+  cursor: not-allowed;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+  .topbar__nav {
+    gap: 60px;
+  }
+
+  .topbar__nav-link {
+    font-size: 16px;
+  }
+
+  .topbar__logo-text {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 900px) {
+  .topbar__nav {
+    gap: 40px;
+  }
+
+  .topbar__nav-link {
+    font-size: 14px;
+  }
+
+  .topbar__logo {
+    left: 40px;
+  }
+
+  .topbar__logo-text {
+    font-size: 22px;
+  }
+
+  .topbar__logout {
+    right: 20px;
+  }
+
+  .topbar__logout-button {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    height: 120px;
+  }
+
+  .topbar__nav {
+    gap: 24px;
+    top: 75%;
+  }
+
+  .topbar__nav-link {
+    font-size: 12px;
+  }
+
+  .topbar__logo {
+    top: 30px;
+    left: 20px;
+  }
+
+  .topbar__logo-text {
+    font-size: 20px;
+  }
+
+  .topbar__logout {
+    top: 15px;
+    right: 15px;
+  }
+
+  .topbar__logout-button {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    height: 100px;
+  }
+
+  .topbar__nav {
+    gap: 16px;
+    top: 70%;
+  }
+
+  .topbar__nav-link {
+    font-size: 11px;
+  }
+
+  .topbar__logo {
+    top: 20px;
+    left: 15px;
+  }
+
+  .topbar__logo-text {
+    font-size: 18px;
+  }
+
+  .topbar__logout {
+    top: 10px;
+    right: 10px;
+  }
+
+  .topbar__logout-button {
+    font-size: 10px;
+  }
+}
