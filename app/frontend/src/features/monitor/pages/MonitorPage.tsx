@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import '../../../assets/styles/Home.css';
 import { useWebcam } from '../hooks/useWebcam';
 import { usePoseInference } from '../../ai/hooks/usePoseInference';
@@ -24,8 +24,46 @@ function MonitorPage() {
     localStorage.setItem(GUIDE_TOUR_STORAGE_KEY, 'true');
     setShowGuideTour(false);
   };
+  
+  // 동영상 재생 상태 관리
+  const [isPlayingIntroVideo, setIsPlayingIntroVideo] = useState(false);
+  const introVideoRef = useRef<HTMLVideoElement | null>(null);
+  
   const webcam = useWebcam();
   const session = usePostureSession();
+
+  // 동영상 종료 후 웹캠 시작 (먼저 선언 - useEffect보다 앞에)
+  const startWebcamAfterVideo = useCallback(async () => {
+    try {
+      setIsPlayingIntroVideo(false);
+      await webcam.start();
+      await session.handleStart();
+    } catch (err) {
+      // 에러는 useWebcam에서 처리됨
+      console.error('웹캠 시작 실패:', err);
+    }
+  }, [webcam, session]);
+
+  // 동영상 재생 상태가 변경되면 자동으로 재생
+  useEffect(() => {
+    if (isPlayingIntroVideo && introVideoRef.current) {
+      const video = introVideoRef.current;
+      video.currentTime = 0; // 처음부터 재생
+      const playPromise = video.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            console.log('인트로 동영상 재생 시작');
+          })
+          .catch((err) => {
+            console.error('동영상 재생 실패:', err);
+            // 동영상 재생 실패 시 바로 웹캠 시작
+            startWebcamAfterVideo();
+          });
+      }
+    }
+  }, [isPlayingIntroVideo, startWebcamAfterVideo]);
 
   // AI 추론 훅: sendFrame 함수를 받아옴
   // sessionId는 프레임 전송 시점에 동적으로 전달되므로, 초기화 시점의 값은 중요하지 않음
@@ -219,15 +257,11 @@ function MonitorPage() {
     poseInference, // poseInference의 sendFrame이 sessionId 변경 시 재생성되므로 의존성에 포함
   ]);
 
-  // 세션 시작 시 웹캠 시작
+  // 세션 시작 시 동영상 먼저 재생
   const handleStart = async () => {
-    try {
-      await webcam.start();
-      await session.handleStart();
-    } catch (err) {
-      // 에러는 useWebcam에서 처리됨
-      console.error('웹캠 시작 실패:', err);
-    }
+    // 동영상 재생 시작 - 무조건 재생 시도
+    // useEffect에서 자동으로 재생 처리됨
+    setIsPlayingIntroVideo(true);
   };
 
   // 세션 종료 시 웹캠 중지
@@ -275,7 +309,7 @@ function MonitorPage() {
                     onClick={() => setShowGuideTour(true)}
                     className="guide-btn"
                     style={{
-                      background: 'linear-gradient(180deg, #bdd0e5 0%, #a0bbd5 100%)',
+                      background: 'linear-gradient(180deg, #cdd8e8 0%, #bfcee2 100%)',
                       border: 'none',
                       borderLeft: 'none',
                       borderRadius: '6px',
@@ -288,14 +322,14 @@ function MonitorPage() {
                       fontFamily: "'Pretendard', sans-serif",
                       width: '100%',
                       textAlign: 'center',
-                      boxShadow: '0 2px 4px rgba(60, 90, 130, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                      boxShadow: '0 2px 4px rgba(60, 80, 120, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
                       outline: 'none',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'linear-gradient(180deg, #b0c5db 0%, #94b0cc 100%)';
+                      e.currentTarget.style.background = 'linear-gradient(180deg, #c0cede 0%, #b2c3d8 100%)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'linear-gradient(180deg, #bdd0e5 0%, #a0bbd5 100%)';
+                      e.currentTarget.style.background = 'linear-gradient(180deg, #cdd8e8 0%, #bfcee2 100%)';
                     }}
                   >
                     가이드 다시 보기
@@ -322,6 +356,9 @@ function MonitorPage() {
                     status={session.status}
                     feedback={session.latestFeedback}
                     feedbackList={session.feedbackList}
+                    isPlayingIntroVideo={isPlayingIntroVideo}
+                    introVideoRef={introVideoRef}
+                    onIntroVideoEnd={startWebcamAfterVideo}
                   />
                 </section>
 

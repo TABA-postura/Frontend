@@ -121,7 +121,8 @@
   position: relative;
   width: 100%;
   flex: 1;
-  min-height: 0;
+  min-height: 200px; /* 최소 높이 보장 */
+  min-width: 0; /* flex item overflow 처리 */
   background-image: url(/images/chris-appano--sTwytNnqWw-unsplash.jpg);
   background-size: cover;
   background-position: center;
@@ -138,6 +139,25 @@
   height: 100%;
   object-fit: cover;
   background: transparent;
+}
+
+.webcam-panel__intro-video {
+  z-index: 5;
+}
+
+.webcam-panel__intro-video--visible {
+  display: block;
+  z-index: 5;
+}
+
+.webcam-panel__intro-video--hidden {
+  display: none;
+  z-index: -1;
+}
+
+.webcam-panel__video--hidden {
+  display: none;
+  z-index: -1;
 }
 
 .webcam-panel__overlay {
@@ -361,11 +381,16 @@
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .webcam-panel {
-    padding: 16px;
+    padding: 12px;
+    min-height: 300px; /* 작은 화면에서도 최소 높이 보장 */
   }
 
   .webcam-panel__title {
-    font-size: 18px;
+    font-size: 16px;
+  }
+
+  .webcam-panel__video-wrapper {
+    min-height: 250px; /* 작은 화면에서도 웹캠 영역 보장 */
   }
 
   .webcam-panel__play-button {
@@ -380,6 +405,36 @@
 
   .webcam-panel__idle-text {
     font-size: 16px;
+  }
+
+  .webcam-panel__status-text {
+    font-size: 14px;
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .webcam-panel {
+    padding: 8px;
+    min-height: 250px;
+  }
+
+  .webcam-panel__video-wrapper {
+    min-height: 200px; /* 매우 작은 화면에서도 최소 높이 */
+  }
+
+  .webcam-panel__title {
+    font-size: 14px;
+  }
+
+  .webcam-panel__feedback-content {
+    padding: 8px;
+    min-height: 40px;
+  }
+
+  .webcam-panel__feedback-message {
+    font-size: 12px;
+    padding: 6px 10px;
   }
 }
 

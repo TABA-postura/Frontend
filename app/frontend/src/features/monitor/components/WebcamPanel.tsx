@@ -9,6 +9,9 @@ export type WebcamPanelProps = {
   status: SessionStatus;
   feedback: string | null;
   feedbackList?: FeedbackItem[];
+  isPlayingIntroVideo?: boolean;
+  introVideoRef?: React.RefObject<HTMLVideoElement | null>;
+  onIntroVideoEnd?: () => void;
 };
 
 function WebcamPanel({
@@ -19,6 +22,9 @@ function WebcamPanel({
   status,
   feedback,
   feedbackList = [],
+  isPlayingIntroVideo = false,
+  introVideoRef,
+  onIntroVideoEnd,
 }: WebcamPanelProps) {
   // 상태별 오버레이 메시지 결정
   const getOverlayMessage = () => {
@@ -81,12 +87,36 @@ function WebcamPanel({
       </div>
 
       <div className="webcam-panel__video-wrapper">
+        {/* 인트로 동영상 - 항상 렌더링하되 상태에 따라 보이기/숨기기 */}
+        {introVideoRef && (
+          <video
+            ref={introVideoRef}
+            src="/videos/postura_monitor1.mp4"
+            autoPlay={false}
+            muted
+            playsInline
+            className={`webcam-panel__video webcam-panel__intro-video ${isPlayingIntroVideo ? 'webcam-panel__intro-video--visible' : 'webcam-panel__intro-video--hidden'}`}
+            onEnded={() => {
+              if (onIntroVideoEnd) {
+                onIntroVideoEnd();
+              }
+            }}
+            onError={(e) => {
+              console.error('인트로 동영상 재생 실패:', e);
+              if (onIntroVideoEnd) {
+                onIntroVideoEnd();
+              }
+            }}
+          />
+        )}
+        
+        {/* 웹캠 비디오 */}
         <video
           ref={videoRef}
           autoPlay
           muted
           playsInline
-          className="webcam-panel__video"
+          className={`webcam-panel__video ${isPlayingIntroVideo ? 'webcam-panel__video--hidden' : ''}`}
         />
 
         {/* 로딩 상태 */}
@@ -107,8 +137,8 @@ function WebcamPanel({
           </div>
         )}
 
-        {/* 상태별 오버레이 (에러/로딩 제외) */}
-        {!isLoading && !error && overlayMessage && (
+        {/* 상태별 오버레이 (에러/로딩 제외, 인트로 동영상 재생 중이 아닐 때만) */}
+        {!isLoading && !error && !isPlayingIntroVideo && overlayMessage && (
           <div className="webcam-panel__overlay webcam-panel__overlay--status">
             <p className="webcam-panel__status-text">{overlayMessage}</p>
           </div>
