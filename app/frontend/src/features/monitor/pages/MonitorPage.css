@@ -10,6 +10,77 @@
   box-sizing: border-box;
 }
 
+/* 세로 높이가 작을 때 (납작한 화면) - 모든 요소 축소 */
+@media (max-height: 700px) {
+  .monitor-page {
+    gap: 0.5vh !important;
+    padding-top: 0.5vh !important;
+    padding-bottom: 0.5vh !important;
+    height: calc(100vh - 12vh) !important; /* 상단 바가 작아졌으므로 높이 조정 */
+  }
+
+  .monitor-page__content {
+    gap: 0.5vw !important;
+    padding: 0 0.5vw !important;
+  }
+
+  .monitor-page__card {
+    padding: 12px !important;
+  }
+
+  .monitor-page__card-title {
+    font-size: 14px !important;
+  }
+
+  .monitor-page__card-description {
+    font-size: 11px !important;
+  }
+
+  .monitor-page__center {
+    min-height: 200px !important;
+  }
+
+  /* 가이드 다시 보기 버튼 숨기기 */
+  .monitor-page__left .guide-btn {
+    display: none !important;
+  }
+}
+
+@media (max-height: 600px) {
+  .monitor-page {
+    gap: 0.3vh !important;
+    padding-top: 0.3vh !important;
+    padding-bottom: 0.3vh !important;
+    height: calc(100vh - 10vh) !important;
+  }
+
+  .monitor-page__content {
+    gap: 0.3vw !important;
+    padding: 0 0.3vw !important;
+  }
+
+  .monitor-page__card {
+    padding: 8px !important;
+  }
+
+  .monitor-page__card-title {
+    font-size: 12px !important;
+  }
+
+  .monitor-page__card-description {
+    font-size: 10px !important;
+  }
+
+  .monitor-page__center {
+    min-height: 150px !important;
+  }
+
+  /* 가이드 다시 보기 버튼 숨기기 */
+  .monitor-page__left .guide-btn {
+    display: none !important;
+  }
+}
+
 /* 스크롤바 숨기기 */
 .monitor-page::-webkit-scrollbar,
 .monitor-page *::-webkit-scrollbar {
@@ -361,6 +432,20 @@
     flex: 1;
     min-width: 0;
     width: 100% !important;
+  }
+}
+
+/* 작은 창 크기에서 가이드 다시 보기 버튼 숨기기 (세로가 길고 창이 작을 때) */
+@media (max-width: 800px) and (max-height: 900px) {
+  .monitor-page__left .guide-btn {
+    display: none !important;
+  }
+}
+
+/* 매우 작은 창 크기에서 가이드 다시 보기 버튼 숨기기 */
+@media (max-width: 600px) {
+  .monitor-page__left .guide-btn {
+    display: none !important;
   }
 }
 

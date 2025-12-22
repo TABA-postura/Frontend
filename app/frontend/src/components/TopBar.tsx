@@ -18,15 +18,7 @@ const TopBar = () => {
   };
 
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '150px',
-        position: 'relative',
-        zIndex: 10,
-        overflow: 'hidden',
-      }}
-    >
+    <div className="topbar">
       <img
         src="/images/posetura_line.png"
         alt="Postura Line"

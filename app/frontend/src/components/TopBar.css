@@ -188,3 +188,70 @@
     font-size: 10px;
   }
 }
+
+/* 세로 높이가 작을 때 (납작한 화면) - 모든 요소 축소 */
+@media (max-height: 700px) {
+  .topbar {
+    height: 80px !important;
+  }
+
+  .topbar__logo {
+    top: 15px !important;
+    left: 20px !important;
+  }
+
+  .topbar__logo-text {
+    font-size: 20px !important;
+  }
+
+  .topbar__nav {
+    top: 75% !important;
+    gap: 30px !important;
+  }
+
+  .topbar__nav-link {
+    font-size: 13px !important;
+  }
+
+  .topbar__logout {
+    top: 10px !important;
+    right: 15px !important;
+  }
+
+  .topbar__logout-button {
+    font-size: 11px !important;
+  }
+}
+
+@media (max-height: 600px) {
+  .topbar {
+    height: 60px !important;
+  }
+
+  .topbar__logo {
+    top: 10px !important;
+    left: 15px !important;
+  }
+
+  .topbar__logo-text {
+    font-size: 18px !important;
+  }
+
+  .topbar__nav {
+    top: 70% !important;
+    gap: 24px !important;
+  }
+
+  .topbar__nav-link {
+    font-size: 11px !important;
+  }
+
+  .topbar__logout {
+    top: 8px !important;
+    right: 10px !important;
+  }
+
+  .topbar__logout-button {
+    font-size: 10px !important;
+  }
+}
