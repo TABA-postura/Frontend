@@ -211,6 +211,14 @@ function SelfCarePage() {
       iconColor: '#f59e0b',
       youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
     },
+    'LEANING_ON_ARM': {
+      title: '팔 지지 자세 감지',
+      description: '손목/전완부 스트레칭 후, 양손을 무릎 위에 올려 바른 자세를 취해주세요.',
+      icon: '◉',
+      iconBg: '#fef3c7',
+      iconColor: '#f59e0b',
+      youtubeUrl: 'https://www.youtube.com/watch?v=kgCj8UUEWjU',
+    },
     'CHIN_REST': {
       title: '턱 괴기 자세 감지',
       description: '턱 당기기 운동을 하거나 화면과 거리를 두고 목을 뒤로 밀어주세요.',

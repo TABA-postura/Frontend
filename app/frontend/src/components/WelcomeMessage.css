@@ -23,7 +23,7 @@
 @media (max-width: 900px) {
   .welcome-message {
     font-size: 20px;
-    font-weight: 600;
+    font-family: 'Pretendard', sans-serif;
     padding: 18px 40px 0;
   }
 }
@@ -31,7 +31,7 @@
 @media (max-width: 768px) {
   .welcome-message {
     font-size: 18px;
-    font-weight: 600;
+    font-family: 'Pretendard', sans-serif;
     padding: 16px 30px 0;
   }
 }
@@ -39,7 +39,7 @@
 @media (max-width: 480px) {
   .welcome-message {
     font-size: 16px;
-    font-weight: 600;
+    font-family: 'Pretendard', sans-serif;
     padding: 14px 20px 0;
   }
 }
