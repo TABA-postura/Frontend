@@ -198,6 +198,18 @@ export function usePostureSession(): UsePostureSessionResult {
           // 최신 피드백 메시지들만 표시 (누적하지 않고 교체)
           // 메시지 내용에 따라 타입 결정: "훌륭합니다" 같은 긍정 메시지는 INFO, 나머지는 WARN
           const newFeedbackList: FeedbackItem[] = feedback.feedbackMessages.map((msg) => {
+            // 팔 지지 자세는 무조건 경고(WARN)로 처리
+            const isArmSupport = /팔\s*지지|팔지지/i.test(msg);
+            if (isArmSupport) {
+              return {
+                type: 'WARN' as const,
+                title: '자세 피드백',
+                message: msg,
+                timestamp: Date.now(),
+              };
+            }
+            
+            // 긍정 메시지 체크 (팔 지지가 아닌 경우에만)
             const isPositiveMessage = msg.includes('훌륭합니다') || msg.includes('바른 자세') || msg.includes('좋은 자세');
             return {
               type: isPositiveMessage ? 'INFO' as const : 'WARN' as const,
