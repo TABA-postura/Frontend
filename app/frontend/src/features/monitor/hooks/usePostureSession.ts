@@ -308,6 +308,29 @@ export function usePostureSession(): UsePostureSessionResult {
                 return { ...issue, count };
               }
               
+              // LEFT_RIGHT_ASYMMETRY의 경우 여러 가능한 백엔드 키 확인
+              if (issue.type === 'LEFT_RIGHT_ASYMMETRY') {
+                // 여러 가능한 백엔드 키를 확인 (백엔드에서 사용할 수 있는 모든 변형)
+                const possibleKeys = [
+                  'LEFT_RIGHT_ASYMMETRY',
+                  'ASYMMETRY',
+                  'ASYMMETRIC_POSTURE',
+                  'LEFT_RIGHT_IMBALANCE',
+                  'ASYMMETRIC',
+                ];
+                let count = 0;
+                for (const key of possibleKeys) {
+                  if (feedback.postureTypeCounts[key] !== undefined && feedback.postureTypeCounts[key] > 0) {
+                    count += feedback.postureTypeCounts[key];
+                    // 디버깅: 매칭된 키 로그
+                    if (Date.now() % logInterval < 1000) {
+                      console.log(`✅ [LEFT_RIGHT_ASYMMETRY] 키 "${key}"에서 ${feedback.postureTypeCounts[key]}회 발견`);
+                    }
+                  }
+                }
+                return { ...issue, count };
+              }
+              
               const count = feedback.postureTypeCounts[backendKey] || 0;
               return { ...issue, count };
             })
