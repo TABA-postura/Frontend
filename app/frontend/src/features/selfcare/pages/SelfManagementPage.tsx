@@ -324,7 +324,7 @@ function SelfManagementPage() {
                   className={`tab-trigger ${selectedTab === 'distribution' ? 'active' : ''}`}
                   onClick={() => setSelectedTab('distribution')}
                 >
-                  문제 유형 분포
+                  자세 분포
                 </button>
               </div>
 
@@ -363,7 +363,7 @@ function SelfManagementPage() {
               {selectedTab === 'distribution' && (
                 <div className="tab-content">
                   <div className="chart-card">
-                    <h3 className="chart-title">문제 유형 분포</h3>
+                    <h3 className="chart-title">문제 유형 비율</h3>
                     {pieChartData.length > 0 ? (
                       <ResponsiveContainer width="100%" height={400}>
                         <PieChart>
