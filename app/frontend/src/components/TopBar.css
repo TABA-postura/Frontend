@@ -60,26 +60,55 @@
   top: 20px;
   right: 40px;
   z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+
+.topbar__logout-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar__user-name {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Pretendard', sans-serif;
+  white-space: nowrap;
 }
 
 .topbar__logout-button {
-  background: transparent;
-  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
   color: white;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   font-family: 'Pretendard', sans-serif;
   cursor: pointer;
-  padding: 0;
-  transition: opacity 0.3s ease;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
 }
 
 .topbar__logout-button:hover:not(:disabled) {
-  opacity: 0.8;
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.topbar__logout-button:active:not(:disabled) {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .topbar__logout-button:disabled {
   cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* 반응형 디자인 */
@@ -118,8 +147,17 @@
     right: 20px;
   }
 
+  .topbar__logout-row {
+    gap: 10px;
+  }
+
+  .topbar__user-name {
+    font-size: 13px;
+  }
+
   .topbar__logout-button {
     font-size: 12px;
+    padding: 6px 12px;
   }
 }
 
@@ -149,10 +187,20 @@
   .topbar__logout {
     top: 15px;
     right: 15px;
+    gap: 6px;
+  }
+
+  .topbar__logout-row {
+    gap: 8px;
+  }
+
+  .topbar__user-name {
+    font-size: 12px;
   }
 
   .topbar__logout-button {
     font-size: 11px;
+    padding: 5px 10px;
   }
 }
 
@@ -182,9 +230,19 @@
   .topbar__logout {
     top: 10px;
     right: 10px;
+    gap: 4px;
+  }
+
+  .topbar__logout-row {
+    gap: 6px;
+  }
+
+  .topbar__user-name {
+    font-size: 11px;
   }
 
   .topbar__logout-button {
     font-size: 10px;
+    padding: 4px 8px;
   }
 }
