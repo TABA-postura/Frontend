@@ -10,6 +10,7 @@ import LiveStatsCard from '../components/LiveStatsCard';
 import CumulativePostureDataCard from '../components/CumulativePostureDataCard';
 import RealtimeFeedbackCard from '../components/RealtimeFeedbackCard';
 import TopBar from '../../../components/TopBar';
+import { WebcamProvider } from '../../../contexts/WebcamContext';
 import type { SessionStatus } from '../types';
 import './RealtimePosturePage.css';
 
@@ -223,12 +224,24 @@ function RealtimePosturePage() {
     message: feedback.message,
   }));
 
+  // 웹캠 종료 함수 (다른 페이지로 이동 시 사용)
+  const stopWebcamForNavigation = async () => {
+    if (session.status === 'RUNNING' || session.status === 'PAUSED') {
+      session.handleEnd();
+      webcam.stop();
+    }
+  };
+
+  // 웹캠이 실행 중인지 확인 (RUNNING 또는 PAUSED 상태)
+  const isWebcamRunning = session.status === 'RUNNING' || session.status === 'PAUSED';
+
   return (
-    <div
-      className="monitor-container"
-      style={{
-        minHeight: '100vh',
-        backgroundImage: 'url(/images/posetura_line.png)',
+    <WebcamProvider isWebcamRunning={isWebcamRunning} stopWebcam={stopWebcamForNavigation}>
+      <div
+        className="monitor-container"
+        style={{
+          minHeight: '100vh',
+          backgroundImage: 'url(/images/posetura_line.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -312,6 +325,7 @@ function RealtimePosturePage() {
         </div>
       </div>
     </div>
+    </WebcamProvider>
   );
 }
 

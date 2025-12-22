@@ -9,6 +9,8 @@ import LiveStatsCard from '../components/LiveStatsCard';
 import AccumulatedPostureCard from '../components/AccumulatedPostureCard';
 import GuideTour from '../components/GuideTour';
 import TopBar from '../../../components/TopBar';
+import WelcomeMessage from '../../../components/WelcomeMessage';
+import { WebcamProvider } from '../../../contexts/WebcamContext';
 import type { SessionStatus } from '../types';
 import './MonitorPage.css';
 
@@ -270,6 +272,16 @@ function MonitorPage() {
     webcam.stop();
   };
 
+  // 웹캠 종료 함수 (다른 페이지로 이동 시 사용)
+  const stopWebcamForNavigation = async () => {
+    if (session.status === 'RUNNING' || session.status === 'PAUSED') {
+      handleEnd();
+    }
+  };
+
+  // 웹캠이 실행 중인지 확인 (RUNNING 또는 PAUSED 상태)
+  const isWebcamRunning = session.status === 'RUNNING' || session.status === 'PAUSED';
+
   // 웹캠 에러가 있으면 시작 불가
   const canStart = !webcam.error;
 
@@ -290,12 +302,14 @@ function MonitorPage() {
   }, [session.status, webcam.isActive, webcam]);
 
   return (
-    <div className="monitor-container">
-      {/* 가이드 투어 */}
-      {showGuideTour && <GuideTour onComplete={handleGuideTourComplete} />}
+    <WebcamProvider isWebcamRunning={isWebcamRunning} stopWebcam={stopWebcamForNavigation}>
+      <div className="monitor-container">
+        {/* 가이드 투어 */}
+        {showGuideTour && <GuideTour onComplete={handleGuideTourComplete} />}
 
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <TopBar />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <TopBar />
+          <WelcomeMessage />
       
         <div className="dashboard-content">
           {/* 메인 콘텐츠 */}
@@ -373,6 +387,7 @@ function MonitorPage() {
 
       </div>
     </div>
+    </WebcamProvider>
   );
 }
 
