@@ -80,3 +80,58 @@
   }
 }
 
+/* 세로 높이가 작을 때 (납작한 화면) - 실시간 통계 카드 축소 */
+@media (max-height: 700px) {
+  .live-stats-card {
+    padding: 10px !important;
+  }
+
+  .live-stats-card__title {
+    font-size: 13px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .live-stats-card__description {
+    font-size: 10px !important;
+  }
+
+  .live-stats-card__stat-item {
+    padding: 4px 0 !important;
+  }
+
+  .live-stats-card__stat-label {
+    font-size: 10px !important;
+  }
+
+  .live-stats-card__stat-value {
+    font-size: 13px !important;
+  }
+}
+
+@media (max-height: 600px) {
+  .live-stats-card {
+    padding: 8px !important;
+  }
+
+  .live-stats-card__title {
+    font-size: 11px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .live-stats-card__description {
+    font-size: 9px !important;
+  }
+
+  .live-stats-card__stat-item {
+    padding: 3px 0 !important;
+  }
+
+  .live-stats-card__stat-label {
+    font-size: 9px !important;
+  }
+
+  .live-stats-card__stat-value {
+    font-size: 11px !important;
+  }
+}
+

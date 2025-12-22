@@ -150,3 +150,62 @@
   }
 }
 
+/* 세로 높이가 작을 때 (납작한 화면) - 모니터링 컨트롤 축소 */
+@media (max-height: 700px) {
+  .monitoring-controls {
+    padding: 10px !important;
+  }
+
+  .monitoring-controls__title {
+    font-size: 13px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .monitoring-controls__description {
+    font-size: 10px !important;
+  }
+
+  .monitoring-controls__button {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+  }
+
+  .monitoring-controls__time-item {
+    padding: 4px 8px !important;
+  }
+
+  .monitoring-controls__time-label,
+  .monitoring-controls__time-value {
+    font-size: 10px !important;
+  }
+}
+
+@media (max-height: 600px) {
+  .monitoring-controls {
+    padding: 8px !important;
+  }
+
+  .monitoring-controls__title {
+    font-size: 11px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .monitoring-controls__description {
+    font-size: 9px !important;
+  }
+
+  .monitoring-controls__button {
+    padding: 5px 10px !important;
+    font-size: 11px !important;
+  }
+
+  .monitoring-controls__time-item {
+    padding: 3px 6px !important;
+  }
+
+  .monitoring-controls__time-label,
+  .monitoring-controls__time-value {
+    font-size: 9px !important;
+  }
+}
+

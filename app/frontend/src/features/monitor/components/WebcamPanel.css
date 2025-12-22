@@ -438,3 +438,54 @@
   }
 }
 
+/* 세로 높이가 작을 때 (납작한 화면) - 웹캠 패널 축소 */
+@media (max-height: 700px) {
+  .webcam-panel {
+    padding: 8px !important;
+    gap: 0.5vh !important;
+  }
+
+  .webcam-panel__title {
+    font-size: 13px !important;
+  }
+
+  .webcam-panel__feedback-content {
+    padding: 8px !important;
+    min-height: 35px !important;
+  }
+
+  .webcam-panel__feedback-message {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+  }
+
+  .webcam-panel__video-wrapper {
+    min-height: 180px !important;
+  }
+}
+
+@media (max-height: 600px) {
+  .webcam-panel {
+    padding: 6px !important;
+    gap: 0.3vh !important;
+  }
+
+  .webcam-panel__title {
+    font-size: 11px !important;
+  }
+
+  .webcam-panel__feedback-content {
+    padding: 6px !important;
+    min-height: 30px !important;
+  }
+
+  .webcam-panel__feedback-message {
+    font-size: 10px !important;
+    padding: 3px 6px !important;
+  }
+
+  .webcam-panel__video-wrapper {
+    min-height: 150px !important;
+  }
+}
+
