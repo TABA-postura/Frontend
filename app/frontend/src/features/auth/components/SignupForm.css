@@ -189,10 +189,13 @@ body {
   font-size: 16px;
   transition: all 0.3s ease;
   outline: none;
-  background: #fff;
+  background: #fff !important;
+  color: #333 !important;
   font-family: 'Pretendard', sans-serif;
   width: 100%;
   box-sizing: border-box;
+  /* 크롬 다크모드에서 색상 강제 지정 */
+  color-scheme: light;
 }
 
 .form-group input:focus {
@@ -201,7 +204,20 @@ body {
 }
 
 .form-group input::placeholder {
-  color: #999;
+  color: #999 !important;
+}
+
+/* 크롬 다크모드일 때도 입력 필드 색상 유지 */
+@media (prefers-color-scheme: dark) {
+  .form-group input {
+    background: #fff !important;
+    color: #333 !important;
+    color-scheme: light;
+  }
+  
+  .form-group input::placeholder {
+    color: #999 !important;
+  }
 }
 
 .password-input-wrapper {
