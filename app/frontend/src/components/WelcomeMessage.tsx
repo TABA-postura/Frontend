@@ -4,7 +4,7 @@ import './WelcomeMessage.css';
 
 // 환영 메시지 목록
 const WELCOME_MESSAGES = [
-  '안녕하세요, {name}님 👋\n오늘도 함께해요',
+  '안녕하세요, {name}님! 오늘도 함께해요',
   '{name}님, 오늘도 바른 자세로 시작해요 💪',
   '환영합니다 {name}님! 건강한 습관을 함께 만들어요',
   '{name}님, 오늘의 기록을 시작해볼까요?',
