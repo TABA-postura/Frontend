@@ -188,6 +188,7 @@ export function usePostureSession(): UsePostureSessionResult {
             correctPostureRatio: feedback.correctPostureRatio,
             totalWarningCount: feedback.totalWarningCount,
             postureTypeCounts: feedback.postureTypeCounts,
+            postureTypeCountsKeys: Object.keys(feedback.postureTypeCounts || {}),
             feedbackMessagesCount: feedback.feedbackMessages?.length || 0,
           });
         }
@@ -264,6 +265,13 @@ export function usePostureSession(): UsePostureSessionResult {
 
         // 자세 타입별 카운트 업데이트
         if (feedback.postureTypeCounts) {
+          // 디버깅: 백엔드에서 받은 모든 키 로그 (간헐적으로만)
+          const logInterval = 10000; // 10초마다
+          if (Date.now() % logInterval < 1000) {
+            console.log('📊 [Posture Counts] 백엔드 키:', Object.keys(feedback.postureTypeCounts));
+            console.log('📊 [Posture Counts] 백엔드 값:', feedback.postureTypeCounts);
+          }
+          
           setAccumulatedIssues((prev) =>
             prev.map((issue) => {
               // 백엔드 키를 프론트엔드 타입으로 매핑
@@ -276,6 +284,30 @@ export function usePostureSession(): UsePostureSessionResult {
               };
               
               backendKey = keyMapping[issue.type] || issue.type;
+              
+              // ARM_SUPPORT_CHIN_REST의 경우 여러 가능한 백엔드 키 확인
+              if (issue.type === 'ARM_SUPPORT_CHIN_REST') {
+                // 여러 가능한 백엔드 키를 확인 (백엔드에서 사용할 수 있는 모든 변형)
+                const possibleKeys = [
+                  'LEANING_ON_ARM',
+                  'ARM_SUPPORT',
+                  'ARM_SUPPORT_CHIN_REST',
+                  'LEANING_ON_ARM_CHIN_REST',
+                  'ARM_SUPPORT_OR_CHIN_REST',
+                ];
+                let count = 0;
+                for (const key of possibleKeys) {
+                  if (feedback.postureTypeCounts[key] !== undefined && feedback.postureTypeCounts[key] > 0) {
+                    count += feedback.postureTypeCounts[key];
+                    // 디버깅: 매칭된 키 로그
+                    if (Date.now() % logInterval < 1000) {
+                      console.log(`✅ [ARM_SUPPORT] 키 "${key}"에서 ${feedback.postureTypeCounts[key]}회 발견`);
+                    }
+                  }
+                }
+                return { ...issue, count };
+              }
+              
               const count = feedback.postureTypeCounts[backendKey] || 0;
               return { ...issue, count };
             })
