@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TopBar from '../../../components/TopBar';
 import WelcomeMessage from '../../../components/WelcomeMessage';
 import {
@@ -99,6 +100,7 @@ const getGuideTitleKorean = (title: string): string => {
 };
 
 function SelfCarePage() {
+  const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState<'weekly' | 'distribution'>('weekly');
   const [isVisible, setIsVisible] = useState(false);
 
@@ -735,15 +737,47 @@ function SelfCarePage() {
                     ))}
                   </Pie>
                   <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      color: 'white',
+                    content={(props: any) => {
+                      const { active, payload } = props;
+                      if (active && payload && payload.length) {
+                        const data = payload[0];
+                        return (
+                          <div
+                            style={{
+                              backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                              border: '1px solid rgba(0, 0, 0, 0.2)',
+                              borderRadius: '8px',
+                              padding: '10px 14px',
+                              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                              color: '#333',
+                              fontFamily: "'Pretendard', sans-serif",
+                            }}
+                          >
+                            <p
+                              style={{
+                                margin: '0 0 4px 0',
+                                fontWeight: 700,
+                                fontSize: '14px',
+                                color: '#333',
+                              }}
+                            >
+                              {data.name}
+                            </p>
+                            <p
+                              style={{
+                                margin: 0,
+                                fontWeight: 600,
+                                fontSize: '13px',
+                                color: '#555',
+                              }}
+                            >
+                              {data.value}회
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
                     }}
-                    formatter={(value: number, name: string) => [
-                      `${value}회`,
-                      name // 이미 한글로 변환된 name 사용
-                    ]}
                   />
                 </PieChart>
                 </ResponsiveContainer>
@@ -985,7 +1019,7 @@ function SelfCarePage() {
                   {getGuideTitleKorean(recommendation.recommendedGuideTitle)}를 추천합니다.
                 </p>
                 <button
-                  onClick={() => window.open(issueInfo.youtubeUrl || 'https://www.youtube.com/watch?v=kgCj8UUEWjU', '_blank')}
+                  onClick={() => navigate(`/content/${recommendation.guideId}`)}
                   style={{
                     marginTop: 'auto',
                     padding: '10px 16px',
@@ -1109,7 +1143,7 @@ function SelfCarePage() {
                     {issue.description} ({issue.count}회 발생)
                   </p>
                   <button
-                    onClick={() => window.open(issue.youtubeUrl, '_blank')}
+                    onClick={() => navigate('/information')}
                     style={{
                       marginTop: 'auto',
                       padding: '10px 16px',
