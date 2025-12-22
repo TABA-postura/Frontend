@@ -9,6 +9,7 @@ import LiveStatsCard from '../components/LiveStatsCard';
 import AccumulatedPostureCard from '../components/AccumulatedPostureCard';
 import GuideTour from '../components/GuideTour';
 import TopBar from '../../../components/TopBar';
+import WelcomeMessage from '../../../components/WelcomeMessage';
 import type { SessionStatus } from '../types';
 import './MonitorPage.css';
 
@@ -296,6 +297,7 @@ function MonitorPage() {
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         <TopBar />
+        <WelcomeMessage />
       
         <div className="dashboard-content">
           {/* 메인 콘텐츠 */}

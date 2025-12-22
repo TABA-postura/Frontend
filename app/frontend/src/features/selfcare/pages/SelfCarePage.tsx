@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import TopBar from '../../../components/TopBar';
+import WelcomeMessage from '../../../components/WelcomeMessage';
 import {
   LineChart,
   Line,
@@ -334,6 +335,7 @@ function SelfCarePage() {
       
       <div style={{ position: 'relative', zIndex: 1 }}>
         <TopBar />
+        <WelcomeMessage />
       
       {/* 4개의 카드 그리드 */}
       <div

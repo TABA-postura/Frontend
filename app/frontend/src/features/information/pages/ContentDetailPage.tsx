@@ -258,6 +258,85 @@ function ContentDetailPage() {
 
   const contentSections = parseContentSections(content.contentText);
 
+  // '주요 원인' 섹션 병합 함수
+  const mergeCauseSections = (sections: { title: string; content: string }[]) => {
+    const merged: { title: string; content: string }[] = [];
+    const CAUSE_SECTION_TITLE = '주요 원인';
+    
+    for (let i = 0; i < sections.length; i++) {
+      const current = sections[i];
+      
+      // '주요 원인' 섹션을 찾은 경우
+      if (current.title === CAUSE_SECTION_TITLE) {
+        // 이전 블록과 다음 블록 확인
+        const prevBlock = i > 0 ? sections[i - 1] : null;
+        const nextBlock = i + 1 < sections.length ? sections[i + 1] : null;
+        
+        // 병합된 title 생성: 이전 블록의 title + '주요 원인'
+        let mergedTitle = '';
+        if (prevBlock && prevBlock.title && !prevBlock.title.includes(CAUSE_SECTION_TITLE)) {
+          mergedTitle = prevBlock.title.trim() + ' ' + CAUSE_SECTION_TITLE;
+        } else {
+          mergedTitle = CAUSE_SECTION_TITLE;
+        }
+        
+        // 병합된 content 생성
+        const contentParts: string[] = [];
+        
+        // 이전 블록의 content 추가
+        if (prevBlock && prevBlock.content) {
+          contentParts.push(prevBlock.content.trim());
+        }
+        
+        // 현재 블록의 content 추가
+        if (current.content) {
+          contentParts.push(current.content.trim());
+        }
+        
+        // 다음 블록 처리
+        if (nextBlock) {
+          // 다음 블록의 title이 ':'로 시작하면 content로 취급
+          if (nextBlock.title.startsWith(':')) {
+            contentParts.push(nextBlock.title.trim().replace(/^:\s*/, ''));
+          } else if (nextBlock.title && !nextBlock.title.match(/^\d+\./)) {
+            // 번호로 시작하지 않는 title도 content로 취급
+            contentParts.push(nextBlock.title.trim());
+          }
+          
+          // 다음 블록의 content 추가
+          if (nextBlock.content) {
+            contentParts.push(nextBlock.content.trim());
+          }
+        }
+        
+        merged.push({
+          title: mergedTitle.trim(),
+          content: contentParts.join(' ').trim(),
+        });
+        
+        // 이전 블록이 병합되었으므로 이미 추가된 경우가 아니면 건너뛰기
+        // 다음 블록도 병합되었으므로 건너뛰기
+        if (nextBlock) {
+          i++; // nextBlock 건너뛰기
+        }
+      } else {
+        // '주요 원인' 섹션이 아니면 그대로 추가
+        // 단, 다음 블록이 '주요 원인'이면 현재 블록은 병합될 예정이므로 건너뛰기
+        const nextBlock = i + 1 < sections.length ? sections[i + 1] : null;
+        if (nextBlock && nextBlock.title === CAUSE_SECTION_TITLE) {
+          // 다음에 병합될 예정이므로 건너뛰기
+          continue;
+        }
+        merged.push(current);
+      }
+    }
+    
+    return merged;
+  };
+
+  // '주요 원인' 섹션 병합 적용
+  const mergedSections = mergeCauseSections(contentSections);
+
   // 메타 정보 추출
   const targetParts = getTargetParts(content.relatedPart, (content as any).posture);
   const expectedEffects = getExpectedEffects(content.contentText);
@@ -298,9 +377,9 @@ function ContentDetailPage() {
         </div>
 
         {/* 본문 설명 - 소제목별 개별 카드 */}
-        {contentSections.length > 0 && (
+        {mergedSections.length > 0 && (
           <div style={{ marginBottom: '40px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {contentSections.map((section, index) => (
+            {mergedSections.map((section, index) => (
               <div
                 key={index}
                 style={{

@@ -1,0 +1,46 @@
+.welcome-message {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+  color: white;
+  font-size: 22px;
+  font-weight: 600;
+  font-family: 'Pretendard', sans-serif;
+  white-space: pre-line;
+  line-height: 1.6;
+  padding: 20px 80px 0;
+  background: transparent;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+  .welcome-message {
+    padding: 20px 60px 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .welcome-message {
+    font-size: 20px;
+    font-weight: 600;
+    padding: 18px 40px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-message {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 16px 30px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-message {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px 20px 0;
+  }
+}
+

@@ -5,7 +5,20 @@ import './TopBar.css';
 const TopBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout, isLoading } = useAuth();
+  const { logout, isLoading, user } = useAuth();
+
+  // 사용자 이름 추출: name이 있으면 사용, 없으면 이메일에서 @ 앞부분 추출
+  const getUserDisplayName = () => {
+    if (user?.name) {
+      return user.name;
+    }
+    if (user?.email) {
+      return user.email.split('@')[0];
+    }
+    return null;
+  };
+
+  const displayName = getUserDisplayName();
 
   const handleLogout = async () => {
     try {
@@ -67,15 +80,20 @@ const TopBar = () => {
         </Link>
       </div>
       
-      {/* 로그아웃 - 우측 상단 */}
+      {/* 사용자 이름 및 로그아웃 - 우측 상단 */}
       <div className="topbar__logout">
-        <button
-          onClick={handleLogout}
-          disabled={isLoading}
-          className="topbar__logout-button"
-        >
-          {isLoading ? 'Logging out...' : 'Logout'}
-        </button>
+        <div className="topbar__logout-row">
+          {displayName && (
+            <span className="topbar__user-name">{displayName}님</span>
+          )}
+          <button
+            onClick={handleLogout}
+            disabled={isLoading}
+            className="topbar__logout-button"
+          >
+            {isLoading ? 'Logging out...' : 'Logout'}
+          </button>
+        </div>
       </div>
     </div>
   );

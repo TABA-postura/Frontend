@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { authStore } from '../store/authStore';
 import * as authApi from '../api/auth';
 import type { SignupRequest, LoginRequest } from '../types/auth';
+import { getUserFromToken } from '../utils/jwt';
 
 export function useAuth() {
   const [state, setState] = useState(authStore.getState());
@@ -48,6 +49,13 @@ export function useAuth() {
     try {
       authStore.setLoading(true);
       const tokenResponse = await authApi.loginApi(data);
+      
+      // JWT 토큰에서 사용자 정보 추출
+      const tokenUser = getUserFromToken();
+      
+      console.log('[useAuth] 로그인 후 사용자 정보:', tokenUser);
+      
+      // 사용자 정보와 함께 인증 상태 설정
       authStore.setAuth(tokenResponse);
       authStore.setLoading(false);
     } catch (error) {
