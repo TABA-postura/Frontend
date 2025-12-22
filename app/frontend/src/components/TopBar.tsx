@@ -1,11 +1,13 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../features/auth/hooks/useAuth';
+import { useWebcamContext } from '../contexts/WebcamContext';
 import './TopBar.css';
 
 const TopBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, isLoading, user } = useAuth();
+  const { isWebcamRunning, stopWebcam } = useWebcamContext();
 
   // 사용자 이름 추출: name이 있으면 사용, 없으면 이메일에서 @ 앞부분 추출
   const getUserDisplayName = () => {
@@ -20,7 +22,34 @@ const TopBar = () => {
 
   const displayName = getUserDisplayName();
 
+  // 웹캠이 실행 중일 때 페이지 이동 전 확인
+  const handleNavigation = async (e: React.MouseEvent<HTMLAnchorElement>, targetPath: string) => {
+    // 현재 페이지와 같은 페이지로 이동하는 경우는 확인 불필요
+    if (location.pathname === targetPath) {
+      return;
+    }
+
+    // 웹캠이 실행 중이면 확인 창 표시
+    if (isWebcamRunning) {
+      e.preventDefault();
+      const confirmed = window.confirm('모니터링이 진행 중입니다. 종료하시겠습니까?');
+      if (confirmed) {
+        await stopWebcam();
+        navigate(targetPath);
+      }
+    }
+  };
+
   const handleLogout = async () => {
+    // 웹캠이 실행 중이면 확인 창 표시
+    if (isWebcamRunning) {
+      const confirmed = window.confirm('모니터링이 진행 중입니다. 종료하시겠습니까?');
+      if (!confirmed) {
+        return;
+      }
+      await stopWebcam();
+    }
+
     try {
       await logout();
       navigate('/login', { replace: true });
@@ -48,7 +77,11 @@ const TopBar = () => {
         }}
       />
       {/* Postura 로고 - 클릭시 메인 화면으로 이동 */}
-      <Link to="/" className="topbar__logo">
+      <Link 
+        to="/" 
+        className="topbar__logo"
+        onClick={(e) => handleNavigation(e, '/')}
+      >
         <span className="topbar__logo-text">Postura</span>
       </Link>
       
@@ -59,6 +92,7 @@ const TopBar = () => {
           className={`topbar__nav-link ${
             location.pathname === '/monitor' || location.pathname === '/realtime' ? 'topbar__nav-link--active' : ''
           }`}
+          onClick={(e) => handleNavigation(e, '/monitor')}
         >
           Real-time Analysis
         </Link>
@@ -67,6 +101,7 @@ const TopBar = () => {
           className={`topbar__nav-link ${
             location.pathname === '/information' ? 'topbar__nav-link--active' : ''
           }`}
+          onClick={(e) => handleNavigation(e, '/information')}
         >
           Information
         </Link>
@@ -75,6 +110,7 @@ const TopBar = () => {
           className={`topbar__nav-link ${
             location.pathname === '/selfcare' ? 'topbar__nav-link--active' : ''
           }`}
+          onClick={(e) => handleNavigation(e, '/selfcare')}
         >
           Self Management
         </Link>
