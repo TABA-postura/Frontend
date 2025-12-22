@@ -1,5 +1,5 @@
-import { createContext, useContext, ReactNode } from 'react';
-import type { SessionStatus } from '../features/monitor/types';
+import { createContext, useContext } from 'react';
+import type { ReactNode } from 'react';
 
 interface WebcamContextType {
   isWebcamRunning: boolean;
